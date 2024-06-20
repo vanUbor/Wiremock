@@ -15,7 +15,7 @@
     <thead>
     <tr>
         <th scope="col">#</th>
-        <th scope="col">Name</th>
+        <th scope="col">@Html.DisplayNameFor(model => model.Servers[0].Name)</th>
         <th scope="col">Status</th>
         <th scope="col">Configuration</th>
         <th scope="col">Manage</th>
@@ -27,7 +27,7 @@
     {
         <tr>
             @* ID *@
-            <th scope="row">@server.Id</th>
+            <th scope="row">@Html.DisplayFor(modelItem => server.Id)</th>
             @* Name *@
             <td>@server.Name</td>
             <td>
@@ -41,8 +41,8 @@
                 }
             </td>
             <td>
-                <button type="button" class="btn btn-primary">Show Mappings</button>
-                <button type="button" class="btn btn-primary">Configure</button>
+                <a class="btn btn-primary" asp-route-id="@server.Id" asp-page="WireMockServers/Details">Details</a>
+                <a class="btn btn-primary" asp-route-id="@server.Id" asp-page="WireMockServers/Edit">Edit</a>
             </td>
             @* Start / Stop Button *@
             <td>
@@ -56,7 +56,10 @@
                 }
             </td>
             <td>
-                <button type="button" class="btn btn-danger">X</button>
+                <form method="post">
+                    <input type="hidden" name="id" value="@server.Id"/>
+                    <input type="submit" value="X" asp-page-handler="Delete" class="btn btn-danger"/>
+                </form>
             </td>
         </tr>
     }
@@ -65,6 +68,6 @@
 <br>
 <div class="d-flex flex-row-reverse">
     <div class="p-2">
-        <button type="button" class="btn btn-primary">Create new Instance</button>
+        <a class="btn btn-primary" href="./WireMockServers/Create" role="button">Create new Instance</a>
     </div>
 </div>

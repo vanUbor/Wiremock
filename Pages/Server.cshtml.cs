@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using WireMock.Server;
 
 namespace WireMock.Pages;
@@ -6,15 +8,40 @@ namespace WireMock.Pages;
 public class Server : PageModel
 {
 
-    public IList<WireMockServer> Servers { get; set; }
-    
-    public void OnGet()
+    [BindProperty] public IList<WireMockServer> Servers { get; set; } = default!;
+    private readonly WireMockServerContext _context;
+
+    public Server(WireMockServerContext context)
     {
-        Servers = new List<WireMockServer>(3)
+        _context = context;
+    }
+    
+    public async Task<IActionResult> OnGet()
+    {
+        var models = await _context.WireMockServerModel.ToListAsync();
+        Servers = models.Select(s => new WireMockServer()
         {
-            new WireMockServer() { Id = "First", Name ="MapDB", IsRunning = true },
-            new WireMockServer() { Id = "Second", Name ="AdminApi", IsRunning = false },
-            new WireMockServer() { Id = "3333", Name ="TrimGen API", IsRunning = true }
-        };
+            Id = s.Id.ToString(),
+            Name = s.Name,
+        }).ToList();
+        
+        return Page();
+    }
+
+    public async Task<IActionResult> OnPostDeleteAsync(int? id)
+    {
+        if (id == null)
+        {
+            return NotFound();
+        }
+
+        var wiremockservermodel = await _context.WireMockServerModel.FindAsync(id);
+        if (wiremockservermodel != null)
+        {
+            _context.WireMockServerModel.Remove(wiremockservermodel);
+            await _context.SaveChangesAsync();
+        }
+
+        return RedirectToPage();
     }
 }

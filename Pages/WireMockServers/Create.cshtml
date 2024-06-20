@@ -1,0 +1,45 @@
+@page
+@model WireMock.Pages_WireMockServers.CreateModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="WireMockServerModel.Name" class="control-label"></label>
+                <input asp-for="WireMockServerModel.Name" class="form-control" />
+                <span asp-validation-for="WireMockServerModel.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="WireMockServerModel.Created" class="control-label"></label>
+                <input asp-for="WireMockServerModel.Created" class="form-control"  
+                       value="@DateTime.Now.ToString("yyyy-MM-dd")" 
+                       readonly/>
+                <span asp-validation-for="WireMockServerModel.Created" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="WireMockServerModel.Contact" class="control-label"></label>
+                <input asp-for="WireMockServerModel.Contact" class="form-control" />
+                <span asp-validation-for="WireMockServerModel.Contact" class="text-danger"></span>
+            </div>
+            <br/>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="../Server">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
