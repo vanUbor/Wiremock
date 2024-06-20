@@ -1,0 +1,70 @@
+@page
+@model WireMock.Pages.Server
+
+
+@{
+    ViewData["Title"] = "Server Overview";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Mocking Server Instances</h1>
+    <p>Manage / Create And Stop Mocking Server</p>
+</div>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Status</th>
+        <th scope="col">Configuration</th>
+        <th scope="col">Manage</th>
+        <th scope="col">Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var server in Model.Servers)
+    {
+        <tr>
+            @* ID *@
+            <th scope="row">@server.Id</th>
+            @* Name *@
+            <td>@server.Name</td>
+            <td>
+                @if (server.IsRunning)
+                {
+                    <span class="badge bg-success">Running</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">Stopped</span>
+                }
+            </td>
+            <td>
+                <button type="button" class="btn btn-primary">Show Mappings</button>
+                <button type="button" class="btn btn-primary">Configure</button>
+            </td>
+            @* Start / Stop Button *@
+            <td>
+                @if (server.IsRunning)
+                {
+                    <button type="button" class="btn btn-warning">Stop</button>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-success">Start</button>
+                }
+            </td>
+            <td>
+                <button type="button" class="btn btn-danger">X</button>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+<br>
+<div class="d-flex flex-row-reverse">
+    <div class="p-2">
+        <button type="button" class="btn btn-primary">Create new Instance</button>
+    </div>
+</div>
