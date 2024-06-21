@@ -1,10 +1,14 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using WireMock.Server;
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddScoped<ServerOrchestrator>();
 builder.Services.AddDbContext<WireMockServerContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("WireMockServerContext") 
                       ?? throw new InvalidOperationException("Connection string 'WireMockServerContext' not found.")));

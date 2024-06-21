@@ -8,23 +8,19 @@ namespace WireMock.Pages;
 public class Server : PageModel
 {
 
-    [BindProperty] public IList<WireMockServer> Servers { get; set; } = default!;
+    [BindProperty] public IList<WireMockService> Servers { get; set; } = default!;
     private readonly WireMockServerContext _context;
+    private readonly ServerOrchestrator _serverOrchestrator;
 
-    public Server(WireMockServerContext context)
+    public Server(WireMockServerContext context, ServerOrchestrator serverOrchestrator)
     {
         _context = context;
+        _serverOrchestrator = serverOrchestrator;
     }
     
     public async Task<IActionResult> OnGet()
     {
-        var models = await _context.WireMockServerModel.ToListAsync();
-        Servers = models.Select(s => new WireMockServer()
-        {
-            Id = s.Id.ToString(),
-            Name = s.Name,
-        }).ToList();
-        
+        Servers = await _serverOrchestrator.GetServicesAsync();
         return Page();
     }
 

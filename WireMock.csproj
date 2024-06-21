@@ -19,6 +19,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
     <PackageReference Include="WireMock.Net" Version="1.5.58" />
+    <PackageReference Include="WireMock.Net.StandAlone" Version="1.5.58" />
   </ItemGroup>
 
 </Project>
