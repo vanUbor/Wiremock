@@ -8,10 +8,19 @@ builder.Logging.AddConsole();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddScoped<ServerOrchestrator>();
-builder.Services.AddDbContext<WireMockServerContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("WireMockServerContext") 
-                      ?? throw new InvalidOperationException("Connection string 'WireMockServerContext' not found.")));
+builder.Services.AddSingleton<IDbContextFactory, DbContextFactory>();
+builder.Services.AddSingleton<ServerOrchestrator>();
+
+builder.Services.AddSingleton<DbContextOptions<WireMockServerContext>>(serviceProvider =>
+{
+    var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+
+    var optionsBuilder = new DbContextOptionsBuilder<WireMockServerContext>();
+    optionsBuilder.UseSqlite(configuration.GetConnectionString("WireMockServerContext")
+                             ?? throw new InvalidOperationException("Connection string 'WireMockServerContext' not found."));
+
+    return optionsBuilder.Options;
+});
 
 var app = builder.Build();
 

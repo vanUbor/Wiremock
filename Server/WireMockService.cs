@@ -22,11 +22,11 @@ public class WireMockService
         _settings.Logger = new WireMockLogger(logger);
     }
 
-    public void Run()
+    public void Start()
     {
-        _logger.LogInformation("WireMock.Net server starting");
+        _logger?.LogInformation("WireMock.Net server starting");
         _server = WireMockServer.Start(_settings);
-        _logger.LogInformation($"WireMock.Net server settings {JsonConvert.SerializeObject(_settings)}");
+        _logger?.LogInformation($"WireMock.Net server settings {JsonConvert.SerializeObject(_settings)}");
     }
 
     public void Stop()

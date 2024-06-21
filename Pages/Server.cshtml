@@ -52,7 +52,11 @@
                 }
                 else
                 {
-                    <button type="button" class="btn btn-success">Start</button>
+                    <form method="post">
+                        <input type="hidden" name="id" value="@server.Id"/>
+                        <input type="submit" value="Start" asp-page-handler="Start" class="btn btn-success"/>
+                    </form>
+                    
                 }
             </td>
             <td>
