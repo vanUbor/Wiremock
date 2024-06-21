@@ -1,5 +1,4 @@
 using Newtonsoft.Json;
-using WireMock.Pages.WireMockServers;
 using WireMock.Settings;
 
 namespace WireMock.Server;
@@ -8,7 +7,7 @@ public class WireMockService
 {
     public string Id => _model.Id.ToString();
     public string Name => _model.Name;
-    public bool IsRunning => _server.IsStarted;
+    public bool IsRunning => _server?.IsStarted ?? false;
 
     private WireMockServer _server;
     private WireMockServerSettings _settings;
