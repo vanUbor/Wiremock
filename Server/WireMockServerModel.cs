@@ -13,8 +13,10 @@ public class WireMockServerModel
     public DateTime Created { get; set; }
     
     public string Contact { get; set; }
+
+    public string[] Urls { get; set; } = default!;
     
-    public string[] Urls { get; set; }
+    public int Port { get; set; }
     public bool StartAdminInterface { get; set; }
     public string ProxyUrl { get; set; }
     public bool SaveMapping { get; set; }
@@ -25,15 +27,7 @@ public class WireMockServerModel
     {
         return new WireMockServerSettings()
         {
-            Urls = Urls,
-            StartAdminInterface = StartAdminInterface,
-            ProxyAndRecordSettings = new ProxyAndRecordSettings()
-            {
-                Url = ProxyUrl,
-                SaveMapping = SaveMapping,
-                SaveMappingToFile = SaveMappingToFile,
-                SaveMappingForStatusCodePattern = SaveMappingForStatusCodePattern
-            }
+            Port = Port,
         };
     }
 }

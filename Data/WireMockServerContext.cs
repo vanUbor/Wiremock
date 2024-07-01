@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 namespace WireMock.Server
@@ -13,6 +9,6 @@ namespace WireMock.Server
         {
         }
 
-        public DbSet<WireMock.Server.WireMockServerModel> WireMockServerModel { get; set; } = default!;
+        public DbSet<WireMockServerModel> WireMockServerModel { get; set; } = default!;
     }
 }

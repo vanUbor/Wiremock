@@ -11,9 +11,9 @@ namespace WireMock.Pages_WireMockServers
 {
     public class CreateModel : PageModel
     {
-        private readonly WireMock.Server.WireMockServerContext _context;
+        private readonly WireMockServerContext _context;
 
-        public CreateModel(WireMock.Server.WireMockServerContext context)
+        public CreateModel(WireMockServerContext context)
         {
             _context = context;
         }

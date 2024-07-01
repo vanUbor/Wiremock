@@ -11,11 +11,11 @@ namespace WireMock.Pages_WireMockServers
 {
     public class DeleteModel : PageModel
     {
-        private readonly WireMock.Server.WireMockServerContext _context;
+        private readonly IDbContextFactory _contextFactory;
 
-        public DeleteModel(WireMock.Server.WireMockServerContext context)
+        public DeleteModel(IDbContextFactory contextFactory)
         {
-            _context = context;
+            _contextFactory = contextFactory;
         }
 
         [BindProperty]
@@ -28,7 +28,8 @@ namespace WireMock.Pages_WireMockServers
                 return NotFound();
             }
 
-            var wiremockservermodel = await _context.WireMockServerModel.FirstOrDefaultAsync(m => m.Id == id);
+            var context = _contextFactory.CreateDbContext();
+            var wiremockservermodel = await context.WireMockServerModel.FirstOrDefaultAsync(m => m.Id == id);
 
             if (wiremockservermodel == null)
             {
@@ -48,12 +49,13 @@ namespace WireMock.Pages_WireMockServers
                 return NotFound();
             }
 
-            var wiremockservermodel = await _context.WireMockServerModel.FindAsync(id);
+            var context = _contextFactory.CreateDbContext();
+            var wiremockservermodel = await context.WireMockServerModel.FindAsync(id);
             if (wiremockservermodel != null)
             {
                 WireMockServerModel = wiremockservermodel;
-                _context.WireMockServerModel.Remove(WireMockServerModel);
-                await _context.SaveChangesAsync();
+                context.WireMockServerModel.Remove(WireMockServerModel);
+                await context.SaveChangesAsync();
             }
 
             return RedirectToPage("./Index");

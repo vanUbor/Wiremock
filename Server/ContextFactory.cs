@@ -10,7 +10,6 @@ public interface IDbContextFactory
 public class DbContextFactory : IDbContextFactory
 {
     private readonly DbContextOptions<WireMockServerContext> _options;
-
     public DbContextFactory(DbContextOptions<WireMockServerContext> options)
     {
         _options = options;

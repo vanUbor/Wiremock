@@ -34,6 +34,9 @@ namespace WireMock.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("Port")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("ProxyUrl")
                         .IsRequired()
                         .HasColumnType("TEXT");

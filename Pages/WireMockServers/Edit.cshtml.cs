@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WireMock.Server;
 
@@ -12,15 +7,14 @@ namespace WireMock.Pages_WireMockServers
 {
     public class EditModel : PageModel
     {
-        private readonly WireMock.Server.WireMockServerContext _context;
+        private WireMockServerContext _context;
 
-        public EditModel(WireMock.Server.WireMockServerContext context)
+        public EditModel(IDbContextFactory contextFactory)
         {
-            _context = context;
+            _context = contextFactory.CreateDbContext();
         }
 
-        [BindProperty]
-        public WireMockServerModel WireMockServerModel { get; set; } = default!;
+        [BindProperty] public WireMockServerModel WireMockServerModel { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -29,12 +23,13 @@ namespace WireMock.Pages_WireMockServers
                 return NotFound();
             }
 
-            var wiremockservermodel =  await _context.WireMockServerModel.FirstOrDefaultAsync(m => m.Id == id);
-            if (wiremockservermodel == null)
+           
+            WireMockServerModel = await _context.WireMockServerModel.FirstOrDefaultAsync(m => m.Id == id);
+            if (WireMockServerModel == null)
             {
                 return NotFound();
             }
-            WireMockServerModel = wiremockservermodel;
+
             return Page();
         }
 
@@ -46,31 +41,22 @@ namespace WireMock.Pages_WireMockServers
             {
                 return Page();
             }
-
+            
             _context.Attach(WireMockServerModel).State = EntityState.Modified;
-
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!WireMockServerModelExists(WireMockServerModel.Id))
+                if (!_context.WireMockServerModel.Any(e => e.Id == WireMockServerModel.Id))
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
             return RedirectToPage("../Server");
-        }
-
-        private bool WireMockServerModelExists(int id)
-        {
-            return _context.WireMockServerModel.Any(e => e.Id == id);
         }
     }
 }
