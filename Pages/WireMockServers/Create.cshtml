@@ -19,14 +19,33 @@
             <div class="form-group">
                 <label asp-for="WireMockServerModel.Created" class="control-label"></label>
                 <input asp-for="WireMockServerModel.Created" class="form-control"  
-                       value="@DateTime.Now.ToString("yyyy-MM-dd")" 
-                       readonly/>
+                       value="@DateTime.Now.ToString("yyyy-MM-dd")" readonly/>
                 <span asp-validation-for="WireMockServerModel.Created" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="WireMockServerModel.ProxyUrl" class="control-label"></label>
+                <input asp-for="WireMockServerModel.ProxyUrl" class="form-control" />
+                <span asp-validation-for="WireMockServerModel.ProxyUrl" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="WireMockServerModel.Port" class="control-label"></label>
+                <input asp-for="WireMockServerModel.Port" class="form-control" />
+                <span asp-validation-for="WireMockServerModel.Port" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="WireMockServerModel.SaveMappingForStatusCodePattern" class="control-label"></label>
+                <input asp-for="WireMockServerModel.SaveMappingForStatusCodePattern" class="form-control" />
+                <span asp-validation-for="WireMockServerModel.SaveMappingForStatusCodePattern" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="WireMockServerModel.Contact" class="control-label"></label>
                 <input asp-for="WireMockServerModel.Contact" class="form-control" />
                 <span asp-validation-for="WireMockServerModel.Contact" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="WireMockServerModel.Description" class="control-label"></label>
+                <input asp-for="WireMockServerModel.Description" class="form-control" />
+                <span asp-validation-for="WireMockServerModel.Description" class="text-danger"></span>
             </div>
             <br/>
             <div class="form-group">

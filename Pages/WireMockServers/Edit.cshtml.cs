@@ -7,10 +7,12 @@ namespace WireMock.Pages_WireMockServers
 {
     public class EditModel : PageModel
     {
+        private readonly ServerOrchestrator _serverOrchestrator;
         private WireMockServerContext _context;
 
-        public EditModel(IDbContextFactory contextFactory)
+        public EditModel(IDbContextFactory contextFactory, ServerOrchestrator serverOrchestrator)
         {
+            _serverOrchestrator = serverOrchestrator;
             _context = contextFactory.CreateDbContext();
         }
 
@@ -46,6 +48,9 @@ namespace WireMock.Pages_WireMockServers
             try
             {
                 await _context.SaveChangesAsync();
+                _serverOrchestrator.Stop(WireMockServerModel.Id);
+                _serverOrchestrator.RemoveService(WireMockServerModel.Id);
+                _serverOrchestrator.CreateService(WireMockServerModel.Id);
             }
             catch (DbUpdateConcurrencyException)
             {

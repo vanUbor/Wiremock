@@ -8,7 +8,7 @@
 
 <div class="text-center">
     <h1 class="display-4">Mocking Server Instances</h1>
-    <p>Manage / Create And Stop Mocking Server</p>
+    <p>Manage / Create / Stop And Stop Mocking Server</p>
 </div>
 
 <table class="table">
@@ -23,7 +23,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var server in Model.Servers)
+    @foreach (var server in Model.Servers.OrderByDescending(m => m.Id))
     {
         <tr>
             @* ID *@
@@ -48,7 +48,10 @@
             <td>
                 @if (server.IsRunning)
                 {
-                    <button type="button" class="btn btn-warning">Stop</button>
+                    <form method="post">
+                        <input type="hidden" name="id" value="@server.Id"/>
+                        <input type="submit" value="Stop" asp-page-handler="Stop" class="btn btn-warning"/>
+                    </form>
                 }
                 else
                 {

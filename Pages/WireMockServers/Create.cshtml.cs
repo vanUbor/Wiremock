@@ -1,21 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using WireMock.Server;
 
 namespace WireMock.Pages_WireMockServers
 {
     public class CreateModel : PageModel
     {
-        private readonly WireMockServerContext _context;
+        private readonly IDbContextFactory _contextFactory;
 
-        public CreateModel(WireMockServerContext context)
+        public CreateModel(IDbContextFactory contextFactory)
         {
-            _context = context;
+            _contextFactory = contextFactory;
         }
 
         public IActionResult OnGet()
@@ -31,11 +26,11 @@ namespace WireMock.Pages_WireMockServers
         {
             if (!ModelState.IsValid)
             {
-                return Page();
+                return RedirectToPage("../Error");
             }
-
-            _context.WireMockServerModel.Add(WireMockServerModel);
-            await _context.SaveChangesAsync();
+            var context = _contextFactory.CreateDbContext();
+            context.WireMockServerModel.Add(WireMockServerModel);
+            await context.SaveChangesAsync();
 
             return RedirectToPage("../Server");
         }

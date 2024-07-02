@@ -22,7 +22,7 @@ public class WireMockService
         _settings.Logger = new WireMockLogger(logger);
     }
 
-    public void Start()
+    public void CreateAndStart()
     {
         _logger?.LogInformation("WireMock.Net server starting");
         _server = WireMockServer.Start(_settings);
@@ -31,6 +31,6 @@ public class WireMockService
 
     public void Stop()
     {
-        _server.Stop();
+        _server?.Stop();
     }
 }

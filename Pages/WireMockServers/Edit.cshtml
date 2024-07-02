@@ -31,11 +31,6 @@
                 <span asp-validation-for="WireMockServerModel.Contact" class="text-danger"></span>
             </div>
             <br/>
-            <div class="form-group">
-                <label asp-for="WireMockServerModel.Urls" class="control-label"></label>
-                <input readonly asp-for="WireMockServerModel.Urls" class="form-control"></input>
-                <span asp-validation-for="WireMockServerModel.Urls" class="text-danger"></span>
-            </div>
             <br/>
             <div class="form-group">
                 <label asp-for="WireMockServerModel.StartAdminInterface" class="control-label"></label>
@@ -71,6 +66,12 @@
                 <label asp-for="WireMockServerModel.SaveMappingForStatusCodePattern" class="control-label"></label>
                 <input asp-for="WireMockServerModel.SaveMappingForStatusCodePattern" class="form-control"/>
                 <span asp-validation-for="WireMockServerModel.SaveMappingForStatusCodePattern" class="text-danger"></span>
+            </div>
+            <br/>
+            <div class="form-group">
+                <label asp-for="WireMockServerModel.Description" class="control-label"></label>
+                <input asp-for="WireMockServerModel.Description" class="form-control"/>
+                <span asp-validation-for="WireMockServerModel.Description" class="text-danger"></span>
             </div>
             <br/>
             <div class="form-group">

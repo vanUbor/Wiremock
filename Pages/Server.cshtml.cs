@@ -19,7 +19,7 @@ public class Server : PageModel
     
     public async Task<IActionResult> OnGet()
     {
-        Servers = await _serverOrchestrator.GetServicesAsync();
+        Servers = await _serverOrchestrator.GetOrCreateServicesAsync();
         return Page();
     }
 
@@ -36,17 +36,29 @@ public class Server : PageModel
         {
             context.WireMockServerModel.Remove(wiremockservermodel);
             await context.SaveChangesAsync();
+            _serverOrchestrator.Stop(id);
+            _serverOrchestrator.RemoveService(id);
         }
 
         return RedirectToPage();
     }
 
-    public async Task<IActionResult> OnPostStartAsync(int? id)
+    public IActionResult OnPostStartAsync(int? id)
     {
         if (id == null)
-            return NotFound();
+            return NotFound($"No service with id {id} found");
 
-        await _serverOrchestrator.Start(id.Value);
+        _serverOrchestrator.Start(id.Value);
+        
+        return RedirectToPage();
+    }
+    
+    public IActionResult OnPostStopAsync(int? id)
+    {
+        if (id == null)
+            return NotFound($"No service with id {id} found");
+
+        _serverOrchestrator.Stop(id.Value);
         
         return RedirectToPage();
     }

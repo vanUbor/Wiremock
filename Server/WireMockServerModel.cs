@@ -14,7 +14,7 @@ public class WireMockServerModel
     
     public string Contact { get; set; }
 
-    public string[] Urls { get; set; } = default!;
+    public string Description { get; set; }
     
     public int Port { get; set; }
     public bool StartAdminInterface { get; set; }

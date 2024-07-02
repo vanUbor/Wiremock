@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WireMock.Server;
 
@@ -10,9 +11,11 @@ using WireMock.Server;
 namespace WireMock.Migrations
 {
     [DbContext(typeof(WireMockServerContext))]
-    partial class WireMockServerContextModelSnapshot : ModelSnapshot
+    [Migration("20240701082058_PortAddedToModel")]
+    partial class PortAddedToModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
@@ -28,10 +31,6 @@ namespace WireMock.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Created")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -57,6 +56,10 @@ namespace WireMock.Migrations
 
                     b.Property<bool>("StartAdminInterface")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Urls")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
