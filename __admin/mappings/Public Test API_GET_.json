@@ -1,0 +1,96 @@
+{
+  "Guid": "c3f2b53e-f424-407c-b8c1-5707023022bd",
+  "UpdatedAt": "2024-07-03T07:40:12.8454477Z",
+  "Title": "Proxy Mapping for GET /",
+  "Description": "Proxy Mapping for GET /",
+  "Priority": -2000000,
+  "Request": {
+    "Path": {
+      "Matchers": [
+        {
+          "Name": "WildcardMatcher",
+          "Pattern": "/",
+          "IgnoreCase": false
+        }
+      ]
+    },
+    "Methods": [
+      "GET"
+    ],
+    "HttpVersion": "1.1",
+    "Headers": [
+      {
+        "Name": "Accept",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "application/json",
+            "IgnoreCase": true
+          }
+        ],
+        "IgnoreCase": true
+      },
+      {
+        "Name": "Host",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "localhost:8081",
+            "IgnoreCase": true
+          }
+        ],
+        "IgnoreCase": true
+      },
+      {
+        "Name": "User-Agent",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "IntelliJ HTTP Client/JetBrains Rider 2024.1.1",
+            "IgnoreCase": true
+          }
+        ],
+        "IgnoreCase": true
+      },
+      {
+        "Name": "Accept-Encoding",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "br, deflate, gzip, x-gzip",
+            "IgnoreCase": true
+          }
+        ],
+        "IgnoreCase": true
+      },
+      {
+        "Name": "Content-Length",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "0",
+            "IgnoreCase": true
+          }
+        ],
+        "IgnoreCase": true
+      }
+    ]
+  },
+  "Response": {
+    "StatusCode": 200,
+    "BodyAsBytes": "IVgBACAKbkt1ocD7G2JNPF4MM9iAE7OME41o8XNFq0zHByFHGOd63ApsXVGB2uUZ3g9Ij0f3oE6aFkFZwKpbUdj3PR9KyK2eV3+rx07nS/UTAwM=",
+    "Headers": {
+      "Content-Type": "application/json",
+      "Content-Encoding": "br",
+      "Date": "Wed, 03 Jul 2024 07:40:12 GMT",
+      "Transfer-Encoding": "chunked",
+      "Connection": "keep-alive",
+      "CF-Cache-Status": "DYNAMIC",
+      "Report-To": "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v4?s=kBdix3Z6JDszMLbqO2NmeRvZFDFqcRkxRKolMKp6pd2I0qhbfQLCDQX0OugLIGKW3hiv3MlwKpR74TAEdaJO5da9wHSdf1LfW5NPEWnB3PNqfgVqN6JGIysL0jFE0TWxnHaOjJiS\"}],\"group\":\"cf-nel\",\"max_age\":604800}",
+      "NEL": "{\"success_fraction\":0,\"report_to\":\"cf-nel\",\"max_age\":604800}",
+      "Server": "cloudflare",
+      "CF-RAY": "89d539dcc9a00f68-EWR",
+      "Alt-Svc": "h3=\":443\""
+    }
+  }
+}

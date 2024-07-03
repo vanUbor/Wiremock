@@ -1,0 +1,101 @@
+{
+  "Guid": "bff11eef-7f97-4abf-a70c-98e6e2b04a66",
+  "UpdatedAt": "2024-07-03T07:41:41.6898393Z",
+  "Title": "Proxy Mapping for GET /objects",
+  "Description": "Proxy Mapping for GET /objects",
+  "Priority": -2000000,
+  "Request": {
+    "Path": {
+      "Matchers": [
+        {
+          "Name": "WildcardMatcher",
+          "Pattern": "/objects",
+          "IgnoreCase": false
+        }
+      ]
+    },
+    "Methods": [
+      "GET"
+    ],
+    "HttpVersion": "1.1",
+    "Headers": [
+      {
+        "Name": "Accept",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "application/json",
+            "IgnoreCase": true
+          }
+        ],
+        "IgnoreCase": true
+      },
+      {
+        "Name": "Host",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "localhost:8081",
+            "IgnoreCase": true
+          }
+        ],
+        "IgnoreCase": true
+      },
+      {
+        "Name": "User-Agent",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "IntelliJ HTTP Client/JetBrains Rider 2024.1.1",
+            "IgnoreCase": true
+          }
+        ],
+        "IgnoreCase": true
+      },
+      {
+        "Name": "Accept-Encoding",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "br, deflate, gzip, x-gzip",
+            "IgnoreCase": true
+          }
+        ],
+        "IgnoreCase": true
+      },
+      {
+        "Name": "Content-Length",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "0",
+            "IgnoreCase": true
+          }
+        ],
+        "IgnoreCase": true
+      }
+    ]
+  },
+  "Response": {
+    "StatusCode": 200,
+    "BodyAsBytes": "A2sCAMTPpfmn6+idSQGXGG5rK3Hye+cvozUKBgvspM//zVQSGAs0g0Vjgff8v7SXFo0JGI6ti7O0bgofpvcO6JxuRQ2GBBy50c23/3yEdzCQEIh2ZhiMKR0C0zt/x4FaepcTBJxdLcwjHlPfAYMhpM3d09fJrwwB8eswkKqjscfzs4CHqeO7ZQlM/t2UIpNU9NpHL0g17dgL6sPGbEbcQkDBWXXpXU702t6pHKCxh2mkWrjqYimorccef2PJfs8wVaePtRaGFL7b8hK4bFjzIx/tXLZ4oNEGe3dPP+giBadw0dp8n9NtHK6t0uKdz++SKwptybDAoMoOgiAj1el2PasZfG33fUrXfnplC/rBPdsMo06lRtO7WuvfDe8+05wcBxhcxZUDDSkzeQ2BS5sdOV+uqfgHhoGkT6lA7S5+tet+oo+cPRfqynrCxzXbhYYU0pZhcB4c5/+c8z0EBluYPpLQaznPMP2dnu1a6OO6OZ8q+uozBy7OCYPphR/YQaANB2Fw6Q/TUc+IdGeVUUy+MH0v8mrw8UATW7dMKXLREiJP86VZF/0RataJRo5q2JgCMGhrCp/p4z4zRyuzZ8cangoZUzUTW2V3Pit2jImD1usEgXcgaqmPtT4mnpqpys5DYYXVTKimpbHH8/NvAwM=",
+    "Headers": {
+      "Content-Type": "application/json",
+      "Content-Encoding": "br",
+      "Date": "Wed, 03 Jul 2024 07:41:41 GMT",
+      "Transfer-Encoding": "chunked",
+      "Connection": "keep-alive",
+      "Vary": [
+        "Origin",
+        "Access-Control-Request-Method",
+        "Access-Control-Request-Headers"
+      ],
+      "CF-Cache-Status": "DYNAMIC",
+      "Report-To": "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v4?s=d9Z2ioKFD7I%2FMXItMmEqhI%2FyBV%2Bus2HgoMDrDpiS65%2F5raYg7wmTTPravxI3rXm6%2BIaCzM3gvF8DkLezYPLgpc%2FY9Lo6bfzoiYOJnKUOrIjaZ6ptE3D1B5N%2FW%2BK5QyicRmu5uf%2BK\"}],\"group\":\"cf-nel\",\"max_age\":604800}",
+      "NEL": "{\"success_fraction\":0,\"report_to\":\"cf-nel\",\"max_age\":604800}",
+      "Server": "cloudflare",
+      "CF-RAY": "89d53c0c9ced17e9-EWR",
+      "Alt-Svc": "h3=\":443\""
+    }
+  }
+}

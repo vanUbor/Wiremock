@@ -11,22 +11,31 @@ public class WireMockServerModel
     
     [DataType(DataType.Date)]
     public DateTime Created { get; set; }
-    
-    public string Contact { get; set; }
 
-    public string Description { get; set; }
+    [MaxLength(100)]public string Contact { get; set; } = string.Empty;
+
+    [MaxLength(255)]public string Description { get; set; } = string.Empty;
     
     public int Port { get; set; }
     public bool StartAdminInterface { get; set; }
-    public string ProxyUrl { get; set; }
+    [MaxLength(100)] public string ProxyUrl { get; set; } = string.Empty;
     public bool SaveMapping { get; set; }
     public bool SaveMappingToFile { get; set; }
-    public string SaveMappingForStatusCodePattern { get; set; }
+    [MaxLength(3)] public string SaveMappingForStatusCodePattern { get; set; } = "4xx";
 
     internal WireMockServerSettings ToSettings()
     {
         return new WireMockServerSettings()
         {
+            ProxyAndRecordSettings = new ProxyAndRecordSettings()
+            {
+                Url = ProxyUrl,
+                SaveMappingForStatusCodePattern = this.SaveMappingForStatusCodePattern,
+                SaveMappingToFile = this.SaveMappingToFile,
+                SaveMapping = this.SaveMapping,
+                PrefixForSavedMappingFile = this.Name
+            },
+            StartAdminInterface = this.StartAdminInterface,
             Port = Port,
         };
     }
