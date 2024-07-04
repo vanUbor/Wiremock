@@ -1,4 +1,4 @@
-GET http://localhost:8081/objects
+GET http://localhost:8081/objects/13
 Accept: application/json
 
 <> 2024-07-03T094141.200.json

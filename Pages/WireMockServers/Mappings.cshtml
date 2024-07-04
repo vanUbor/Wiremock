@@ -2,12 +2,45 @@
 @model Mappings
 
 @{
-ViewData["Title"] = "Mappings";
+    ViewData["Title"] = "Mappings";
 }
+<table class="table">
+    <thead>
+    <tr>
+        <th>GUID</th>
+        <th>Title</th>
+        <th>Updated</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var map in Model.Maps)
+    {
+        <tr>
+            <th scope="row">@map.Guid</th>
+            <td> @map.Title </td>
+            <td> @map.UpdatedAt </td>
+            <td>
+                <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#details-@map.Guid">Details</button>
+            </td>
+        </tr>
+        <tr id="details-@map.Guid" class="collapse">
+            <td colspan="4">
+                <div class="form-floating">
+                    <textarea class="form-control"
+                                  style="height: 300px; white-space: pre-line">@map.Raw</textarea>
 
-<div style="white-space: pre-line">
-    @Model.Maps
-</div>
+                </div>
+                <p>
+                    <div class="d-flex flex-row-reverse">
+                        <button class="btn btn-warning">Save and Update</button>
+                    </div>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
 
 <div>
     <a asp-page="../Server">Back to List</a>

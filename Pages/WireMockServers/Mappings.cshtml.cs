@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ public class Mappings : PageModel
 {
     private readonly IDbContextFactory _contextFactory;
     
-    [BindProperty] public string Maps { get; set; }
+    [BindProperty] public WireMockModel[]? Maps { get; set; }
 
     public Mappings(IDbContextFactory contextFactory)
     {
@@ -30,14 +31,20 @@ public class Mappings : PageModel
             return NotFound();
         }
 
-        Maps = await GetMappings(wireMockServerModel); 
+        await GetMappings(wireMockServerModel); 
         return Page();
     }
 
-    private async Task<string> GetMappings(WireMockServerModel model)
+    private async Task GetMappings(WireMockServerModel model)
     {
         var client = new HttpClient();
         var response = await client.GetAsync($"http://localhost:{model.Port}/__admin/mappings");
-        return await response.Content.ReadAsStringAsync();
+        var mappingString = await response.Content.ReadAsStringAsync();
+
+        Maps = JsonSerializer.Deserialize<WireMockModel[]>(mappingString);
+        foreach (var map in Maps)
+        {
+            map.Raw = JsonSerializer.Serialize(map, new JsonSerializerOptions(){WriteIndented = true});
+        }
     }
 }
