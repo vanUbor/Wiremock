@@ -1,6 +1,6 @@
 {
-  "Guid": "9d997f5a-b169-4330-b90b-9025c1254f5e",
-  "UpdatedAt": "2024-07-04T13:58:29.7181215Z",
+  "Guid": "533e63d7-f8b0-46aa-9057-fecd6d5463fb",
+  "UpdatedAt": "2024-07-08T08:17:18.9025595Z",
   "Title": "Proxy Mapping for GET /objects",
   "Description": "Proxy Mapping for GET /objects",
   "Priority": -2000000,
@@ -46,7 +46,7 @@
         "Matchers": [
           {
             "Name": "WildcardMatcher",
-            "Pattern": "IntelliJ HTTP Client/JetBrains Rider 2024.1.1",
+            "Pattern": "IntelliJ HTTP Client/JetBrains Rider 2024.1.4",
             "IgnoreCase": true
           }
         ],
@@ -82,7 +82,7 @@
     "Headers": {
       "Content-Type": "application/json",
       "Content-Encoding": "br",
-      "Date": "Thu, 04 Jul 2024 13:58:30 GMT",
+      "Date": "Mon, 08 Jul 2024 08:17:18 GMT",
       "Transfer-Encoding": "chunked",
       "Connection": "keep-alive",
       "Vary": [
@@ -91,10 +91,10 @@
         "Access-Control-Request-Headers"
       ],
       "CF-Cache-Status": "DYNAMIC",
-      "Report-To": "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v4?s=TvxuclnL%2B3qi084dsKaOu%2FL5UT%2BLdoq59v%2F%2Bo7KnaSmQ%2FeyBTrOgUtO7j3DSpDNK4NxM90EIOQo9sQTrhPCpQpwwTm%2FMmegPzMk%2BXytGHz8K0fjvPGFIb2ywuOIazkaGsTdsEdV6\"}],\"group\":\"cf-nel\",\"max_age\":604800}",
+      "Report-To": "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v4?s=0OnHZ8sHNN8%2B62NuuZrxm4me4%2B96VsKa7aDEczBKNL%2B6ToJ5b3s3yuuUw3SSi8zCNWNoAUnYfaWGtbZJobCgqClpvrC36a%2FLL4hNPQ2Pp1YFFWgxXF7ZIezudrTzcQt%2Fmasicm0d\"}],\"group\":\"cf-nel\",\"max_age\":604800}",
       "NEL": "{\"success_fraction\":0,\"report_to\":\"cf-nel\",\"max_age\":604800}",
       "Server": "cloudflare",
-      "CF-RAY": "89dfa1677beb3344-EWR",
+      "CF-RAY": "89fea3168e7c1996-EWR",
       "Alt-Svc": "h3=\":443\""
     }
   }

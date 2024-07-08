@@ -21,7 +21,8 @@
             <td> @map.Title </td>
             <td> @map.UpdatedAt </td>
             <td>
-                <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#details-@map.Guid">Details</button>
+                <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#details-@map.Guid">Details and Edit</button>
+                <button class="btn btn-danger" >X</button>
             </td>
         </tr>
         <tr id="details-@map.Guid" class="collapse">
@@ -40,7 +41,12 @@
     }
     </tbody>
 </table>
-
+<div class="d-flex flex-row-reverse">
+    <form method="post" asp-page-handler="ResetAllMappings">
+        <input type="hidden" asp-for="@Model.Request.Query["id"]" name="id"/> 
+        <button type="submit" class="btn btn-danger">Reset All Mappings</button>
+    </form>
+</div>
 
 <div>
     <a asp-page="../Server">Back to List</a>
