@@ -1,15 +1,15 @@
 {
-  "Guid": "db3e0ea1-5ddd-4e19-96cc-964cc93d987e",
-  "UpdatedAt": "2024-07-08T10:48:00.6083341Z",
-  "Title": "Proxy Mapping for GET /objects/13",
-  "Description": "Proxy Mapping for GET /objects/13",
+  "Guid": "d657bf9b-a216-4491-b839-3a4db002fdbe",
+  "UpdatedAt": "2024-07-08T10:54:37.0065308Z",
+  "Title": "Proxy Mapping for GET /objects/14",
+  "Description": "Proxy Mapping for GET /objects/14",
   "Priority": -2000000,
   "Request": {
     "Path": {
       "Matchers": [
         {
           "Name": "WildcardMatcher",
-          "Pattern": "/objects/13",
+          "Pattern": "/objects/14",
           "IgnoreCase": false
         }
       ]
@@ -78,11 +78,11 @@
   },
   "Response": {
     "StatusCode": 200,
-    "BodyAsBytes": "gzEAAAQim0vZy+gSrivbCkvwiGWSSpHSL0uPYLtoHJr9gJCcTrtBLXXTq2S5oNE3twb5Qt7CbTkeELzbjEZ9WboBwbdjI47RyJpT0y23N4LjB6pK+f8NAw==",
+    "BodyAsBytes": "AxcAAATCbaUqly2Cac3QDHUww2CKiKbnQ6QA+sMNoVQyS+dAaHvHSN7VUvNDxvQqsl7EbwAD",
     "Headers": {
       "Content-Type": "application/json",
       "Content-Encoding": "br",
-      "Date": "Mon, 08 Jul 2024 10:48:00 GMT",
+      "Date": "Mon, 08 Jul 2024 10:54:37 GMT",
       "Transfer-Encoding": "chunked",
       "Connection": "keep-alive",
       "Vary": [
@@ -91,10 +91,10 @@
         "Access-Control-Request-Headers"
       ],
       "CF-Cache-Status": "DYNAMIC",
-      "Report-To": "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v4?s=KeaY%2FBZzezoz2lv1C2bARKMxfoK%2FyeXPWEVyJPHoKBGK%2Fqr7uYxnebVdIQYFh5NT56h7KiRBXZ%2FyNZjglPKHO%2B8lGY81esC3lltRGkNCGQ9LdhDVkhCCRYPKyoqwOfioyhOFMxBh\"}],\"group\":\"cf-nel\",\"max_age\":604800}",
+      "Report-To": "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v4?s=gKMpWoih37kJLS4TgSrAd0AEmKhnBXI9HZiGm0S99ZcisOnFo8G3OQlkRjxxSfOvI1zsMzO6VR88vWORfK5R1mDOKXRBKVl5GMJZUNliZ36v2C%2FHRzIjjSNbuVle2OHoCZltDvU7\"}],\"group\":\"cf-nel\",\"max_age\":604800}",
       "NEL": "{\"success_fraction\":0,\"report_to\":\"cf-nel\",\"max_age\":604800}",
       "Server": "cloudflare",
-      "CF-RAY": "89ff7fd548554267-EWR",
+      "CF-RAY": "89ff89833b2e0cc4-EWR",
       "Alt-Svc": "h3=\":443\""
     }
   }

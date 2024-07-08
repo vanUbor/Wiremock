@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
 namespace WireMock.Server;
@@ -7,7 +8,13 @@ namespace WireMock.Server;
 public class WireMockModel
 {
     public string Guid { get; set; }
-    public string UpdatedAt { get; set; }
+    
+    private string _updatedAt;
+    public string UpdatedAt
+    {
+        get { return $"{DateTime.Parse(_updatedAt).ToString("dd.MM.yyyy HH:mm:ss")}" ; }
+        set { _updatedAt = value; }
+    }
     public string Title { get; set; }
     public string Description { get; set; }
     public int Priority { get; set; }
@@ -49,7 +56,8 @@ public class Response
 {
     public int StatusCode { get; set; }
     public string BodyAsBytes { get; set; }
-    public ResponseHeader Headers { get; set; }
+    public JsonObject BodyAsJson { get; set; }
+    public JsonObject Headers { get; set; }
 }
 
 public class ResponseHeader

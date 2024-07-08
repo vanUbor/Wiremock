@@ -1,15 +1,15 @@
 {
-  "Guid": "799b5044-387f-422e-872a-876dbc5ee9ee",
-  "UpdatedAt": "2024-07-08T10:10:05.2673184Z",
-  "Title": "Proxy Mapping for GET /objects/",
-  "Description": "Proxy Mapping for GET /objects/",
+  "Guid": "aded4247-a781-4954-9aed-1b6b57d80d22",
+  "UpdatedAt": "2024-07-08T11:26:13.1503925Z",
+  "Title": "Proxy Mapping for GET /",
+  "Description": "Proxy Mapping for GET /",
   "Priority": -2000000,
   "Request": {
     "Path": {
       "Matchers": [
         {
           "Name": "WildcardMatcher",
-          "Pattern": "/objects/",
+          "Pattern": "/",
           "IgnoreCase": false
         }
       ]
@@ -24,7 +24,18 @@
         "Matchers": [
           {
             "Name": "WildcardMatcher",
-            "Pattern": "application/json",
+            "Pattern": "*/*",
+            "IgnoreCase": true
+          }
+        ],
+        "IgnoreCase": true
+      },
+      {
+        "Name": "Connection",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "keep-alive",
             "IgnoreCase": true
           }
         ],
@@ -35,7 +46,7 @@
         "Matchers": [
           {
             "Name": "WildcardMatcher",
-            "Pattern": "localhost:8081",
+            "Pattern": "localhost:8083",
             "IgnoreCase": true
           }
         ],
@@ -46,7 +57,7 @@
         "Matchers": [
           {
             "Name": "WildcardMatcher",
-            "Pattern": "IntelliJ HTTP Client/JetBrains Rider 2024.1.4",
+            "Pattern": "PostmanRuntime/7.39.0",
             "IgnoreCase": true
           }
         ],
@@ -57,18 +68,18 @@
         "Matchers": [
           {
             "Name": "WildcardMatcher",
-            "Pattern": "br, deflate, gzip, x-gzip",
+            "Pattern": "gzip, deflate, br",
             "IgnoreCase": true
           }
         ],
         "IgnoreCase": true
       },
       {
-        "Name": "Content-Length",
+        "Name": "Postman-Token",
         "Matchers": [
           {
             "Name": "WildcardMatcher",
-            "Pattern": "0",
+            "Pattern": "fd79008e-35dc-4417-afd9-2ba6ad3fe183",
             "IgnoreCase": true
           }
         ],
@@ -78,23 +89,19 @@
   },
   "Response": {
     "StatusCode": 200,
-    "Body": "Hello world from Spring Boot",
+    "BodyAsJson": {
+      "ip": "91.62.78.92"
+    },
     "Headers": {
       "Content-Type": "application/json",
-      "Content-Length": "28",
-      "Date": "Mon, 08 Jul 2024 10:10:05 GMT",
-      "Connection": "keep-alive",
-      "Vary": [
-        "Origin",
-        "Access-Control-Request-Method",
-        "Access-Control-Request-Headers"
-      ],
-      "CF-Cache-Status": "DYNAMIC",
-      "Report-To": "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v4?s=fO%2FWKz7zaW9MvphstIB3WQOLRHvDRqNWFtE2BN2ebNeJDkffYJ9Rq66OqXLXYxHANPXYfakEt7SLjtSNAvaF6jGqiNHsakBxbN7yDs7ASnLCK8hFJCGznVQzH0shVt9xOAqnJWV5\"}],\"group\":\"cf-nel\",\"max_age\":604800}",
-      "NEL": "{\"success_fraction\":0,\"report_to\":\"cf-nel\",\"max_age\":604800}",
-      "Server": "cloudflare",
-      "CF-RAY": "89ff48482cb5c346-EWR",
-      "Alt-Svc": "h3=\":443\""
+      "Content-Length": "22",
+      "Access-Control-Allow-Origin": "*",
+      "X-Cloud-Trace-Context": "939e0eb76b40e31dfd2d10f6783f8eec",
+      "Date": "Mon, 08 Jul 2024 11:26:13 GMT",
+      "Server": [
+        "Google",
+        "Frontend"
+      ]
     }
   }
 }

@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -11,6 +12,7 @@ public class Mappings : PageModel
     private readonly IDbContextFactory _contextFactory;
 
     [BindProperty] public WireMockModel[]? Maps { get; set; }
+    [BindProperty] public string Raw { get; set; }
 
     public Mappings(IDbContextFactory contextFactory)
     {
@@ -48,6 +50,7 @@ public class Mappings : PageModel
         var response = await client.GetAsync($"http://localhost:{model.Port}/__admin/mappings");
         var mappingString = await response.Content.ReadAsStringAsync();
 
+        var ipMap = JsonSerializer.Deserialize<WireMockModel[]>(mappingString);
         Maps = JsonSerializer.Deserialize<WireMockModel[]>(mappingString);
         foreach (var map in Maps)
         {
@@ -55,13 +58,41 @@ public class Mappings : PageModel
         }
     }
 
+    public async Task<IActionResult> OnPostSaveAndUpdate(string id, string guid, string raw)
+    {
+        var model = JsonSerializer.Deserialize<WireMockModel>(raw);
+        var wireMockServerModel = await GetModel(int.Parse(id));
+        var client = new HttpClient();
+        var content = JsonContent.Create(model);
+        var request = new HttpRequestMessage()
+        {
+            Method = HttpMethod.Put,
+            RequestUri = new Uri($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/{guid}"),
+            Content = content
+        };
+        var response = await client.SendAsync(request);
+        return RedirectToPage(new { id = id });
+    }
+    public async Task<IActionResult> OnPostResetMapping(string id, string guid)
+    {
+        var wireMockServerModel = await GetModel(int.Parse(id));
+        var client = new HttpClient();
+        var request = new HttpRequestMessage()
+        {
+            Method = HttpMethod.Delete,
+            RequestUri = new Uri($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/{guid}"),
+        };
+        await client.SendAsync(request);
+        return RedirectToPage(new { id = id });
+    }
+
     public async Task<IActionResult> OnPostResetAllMappings(string id)
     {
-            var wireMockServerModel = await GetModel(int.Parse(id));
-            var client = new HttpClient();
-            var context = new StringContent(string.Empty);
-            var response = await client.PostAsync($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/reset",
-                context);
-            return Page();
+        var wireMockServerModel = await GetModel(int.Parse(id));
+        var client = new HttpClient();
+        var context = new StringContent(string.Empty);
+        await client.PostAsync($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/reset",
+            context);
+        return RedirectToPage(new {id = id});
     }
 }
