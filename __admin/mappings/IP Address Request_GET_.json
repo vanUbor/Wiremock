@@ -1,6 +1,6 @@
 {
-  "Guid": "aded4247-a781-4954-9aed-1b6b57d80d22",
-  "UpdatedAt": "2024-07-08T11:26:13.1503925Z",
+  "Guid": "8f9d0633-d85d-471a-a552-f40073f6f853",
+  "UpdatedAt": "2024-07-11T08:48:14.3603166Z",
   "Title": "Proxy Mapping for GET /",
   "Description": "Proxy Mapping for GET /",
   "Priority": -2000000,
@@ -57,7 +57,7 @@
         "Matchers": [
           {
             "Name": "WildcardMatcher",
-            "Pattern": "PostmanRuntime/7.39.0",
+            "Pattern": "PostmanRuntime/7.40.0",
             "IgnoreCase": true
           }
         ],
@@ -79,7 +79,7 @@
         "Matchers": [
           {
             "Name": "WildcardMatcher",
-            "Pattern": "fd79008e-35dc-4417-afd9-2ba6ad3fe183",
+            "Pattern": "91e8f941-81e5-41cf-ba6d-ccff29b50ab8",
             "IgnoreCase": true
           }
         ],
@@ -96,8 +96,8 @@
       "Content-Type": "application/json",
       "Content-Length": "22",
       "Access-Control-Allow-Origin": "*",
-      "X-Cloud-Trace-Context": "939e0eb76b40e31dfd2d10f6783f8eec",
-      "Date": "Mon, 08 Jul 2024 11:26:13 GMT",
+      "X-Cloud-Trace-Context": "7ab40980811162d03e4de09b4de10d97",
+      "Date": "Thu, 11 Jul 2024 08:48:15 GMT",
       "Server": [
         "Google",
         "Frontend"

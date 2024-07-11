@@ -7,7 +7,7 @@ public class ServerOrchestrator
 {
     private ILogger _logger;
     private IDbContextFactory _contextFactory;
-    private IList<WireMockService>? _services = default!;
+    private IList<WireMockService> _services = default!;
 
     public ServerOrchestrator(ILogger<ServerOrchestrator> logger, IDbContextFactory contextFactory)
     {
@@ -25,11 +25,12 @@ public class ServerOrchestrator
             // create new services for each model found in configuration that is not already in the service list
             foreach (var model in models)
             {
-                if (_services.Any(s => s.Id.Equals(model.Id.ToString(), 
+                if (_services.Any(s => s.Id.Equals(model.Id.ToString(),
                         StringComparison.CurrentCultureIgnoreCase)))
                     continue;
-                _services.Add(new WireMockService(_logger, model));
+                _services.Add(CreateService(model));
             }
+
             return _services;
         }
 
@@ -37,15 +38,32 @@ public class ServerOrchestrator
         await CreateServices();
         return _services;
     }
-    
-    
+
+
     private async Task CreateServices()
     {
         var context = _contextFactory.CreateDbContext();
         var models = await context.WireMockServerModel.ToListAsync();
-        _services = models.Select(s
-            => new WireMockService(_logger, s)
-        ).ToList();
+        _services = models.Select(CreateService).ToList();
+    }
+
+    
+    public async Task CreateService(int id)
+    {
+        var context = _contextFactory.CreateDbContext();
+        var models = await context.WireMockServerModel.ToListAsync();
+        var m = models.Single(model => model.Id == id);
+        _services.Add(CreateService(m));
+    }
+
+    /// <summary>
+    /// Creates a WireMockService and adds it to the list of services.
+    /// </summary>
+    /// <returns>Void</returns>
+    private WireMockService CreateService(WireMockServerModel model)
+    {
+        var service = new WireMockService(_logger, model);
+        return service;
     }
 
     internal void Start(int id)
@@ -71,11 +89,4 @@ public class ServerOrchestrator
         _services.Remove(service);
     }
 
-    public async Task CreateService(int id)
-    {
-        var context = _contextFactory.CreateDbContext();
-        var models = await context.WireMockServerModel.ToListAsync();
-        var m = models.Single(model => model.Id == id);
-        _services.Add(new WireMockService(_logger, m));
-    }
 }

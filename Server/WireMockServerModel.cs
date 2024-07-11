@@ -23,6 +23,10 @@ public class WireMockServerModel
     public bool SaveMappingToFile { get; set; }
     [MaxLength(3)] public string SaveMappingForStatusCodePattern { get; set; } = "4xx";
 
+    /// <summary>
+    /// AList of all Mappings
+    /// </summary>
+    public IList<WireMockServerMapping> Mappings { get; set; }
     internal WireMockServerSettings ToSettings()
     {
         return new WireMockServerSettings()
