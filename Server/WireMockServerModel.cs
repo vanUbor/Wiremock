@@ -26,7 +26,8 @@ public class WireMockServerModel
     /// <summary>
     /// AList of all Mappings
     /// </summary>
-    public IList<WireMockServerMapping> Mappings { get; set; }
+    public IList<WireMockServerMapping> Mappings { get; set; } = new List<WireMockServerMapping>();
+    
     internal WireMockServerSettings ToSettings()
     {
         return new WireMockServerSettings()

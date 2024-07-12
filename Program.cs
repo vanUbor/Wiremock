@@ -10,6 +10,7 @@ builder.Logging.AddConsole();
 builder.Services.AddRazorPages();
 builder.Services.AddSingleton<IDbContextFactory, DbContextFactory>();
 builder.Services.AddSingleton<ServerOrchestrator>();
+builder.Services.AddSingleton<WireMockServiceList>();
 
 builder.Services.AddSingleton<DbContextOptions<WireMockServerContext>>(serviceProvider =>
 {

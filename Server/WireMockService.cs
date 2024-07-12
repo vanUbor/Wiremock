@@ -13,8 +13,8 @@ public class WireMockService
     public string Name => _model.Name;
     public bool IsRunning => _server?.IsStarted ?? false;
 
-    public EventHandler<ChangedMappingsArgs> MappingsAdded;
-    public EventHandler<ChangedMappingsArgs> MappingsRemoved;
+    public EventHandler<ChangedMappingsArgs>? MappingsAdded;
+    public EventHandler<ChangedMappingsArgs>? MappingsRemoved;
 
     private WireMockServer _server;
     private WireMockServerSettings _settings;
@@ -78,12 +78,18 @@ public class WireMockService
 
     private void RaiseMappingRemoved(List<Guid> removedMappings)
     {
-        MappingsRemoved?.Invoke(this, new ChangedMappingsArgs(removedMappings));
+        MappingsRemoved?.Invoke(this, new ChangedMappingsArgs(removedMappings)
+        {
+            ServiceId = Id,
+        });
     }
 
     private void RaiseNewMappings(List<Guid> deltaMappings)
     {
-        MappingsAdded?.Invoke(this, new ChangedMappingsArgs(deltaMappings));
+        MappingsAdded?.Invoke(this, new ChangedMappingsArgs(deltaMappings)
+        {
+            ServiceId = Id,
+        });
     }
 
 
@@ -96,10 +102,11 @@ public class WireMockService
 
 public class ChangedMappingsArgs : EventArgs
 {
-    public IList<Guid> Guid { get; set; }
+    public string ServiceId { get; set; }
+    public IList<Guid> MapGuid { get; set; }
 
-    public ChangedMappingsArgs(IList<Guid> guid)
+    public ChangedMappingsArgs(IList<Guid> mapGuid)
     {
-        Guid = guid;
+        MapGuid = mapGuid;
     }
 }

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using NuGet.Packaging;
 
 namespace WireMock.Server;
 
@@ -7,12 +8,32 @@ public class ServerOrchestrator
 {
     private ILogger _logger;
     private IDbContextFactory _contextFactory;
-    private IList<WireMockService> _services = default!;
+    private WireMockServiceList _services = default!;
 
-    public ServerOrchestrator(ILogger<ServerOrchestrator> logger, IDbContextFactory contextFactory)
+    public ServerOrchestrator(ILogger<ServerOrchestrator> logger, WireMockServiceList serviceList,
+        IDbContextFactory contextFactory)
     {
+        _services = serviceList;
+        _services.MappingAdded += SaveMappingToContext;
         _logger = logger;
         _contextFactory = contextFactory;
+    }
+
+    private void SaveMappingToContext(object? sender, ChangedMappingsArgs e)
+    {
+        var context = _contextFactory.CreateDbContext();
+        var serviceModel = context.WireMockServerModel.Single(m
+            => m.Id.ToString()
+                .Equals(e.ServiceId));
+        foreach (var guid in e.MapGuid)
+        {
+            serviceModel.Mappings.Add(new WireMockServerMapping()
+            {
+                Raw = guid.ToString()
+            });
+        }
+
+        context.SaveChanges();
     }
 
     public async Task<IList<WireMockService>> GetOrCreateServicesAsync()
@@ -44,10 +65,10 @@ public class ServerOrchestrator
     {
         var context = _contextFactory.CreateDbContext();
         var models = await context.WireMockServerModel.ToListAsync();
-        _services = models.Select(CreateService).ToList();
+        _services.AddRange(models.Select(CreateService));
     }
 
-    
+
     public async Task CreateService(int id)
     {
         var context = _contextFactory.CreateDbContext();
@@ -88,5 +109,4 @@ public class ServerOrchestrator
             , StringComparison.InvariantCultureIgnoreCase));
         _services.Remove(service);
     }
-
 }
