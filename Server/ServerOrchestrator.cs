@@ -15,10 +15,16 @@ public class ServerOrchestrator
     {
         _services = serviceList;
         _services.MappingAdded += SaveMappingToContext;
+        _services.MappingRemoved += RemoveMappingToContext;
         _logger = logger;
         _contextFactory = contextFactory;
     }
 
+    /// <summary>
+    /// Saves the mappings to the database context.
+    /// </summary>
+    /// <param name="sender">The object that raised the event.</param>
+    /// <param name="e">The event arguments containing the service ID and mapping GUIDs.</param>
     private void SaveMappingToContext(object? sender, ChangedMappingsArgs e)
     {
         var context = _contextFactory.CreateDbContext();
@@ -32,6 +38,21 @@ public class ServerOrchestrator
                 Raw = guid.ToString()
             });
         }
+
+        context.SaveChanges();
+    }
+
+    private void RemoveMappingToContext(object? sender, ChangedMappingsArgs e)
+    {
+        var context = _contextFactory.CreateDbContext();
+
+
+        List<WireMockServerMapping> mappingsToRemove = context.WireMockServerMapping
+            .AsEnumerable()
+            .Where(m => !string.IsNullOrEmpty(m.Raw) && Guid.TryParse(m.Raw, out var guid) && e.MapGuid.Contains(guid))
+            .ToList();
+
+        context.WireMockServerMapping.RemoveRange(mappingsToRemove);
 
         context.SaveChanges();
     }

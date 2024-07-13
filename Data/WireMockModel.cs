@@ -9,12 +9,8 @@ public class WireMockModel
 {
     public string Guid { get; set; }
     
-    private string _updatedAt;
-    public string UpdatedAt
-    {
-        get { return $"{DateTime.Parse(_updatedAt).ToString("dd.MM.yyyy HH:mm:ss")}" ; }
-        set { _updatedAt = value; }
-    }
+
+    public DateTime UpdatedAt { get; set; }
     public string Title { get; set; }
     public string Description { get; set; }
     public int Priority { get; set; }

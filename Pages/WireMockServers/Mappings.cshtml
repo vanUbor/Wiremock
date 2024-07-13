@@ -1,6 +1,4 @@
 @page
-@using System.Reflection.PortableExecutable
-@using Mapping = WireMock.Org.Abstractions.Mapping
 @model Mappings
 
 @{
@@ -21,7 +19,7 @@
         <tr>
             <th scope="row">@map.Guid</th>
             <td> @map.Title </td>
-            <td> @map.UpdatedAt </td>
+            <td> @map.UpdatedAt.ToString("dd.MM.yyyy HH:mm:ss") </td>
             <td>
                 <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#details-@map.Guid">Details and Edit</button>
                 <form method="post" asp-page-handler="ResetMapping">
@@ -35,14 +33,35 @@
             <td colspan="4">
                 <form method="post" asp-page-handler="SaveAndUpdate">
                     <div class="form-floating">
-                        <textarea asp-for="@map.Raw" class="form-control" style="height: 300px; white-space: pre-line" name="raw">
-                                  </textarea>
+                        <div id="jsoneditor" style="width: 800px; height: 400px;"></div>
+                        <script src="~/lib/jsoneditor/jsoneditor.min.js"></script>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', (event) => {
+                                var container = document.getElementById("jsoneditor");
+                                var options = {};
+                                var editor = new JSONEditor(container, options);
+
+                                // set json
+                                let json = @Html.Raw(@map.Raw);
+                                editor.set(json);
+                                });
+
+                                document.getElementById('save-button').addEventListener('click', function() {
+                                    // Get JSONEditor data
+                                    var jsonData = editor.get();
+                                    // Populate hidden input's value with JSONEditor content
+                                    document.getElementById('json-content').value = JSON.stringify(jsonData);
+                            });
+                        </script>
+                        @* <textarea asp-for="@map.Raw" class="form-control" style="height: 300px; white-space: pre-line" name="raw"> *@
+                        @*           </textarea> *@
                     </div>
                     <p>
                     <div class="d-flex flex-row-reverse">
                         <input type="hidden" asp-for="@Model.Request.Query["id"]" name="id"/>
                         <input type="hidden" asp-for="@map.Guid" name="guid"/>
-                        <button type="submit" class="btn btn-warning">Save and Update</button>
+                        <input type="hidden" asp-for="MapJsonContent" id="json-content"/>
+                        <button id="save-button" type="submit" class="btn btn-warning">Save and Update</button>
                     </div>
                 </form>
             </td>

@@ -22,4 +22,16 @@
     <PackageReference Include="WireMock.Net.StandAlone" Version="1.5.58" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="wwwroot\lib\jsoneditor\jsoneditor.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\lib\jsoneditor\jsoneditor.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\lib\jsoneditor\img\jsoneditor-icons.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

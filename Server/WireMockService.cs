@@ -38,7 +38,9 @@ public class WireMockService
         _server = WireMockServer.Start(_settings);
 
         // check mappings before starting to register all "default" mappings as already known
-        CheckMappings();
+        var currentMappings = _server.Mappings.Select(m => m.Guid).ToList();
+        _lastKnonwMappings.AddRange(currentMappings);
+        
 
         // create the timer to check for new mappings
         CreateAndStartTimer();
@@ -55,6 +57,16 @@ public class WireMockService
         _checkMappingsTimer.Start();
     }
 
+    /// <summary>
+    /// This method checks for new mappings periodically by using a timer.
+    /// It compares the current mappings with the previous set of known mappings and raises events
+    /// for any new mappings or removed mappings.
+    /// </summary>
+    /// <remarks>
+    /// This method is called internally by the WireMockService class and should not be called directly.
+    /// </remarks>
+    /// <param name="sender">The object that raised the event.</param>
+    /// <param name="e">The event arguments for the Elapsed event.</param>
     private void CheckMappings(object? sender = null, ElapsedEventArgs? e = null)
     {
         // lock makes debugging simpler as we could change the lists of known mappings in a breakpoint

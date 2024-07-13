@@ -5,7 +5,11 @@ public class WireMockServiceList : IList<WireMockService>
 {
     private readonly IList<WireMockService> _list = new List<WireMockService>();
 
-    public WireMockService this[int index] { get => _list[index]; set => _list[index] = value; }
+    public WireMockService this[int index]
+    {
+        get => _list[index];
+        set => _list[index] = value;
+    }
 
     public int Count => _list.Count;
 
@@ -13,16 +17,18 @@ public class WireMockServiceList : IList<WireMockService>
 
     public EventHandler<ChangedMappingsArgs>? MappingAdded;
     public EventHandler<ChangedMappingsArgs>? MappingRemoved;
-    
+
     public void Add(WireMockService item)
     {
         item.MappingsAdded += MappingAdded;
+        item.MappingsRemoved += MappingRemoved;
         _list.Add(item);
     }
 
     public bool Remove(WireMockService item)
     {
-        item.MappingsRemoved += MappingRemoved;
+        item.MappingsAdded -= MappingAdded;
+        item.MappingsRemoved -= MappingRemoved;
         return _list.Remove(item);
     }
 

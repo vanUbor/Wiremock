@@ -12,7 +12,7 @@ public class Mappings : PageModel
     private readonly IDbContextFactory _contextFactory;
 
     [BindProperty] public WireMockModel[]? Maps { get; set; }
-    [BindProperty] public string Raw { get; set; }
+    [BindProperty] public string MapJsonContent { get; set; }
 
     public Mappings(IDbContextFactory contextFactory)
     {
