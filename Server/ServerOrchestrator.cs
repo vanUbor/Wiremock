@@ -35,7 +35,7 @@ public class ServerOrchestrator
         {
             serviceModel.Mappings.Add(new WireMockServerMapping()
             {
-                Raw = guid.ToString()
+                Guid = guid
             });
         }
 
@@ -49,7 +49,8 @@ public class ServerOrchestrator
 
         List<WireMockServerMapping> mappingsToRemove = context.WireMockServerMapping
             .AsEnumerable()
-            .Where(m => !string.IsNullOrEmpty(m.Raw) && Guid.TryParse(m.Raw, out var guid) && e.MapGuid.Contains(guid))
+            .Where(m 
+                => e.MapGuid.Contains(m.Guid))
             .ToList();
 
         context.WireMockServerMapping.RemoveRange(mappingsToRemove);
