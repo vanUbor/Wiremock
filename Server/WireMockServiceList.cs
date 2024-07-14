@@ -71,9 +71,4 @@ public class WireMockServiceList : IList<WireMockService>
     {
         return _list.GetEnumerator();
     }
-
-    private void CustomCode()
-    {
-        // Definieren Sie hier Ihren benutzerdefinierten Code
-    }
 }

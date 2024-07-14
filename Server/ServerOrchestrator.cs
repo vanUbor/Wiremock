@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using NuGet.Packaging;
+using NuGet.Protocol;
 
 namespace WireMock.Server;
 
@@ -31,11 +32,13 @@ public class ServerOrchestrator
         var serviceModel = context.WireMockServerModel.Single(m
             => m.Id.ToString()
                 .Equals(e.ServiceId));
+        
         foreach (var guid in e.MapGuid)
         {
             serviceModel.Mappings.Add(new WireMockServerMapping()
             {
-                Guid = guid
+                Guid = guid.Guid.Value,
+                Raw = guid.ToJson()
             });
         }
 
@@ -50,7 +53,7 @@ public class ServerOrchestrator
         List<WireMockServerMapping> mappingsToRemove = context.WireMockServerMapping
             .AsEnumerable()
             .Where(m 
-                => e.MapGuid.Contains(m.Guid))
+                => e.MapGuid.Any(iMapping => iMapping.Guid.Equals(m.Guid)))
             .ToList();
 
         context.WireMockServerMapping.RemoveRange(mappingsToRemove);

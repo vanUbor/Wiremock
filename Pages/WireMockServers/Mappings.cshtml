@@ -33,28 +33,28 @@
             <td colspan="4">
                 <form method="post" asp-page-handler="SaveAndUpdate">
                     <div class="form-floating">
-                        <div id="jsoneditor" style="width: 800px; height: 400px;"></div>
-                        <script src="~/lib/jsoneditor/jsoneditor.min.js"></script>
-                        <script>
-                            document.addEventListener('DOMContentLoaded', (event) => {
-                                var container = document.getElementById("jsoneditor");
-                                var options = {};
-                                var editor = new JSONEditor(container, options);
-
-                                // set json
-                                let json = @Html.Raw(@map.Raw);
-                                editor.set(json);
-                                });
-
-                                document.getElementById('save-button').addEventListener('click', function() {
-                                    // Get JSONEditor data
-                                    var jsonData = editor.get();
-                                    // Populate hidden input's value with JSONEditor content
-                                    document.getElementById('json-content').value = JSON.stringify(jsonData);
-                            });
-                        </script>
-                        @* <textarea asp-for="@map.Raw" class="form-control" style="height: 300px; white-space: pre-line" name="raw"> *@
-                        @*           </textarea> *@
+@*                         <div id="jsoneditor" style="width: 800px; height: 400px;"></div> *@
+@*                         <script src="~/lib/jsoneditor/jsoneditor.min.js"></script> *@
+@*                         <script> *@
+@*                             document.addEventListener('DOMContentLoaded', (event) => { *@
+@*                                 var container = document.getElementById("jsoneditor"); *@
+@*                                 var options = {}; *@
+@*                                 var editor = new JSONEditor(container, options); *@
+@* *@
+@*                                 // set json *@
+@*                                 let json = @Html.Raw(@map.Raw); *@
+@*                                 editor.set(json); *@
+@*                                 }); *@
+@* *@
+@*                                 document.getElementById('save-button').addEventListener('click', function() { *@
+@*                                     // Get JSONEditor data *@
+@*                                     var jsonData = editor.get(); *@
+@*                                     // Populate hidden input's value with JSONEditor content *@
+@*                                     document.getElementById('json-content').value = JSON.stringify(jsonData); *@
+@*                             }); *@
+@*                         </script> *@
+                        <textarea asp-for="@map.Raw" class="form-control" style="height: 300px; white-space: pre-line" name="raw">
+                                  </textarea>
                     </div>
                     <p>
                     <div class="d-flex flex-row-reverse">

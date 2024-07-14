@@ -1,7 +1,10 @@
 using System.Timers;
 using Microsoft.Build.Construction;
+using Microsoft.CodeAnalysis.Host.Mef;
 using Newtonsoft.Json;
 using NuGet.Packaging;
+using NuGet.Protocol;
+using WireMock.Admin.Mappings;
 using WireMock.Settings;
 using Timer = System.Timers.Timer;
 
@@ -21,7 +24,7 @@ public class WireMockService
     private WireMockServerModel _model;
     private ILogger _logger;
 
-    private IList<Guid> _lastKnonwMappings = new List<Guid>();
+    private IList<MappingModel> _lastKnonwMappings = new List<MappingModel>();
     private Timer _checkMappingsTimer = new(2000);
 
     public WireMockService(ILogger logger, WireMockServerModel model)
@@ -38,9 +41,9 @@ public class WireMockService
         _server = WireMockServer.Start(_settings);
 
         // check mappings before starting to register all "default" mappings as already known
-        var currentMappings = _server.Mappings.Select(m => m.Guid).ToList();
-        _lastKnonwMappings.AddRange(currentMappings);
-        
+        // var currentMappings = _server.MappingModels.Select(m => m).ToList();
+        // _lastKnonwMappings.AddRange(currentMappings);
+
 
         // create the timer to check for new mappings
         CreateAndStartTimer();
@@ -73,9 +76,17 @@ public class WireMockService
         // its probably not needed in RL as the handling is quick enough (hopefully :P)
         lock (this)
         {
-            var currentMappings = _server.Mappings.Select(m => m.Guid).ToList();
-            var newMappings = currentMappings.Except(_lastKnonwMappings).ToList();
-            var removedMapping = _lastKnonwMappings.Except(currentMappings).ToList();
+            var currentMappings = _server.MappingModels.Select(m => m).ToList();
+
+            // var newMappings = currentMappings.Except(_lastKnonwMappings).ToList();
+            var newMappings = currentMappings
+                .Where(m => _lastKnonwMappings.All(lm => lm.Guid != m.Guid))
+                .ToList();
+            
+            // var removedMapping = _lastKnonwMappings.Except(currentMappings).ToList();
+            var removedMapping = _lastKnonwMappings
+                .Where(lkm => currentMappings.All(cm => cm.Guid != lkm.Guid))
+                .ToList();
 
             // Raise events for new and removed mappings
             if (newMappings is { Count: > 0 })
@@ -88,7 +99,7 @@ public class WireMockService
         }
     }
 
-    private void RaiseMappingRemoved(List<Guid> removedMappings)
+    private void RaiseMappingRemoved(List<MappingModel> removedMappings)
     {
         MappingsRemoved?.Invoke(this, new ChangedMappingsArgs(removedMappings)
         {
@@ -96,7 +107,7 @@ public class WireMockService
         });
     }
 
-    private void RaiseNewMappings(List<Guid> deltaMappings)
+    private void RaiseNewMappings(List<MappingModel> deltaMappings)
     {
         MappingsAdded?.Invoke(this, new ChangedMappingsArgs(deltaMappings)
         {
@@ -115,9 +126,10 @@ public class WireMockService
 public class ChangedMappingsArgs : EventArgs
 {
     public string ServiceId { get; set; }
-    public IList<Guid> MapGuid { get; set; }
+    public IList<MappingModel> MapGuid { get; set; }
 
-    public ChangedMappingsArgs(IList<Guid> mapGuid)
+
+    public ChangedMappingsArgs(IList<MappingModel> mapGuid)
     {
         MapGuid = mapGuid;
     }
