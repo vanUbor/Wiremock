@@ -35,16 +35,15 @@ public class WireMockService
         _settings.Logger = new WireMockLogger(logger);
     }
 
-    public void CreateAndStart()
+    public void CreateAndStart(WireMockServerModel model)
     {
         _logger?.LogInformation("WireMock.Net server starting");
         _server = WireMockServer.Start(_settings);
-
-        // check mappings before starting to register all "default" mappings as already known
-        // var currentMappings = _server.MappingModels.Select(m => m).ToList();
-        // _lastKnonwMappings.AddRange(currentMappings);
-
-
+        foreach (var m in model.Mappings)
+        {
+            var mapping =JsonConvert.DeserializeObject<MappingModel>(m.Raw);
+            _server.WithMapping(mapping);
+        }
         // create the timer to check for new mappings
         CreateAndStartTimer();
         _logger?.LogInformation($"WireMock.Net server settings {JsonConvert.SerializeObject(_settings)}");
@@ -82,7 +81,7 @@ public class WireMockService
             var newMappings = currentMappings
                 .Where(m => _lastKnonwMappings.All(lm => lm.Guid != m.Guid))
                 .ToList();
-            
+
             // var removedMapping = _lastKnonwMappings.Except(currentMappings).ToList();
             var removedMapping = _lastKnonwMappings
                 .Where(lkm => currentMappings.All(cm => cm.Guid != lkm.Guid))
