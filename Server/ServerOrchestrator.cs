@@ -112,12 +112,16 @@ public class ServerOrchestrator
         return service;
     }
 
-    internal void Start(int id)
+    internal async Task Start(int id)
     {
         var service = _services.Single(i => i.Id.Equals(id.ToString()
             , StringComparison.InvariantCultureIgnoreCase));
 
-        service.CreateAndStart();
+        var context = _contextFactory.CreateDbContext();
+        var models = await context.WireMockServerModel.ToListAsync();
+        var mappings = await context.WireMockServerMapping.ToListAsync();
+        var m = models.Single(model => model.Id == id);
+        service.CreateAndStart(m);
     }
 
     internal void Stop(int? id)
