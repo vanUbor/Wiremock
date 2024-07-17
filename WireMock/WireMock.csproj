@@ -34,4 +34,13 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="WireMock.Test\UnitTest1.cs">
+      <Link>TestProject1\UnitTest1.cs</Link>
+    </Compile>
+    <Compile Update="WireMock.Test\GlobalUsings.cs">
+      <Link>TestProject1\GlobalUsings.cs</Link>
+    </Compile>
+  </ItemGroup>
+
 </Project>
