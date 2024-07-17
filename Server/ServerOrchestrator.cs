@@ -28,21 +28,33 @@ public class ServerOrchestrator
     /// <param name="e">The event arguments containing the service ID and mapping GUIDs.</param>
     private void SaveMappingToContext(object? sender, ChangedMappingsArgs e)
     {
-        var context = _contextFactory.CreateDbContext();
-        var serviceModel = context.WireMockServerModel.Single(m
-            => m.Id.ToString()
-                .Equals(e.ServiceId));
-        
-        foreach (var guid in e.MapGuid)
+        try
         {
-            serviceModel.Mappings.Add(new WireMockServerMapping()
-            {
-                Guid = guid.Guid.Value,
-                Raw = guid.ToJson()
-            });
-        }
+            var context = _contextFactory.CreateDbContext();
+            var serviceModel = context.WireMockServerModel.Single(m
+                => m.Id.ToString()
+                    .Equals(e.ServiceId));
 
-        context.SaveChanges();
+            foreach (var guid in e.MapGuid)
+            {
+                // TODO: fix this
+                // no need to save new mappings if already existing
+                // this happens during the startup, no idea why
+                if (serviceModel.Mappings.Any(m => m.Guid.Equals(guid.Guid)))
+                    continue;
+                serviceModel.Mappings.Add(new WireMockServerMapping()
+                {
+                    Guid = guid.Guid.Value,
+                    Raw = guid.ToJson()
+                });
+            }
+
+            context.SaveChanges();
+        }
+        catch (Exception exception)
+        {
+            Console.WriteLine(exception);
+        }
     }
 
     private void RemoveMappingToContext(object? sender, ChangedMappingsArgs e)
@@ -52,7 +64,7 @@ public class ServerOrchestrator
 
         List<WireMockServerMapping> mappingsToRemove = context.WireMockServerMapping
             .AsEnumerable()
-            .Where(m 
+            .Where(m
                 => e.MapGuid.Any(iMapping => iMapping.Guid.Equals(m.Guid)))
             .ToList();
 
