@@ -11,5 +11,12 @@ namespace WireMock.Server
 
         public DbSet<WireMockServerModel> WireMockServerModel { get; set; } = default!;
         public DbSet<WireMockServerMapping> WireMockServerMapping { get; set; } = default!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<WireMockServerMapping>()
+                .HasIndex(e => e.Guid)
+                .IsUnique();
+        }
     }
 }
