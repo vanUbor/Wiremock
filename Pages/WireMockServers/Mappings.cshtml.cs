@@ -71,8 +71,22 @@ public class Mappings : PageModel
             Content = content
         };
         var response = await client.SendAsync(request);
+        if (!response.IsSuccessStatusCode)
+            return RedirectToPage(new { id = id });
+
+        // if successful set, save to DB
+        if (Guid.TryParse(guid, out var guidObj))
+        {
+            var context = _contextFactory.CreateDbContext();
+            var mapping = context.WireMockServerMapping
+                .Single(m => m.Guid == guidObj);
+            mapping.Raw = raw;
+            context.SaveChanges();
+        }
+
         return RedirectToPage(new { id = id });
     }
+
     public async Task<IActionResult> OnPostResetMapping(string id, string guid)
     {
         var wireMockServerModel = await GetModel(int.Parse(id));
@@ -93,6 +107,6 @@ public class Mappings : PageModel
         var context = new StringContent(string.Empty);
         await client.PostAsync($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/reset",
             context);
-        return RedirectToPage(new {id = id});
+        return RedirectToPage(new { id = id });
     }
 }
