@@ -6,19 +6,19 @@ namespace WireMock.Pages_WireMockServers
 {
     public class IndexModel : PageModel
     {
-        private readonly IDbContextFactory _contextFactory;
+        public IList<WireMockServerModel> WireMockServerModel { get;set; } = default!;
+        
+        private readonly IWireMockRepository _repository;
 
-        public IndexModel(IDbContextFactory contextFactory)
+        public IndexModel(IWireMockRepository repository)
         {
-            _contextFactory = contextFactory;
+            _repository = repository;
         }
 
-        public IList<WireMockServerModel> WireMockServerModel { get;set; } = default!;
 
         public async Task OnGetAsync()
         {
-            var context = _contextFactory.CreateDbContext();
-            WireMockServerModel = await context.WireMockServerModel.ToListAsync();
+            WireMockServerModel = await _repository.GetModelsAsync();
         }
     }
 }

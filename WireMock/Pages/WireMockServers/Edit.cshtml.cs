@@ -7,31 +7,20 @@ namespace WireMock.Pages_WireMockServers
 {
     public class EditModel : PageModel
     {
-        private readonly ServerOrchestrator _serverOrchestrator;
-        private WireMockServerContext _context;
+        private readonly ServiceOrchestrator _serviceOrchestrator;
+        private IWireMockRepository _repository;
 
-        public EditModel(IDbContextFactory contextFactory, ServerOrchestrator serverOrchestrator)
+        public EditModel(IWireMockRepository repository, ServiceOrchestrator serviceOrchestrator)
         {
-            _serverOrchestrator = serverOrchestrator;
-            _context = contextFactory.CreateDbContext();
+            _serviceOrchestrator = serviceOrchestrator;
+            _repository = repository;
         }
 
         [BindProperty] public WireMockServerModel WireMockServerModel { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-           
-            WireMockServerModel = await _context.WireMockServerModel.FirstOrDefaultAsync(m => m.Id == id);
-            if (WireMockServerModel == null)
-            {
-                return NotFound();
-            }
-
+            WireMockServerModel = await _repository.GetModelAsync(id);
             return Page();
         }
 
@@ -43,22 +32,17 @@ namespace WireMock.Pages_WireMockServers
             {
                 return Page();
             }
-            
-            _context.Attach(WireMockServerModel).State = EntityState.Modified;
+
             try
             {
-                await _context.SaveChangesAsync();
-                _serverOrchestrator.Stop(WireMockServerModel.Id);
-                _serverOrchestrator.RemoveService(WireMockServerModel.Id);
-                _serverOrchestrator.CreateService(WireMockServerModel.Id);
+                await _repository.UpdateModelAsync(WireMockServerModel);
+                _serviceOrchestrator.Stop(WireMockServerModel.Id);
+                _serviceOrchestrator.RemoveService(WireMockServerModel.Id);
+                _serviceOrchestrator.CreateService(WireMockServerModel.Id);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_context.WireMockServerModel.Any(e => e.Id == WireMockServerModel.Id))
-                {
-                    return NotFound();
-                }
-                throw;
+                return NotFound();
             }
 
             return RedirectToPage("../Server");

@@ -5,18 +5,18 @@ using NuGet.Protocol;
 
 namespace WireMock.Server;
 
-public class ServerOrchestrator
+public class ServiceOrchestrator
 {
     private ILogger _logger;
     private IDbContextFactory _contextFactory;
     private WireMockServiceList _services = default!;
 
-    public ServerOrchestrator(ILogger<ServerOrchestrator> logger, WireMockServiceList serviceList,
+    public ServiceOrchestrator(ILogger<ServiceOrchestrator> logger, WireMockServiceList serviceList,
         IDbContextFactory contextFactory)
     {
         _services = serviceList;
         _services.MappingAdded += SaveMappingToContext;
-        _services.MappingRemoved += RemoveMappingToContext;
+        _services.MappingRemoved += RemoveMappingFromContext;
         _logger = logger;
         _contextFactory = contextFactory;
     }
@@ -57,7 +57,7 @@ public class ServerOrchestrator
         }
     }
 
-    private void RemoveMappingToContext(object? sender, ChangedMappingsArgs e)
+    private void RemoveMappingFromContext(object? sender, ChangedMappingsArgs e)
     {
         var context = _contextFactory.CreateDbContext();
 

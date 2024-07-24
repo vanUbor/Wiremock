@@ -17,6 +17,12 @@ namespace WireMock.Server
             modelBuilder.Entity<WireMockServerMapping>()
                 .HasIndex(e => e.Guid)
                 .IsUnique();
+
+            modelBuilder.Entity<WireMockServerMapping>()
+                .HasOne<WireMockServerModel>()
+                .WithMany(m => m.Mappings)
+                .HasForeignKey(m => m.WireMockServerModelId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

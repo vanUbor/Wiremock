@@ -11,53 +11,25 @@ namespace WireMock.Pages_WireMockServers
 {
     public class DeleteModel : PageModel
     {
-        private readonly IDbContextFactory _contextFactory;
-
-        public DeleteModel(IDbContextFactory contextFactory)
+        private readonly IWireMockRepository _repository;
+        
+        public DeleteModel(IWireMockRepository repository)
         {
-            _contextFactory = contextFactory;
+            _repository = repository;
         }
 
         [BindProperty]
         public WireMockServerModel WireMockServerModel { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var context = _contextFactory.CreateDbContext();
-            var wiremockservermodel = await context.WireMockServerModel.FirstOrDefaultAsync(m => m.Id == id);
-
-            if (wiremockservermodel == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                WireMockServerModel = wiremockservermodel;
-            }
+            WireMockServerModel = await _repository.GetModelAsync(id);
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int? id)
+        public async Task<IActionResult> OnPostAsync(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var context = _contextFactory.CreateDbContext();
-            var wiremockservermodel = await context.WireMockServerModel.FindAsync(id);
-            if (wiremockservermodel != null)
-            {
-                WireMockServerModel = wiremockservermodel;
-                context.WireMockServerModel.Remove(WireMockServerModel);
-                await context.SaveChangesAsync();
-            }
-
+            await _repository.RemoveModelAsync(id);
             return RedirectToPage("./Index");
         }
     }

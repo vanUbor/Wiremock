@@ -7,31 +7,18 @@ namespace WireMock.Pages_WireMockServers
 {
     public class DetailsModel : PageModel
     {
-        private readonly IDbContextFactory _contextFactory;
+        private readonly IWireMockRepository _repository;
 
-        public DetailsModel(IDbContextFactory contextFactory)
+        public DetailsModel(IWireMockRepository repository)
         {
-            _contextFactory = contextFactory;
+            _repository = repository;
         }
 
         public WireMockServerModel WireMockServerModel { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var context = _contextFactory.CreateDbContext();
-            var wireMockServerModel = await context.WireMockServerModel.FirstOrDefaultAsync(m => m.Id == id);
-            if (wireMockServerModel == null)
-            {
-                return NotFound();
-            }
-
-            WireMockServerModel = wireMockServerModel;
-
+            WireMockServerModel = await _repository.GetModelAsync(id);
             return Page();
         }
     }
