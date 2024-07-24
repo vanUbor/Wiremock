@@ -1,5 +1,6 @@
 using System.Collections;
-using WireMock.Server;
+
+namespace WireMock.Server;
 
 public class WireMockServiceList : IList<WireMockService>
 {

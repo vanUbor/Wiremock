@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using WireMock.Data;
 using WireMock.Server;
 
 namespace WireMock.Pages_WireMockServers
@@ -16,11 +17,11 @@ namespace WireMock.Pages_WireMockServers
             _repository = repository;
         }
 
-        [BindProperty] public WireMockServerModel WireMockServerModel { get; set; } = default!;
+        [BindProperty] public WireMockServiceModel WireMockServiceModel { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            WireMockServerModel = await _repository.GetModelAsync(id);
+            WireMockServiceModel = await _repository.GetModelAsync(id);
             return Page();
         }
 
@@ -35,10 +36,10 @@ namespace WireMock.Pages_WireMockServers
 
             try
             {
-                await _repository.UpdateModelAsync(WireMockServerModel);
-                _serviceOrchestrator.Stop(WireMockServerModel.Id);
-                _serviceOrchestrator.RemoveService(WireMockServerModel.Id);
-                _serviceOrchestrator.CreateService(WireMockServerModel.Id);
+                await _repository.UpdateModelAsync(WireMockServiceModel);
+                _serviceOrchestrator.Stop(WireMockServiceModel.Id);
+                _serviceOrchestrator.RemoveService(WireMockServiceModel.Id);
+                _serviceOrchestrator.CreateService(WireMockServiceModel.Id);
             }
             catch (DbUpdateConcurrencyException)
             {

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using WireMock.Server;
 
-namespace WireMock.Server;
+namespace WireMock.Data;
 
 public class WireMockRepository : IWireMockRepository
 {
@@ -13,26 +14,26 @@ public class WireMockRepository : IWireMockRepository
         _contextFactory = contextFactory;
     }
 
-    public async Task AddModelAsync(WireMockServerModel model)
+    public async Task AddModelAsync(WireMockServiceModel model)
     {
         await using var context = _contextFactory.CreateDbContext();
         await context.WireMockServerModel.AddAsync(model);
         await context.SaveChangesAsync();
     }
 
-    public async Task<WireMockServerModel> GetModelAsync(int id)
+    public async Task<WireMockServiceModel> GetModelAsync(int id)
     {
         await using var context = _contextFactory.CreateDbContext();
         return await context.WireMockServerModel.FirstOrDefaultAsync(m => m.Id == id);
     }
 
-    public async Task<IList<WireMockServerModel>> GetModelsAsync()
+    public async Task<IList<WireMockServiceModel>> GetModelsAsync()
     {
         await using var context = _contextFactory.CreateDbContext();
         return await context.WireMockServerModel.ToListAsync();
     }
 
-    public async Task UpdateModelAsync(WireMockServerModel model)
+    public async Task UpdateModelAsync(WireMockServiceModel model)
     {
         await using var context = _contextFactory.CreateDbContext();
         context.WireMockServerModel.Update(model);

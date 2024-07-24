@@ -1,10 +1,8 @@
 using System.Timers;
-using Microsoft.Build.Construction;
-using Microsoft.CodeAnalysis.Host.Mef;
 using Newtonsoft.Json;
 using NuGet.Packaging;
-using NuGet.Protocol;
 using WireMock.Admin.Mappings;
+using WireMock.Data;
 using WireMock.Settings;
 using Timer = System.Timers.Timer;
 
@@ -21,13 +19,13 @@ public class WireMockService
 
     private WireMockServer _server;
     private WireMockServerSettings _settings;
-    private WireMockServerModel _model;
+    private WireMockServiceModel _model;
     private ILogger _logger;
 
     private IList<MappingModel> _lastKnonwMappings = new List<MappingModel>();
     private Timer _checkMappingsTimer = new(2000);
 
-    public WireMockService(ILogger logger, WireMockServerModel model)
+    public WireMockService(ILogger logger, WireMockServiceModel model)
     {
         _logger = logger;
         _model = model;
@@ -35,7 +33,7 @@ public class WireMockService
         _settings.Logger = new WireMockLogger(logger);
     }
 
-    public void CreateAndStart(WireMockServerModel model)
+    public void CreateAndStart(WireMockServiceModel model)
     {
         _logger?.LogInformation("WireMock.Net server starting");
         _server = WireMockServer.Start(_settings);

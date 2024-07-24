@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using WireMock.Data;
 using WireMock.Server;
 
 namespace WireMock.Pages;
 
 public class Server : PageModel
 {
-    [BindProperty] public IList<WireMockService> Servers { get; set; } = default!;
+    [BindProperty] public IList<WireMock.Server.WireMockService> Servers { get; set; } = default!;
 
     private readonly IWireMockRepository _repository;
     private readonly ServiceOrchestrator _serviceOrchestrator;

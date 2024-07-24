@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using WireMock.Data;
 using WireMock.Server;
 
 namespace WireMock.Pages_WireMockServers
@@ -19,7 +20,7 @@ namespace WireMock.Pages_WireMockServers
         }
 
         [BindProperty]
-        public WireMockServerModel WireMockServerModel { get; set; } = default!;
+        public WireMockServiceModel WireMockServiceModel { get; set; } = default!;
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
@@ -29,7 +30,7 @@ namespace WireMock.Pages_WireMockServers
                 return RedirectToPage("../Error");
             }
 
-            await _repository.AddModelAsync(WireMockServerModel);
+            await _repository.AddModelAsync(WireMockServiceModel);
 
             return RedirectToPage("../Server");
         }

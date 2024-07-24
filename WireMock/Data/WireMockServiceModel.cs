@@ -1,9 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using WireMock.Server;
 using WireMock.Settings;
 
-namespace WireMock.Server;
+namespace WireMock.Data;
 
-public class WireMockServerModel
+public class WireMockServiceModel
 {
     public int Id { get; set; }
     

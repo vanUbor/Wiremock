@@ -1,0 +1,84 @@
+@page
+@model WireMock.Pages_WireMockServers.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1 xmlns="http://www.w3.org/1999/html">Details</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.WireMockServiceModel.Id)
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.WireMockServiceModel.Id)
+        </dd>
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.WireMockServiceModel.Name)
+        </dt>
+        <dd class="col-sm-810">
+            @Html.DisplayFor(model => model.WireMockServiceModel.Name)
+        </dd>
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.WireMockServiceModel.Created)
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.WireMockServiceModel.Created)
+        </dd>
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.WireMockServiceModel.Contact)
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.WireMockServiceModel.Contact)
+        </dd>
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.WireMockServiceModel.StartAdminInterface)
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.WireMockServiceModel.StartAdminInterface)
+        </dd>
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.WireMockServiceModel.ProxyUrl)
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.WireMockServiceModel.ProxyUrl)
+        </dd>
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.WireMockServiceModel.Port)
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.WireMockServiceModel.Port)
+        </dd>
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.WireMockServiceModel.SaveMapping)
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.WireMockServiceModel.SaveMapping)
+        </dd>
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.WireMockServiceModel.SaveMappingToFile)
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.WireMockServiceModel.SaveMappingToFile)
+        </dd>
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.WireMockServiceModel.SaveMappingForStatusCodePattern)
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.WireMockServiceModel.SaveMappingForStatusCodePattern)
+        </dd>
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.WireMockServiceModel.Description)
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.WireMockServiceModel.Description)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.WireMockServiceModel.Id">Edit</a> |
+    <a asp-page="../Server">Back to List</a>
+</div>

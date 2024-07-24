@@ -1,8 +1,7 @@
-using System.Net;
-using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using WireMock.Data;
 using WireMock.Server;
 
 namespace WireMock.Pages.WireMockServers;
@@ -26,7 +25,7 @@ public class Mappings : PageModel
         return Page();
     }
 
-    private async Task GetMappings(WireMockServerModel model)
+    private async Task GetMappings(WireMockServiceModel model)
     {
         var client = new HttpClient();
         var response = await client.GetAsync($"http://localhost:{model.Port}/__admin/mappings");

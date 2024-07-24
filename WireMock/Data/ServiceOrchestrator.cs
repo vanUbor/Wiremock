@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using NuGet.Packaging;
 using NuGet.Protocol;
+using WireMock.Server;
 
-namespace WireMock.Server;
+namespace WireMock.Data;
 
 public class ServiceOrchestrator
 {
@@ -118,7 +118,7 @@ public class ServiceOrchestrator
     /// Creates a WireMockService and adds it to the list of services.
     /// </summary>
     /// <returns>Void</returns>
-    private WireMockService CreateService(WireMockServerModel model)
+    private WireMockService CreateService(WireMockServiceModel model)
     {
         var service = new WireMockService(_logger, model);
         return service;

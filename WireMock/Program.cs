@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using WireMock.Data;
 using WireMock.Server;
 
 var builder = WebApplication.CreateBuilder(args);

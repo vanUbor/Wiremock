@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
+using WireMock.Data;
 using WireMock.Server;
 
 namespace WireMock.Pages_WireMockServers
@@ -19,11 +15,11 @@ namespace WireMock.Pages_WireMockServers
         }
 
         [BindProperty]
-        public WireMockServerModel WireMockServerModel { get; set; } = default!;
+        public WireMockServiceModel WireMockServiceModel { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            WireMockServerModel = await _repository.GetModelAsync(id);
+            WireMockServiceModel = await _repository.GetModelAsync(id);
             return Page();
         }
 
