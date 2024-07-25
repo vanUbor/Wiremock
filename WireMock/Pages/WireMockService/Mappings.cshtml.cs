@@ -4,23 +4,16 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using WireMock.Data;
 using WireMock.Server;
 
-namespace WireMock.Pages.WireMockServers;
+namespace WireMock.Pages.WireMockService;
 
-public class Mappings : PageModel
+public class Mappings(IWireMockRepository Repository) : PageModel
 {
-    private readonly IWireMockRepository _repository;
-
-    [BindProperty] public WireMockMappingModel[]? Maps { get; set; }
-    [BindProperty] public string MapJsonContent { get; set; }
-
-    public Mappings(IWireMockRepository repository)
-    {
-        _repository = repository;
-    }
+    [BindProperty] public WireMockMappingModel[] Maps { get; set; } = [];
+    [BindProperty] public string MapJsonContent { get; set; } = string.Empty;
 
     public async Task<IActionResult> OnGet(int id)
     {
-        var wireMockServerModel = await _repository.GetModelAsync(id);
+        var wireMockServerModel = await Repository.GetModelAsync(id);
         await GetMappings(wireMockServerModel);
         return Page();
     }
@@ -30,13 +23,11 @@ public class Mappings : PageModel
         var client = new HttpClient();
         var response = await client.GetAsync($"http://localhost:{model.Port}/__admin/mappings");
         if (!response.IsSuccessStatusCode)
-        {
-            Maps = Array.Empty<WireMockMappingModel>();
             return;
-        }
+        
         
         var mappingString = await response.Content.ReadAsStringAsync();
-        Maps = JsonSerializer.Deserialize<WireMockMappingModel[]>(mappingString);
+        Maps = JsonSerializer.Deserialize<WireMockMappingModel[]>(mappingString) ?? [];
         foreach (var map in Maps)
         {
             map.Raw = JsonSerializer.Serialize(map, new JsonSerializerOptions() { WriteIndented = true });
@@ -46,7 +37,7 @@ public class Mappings : PageModel
     public async Task<IActionResult> OnPostSaveAndUpdate(string id, string guid, string raw)
     {
         var model = JsonSerializer.Deserialize<WireMockMappingModel>(raw);
-        var wireMockServerModel = await _repository.GetModelAsync(int.Parse(id));
+        var wireMockServerModel = await Repository.GetModelAsync(int.Parse(id));
         var client = new HttpClient();
         var content = JsonContent.Create(model);
         var request = new HttpRequestMessage()
@@ -62,15 +53,15 @@ public class Mappings : PageModel
         // if successful set, save to DB
         if (Guid.TryParse(guid, out var guidObj))
         {
-            await _repository.UpdateMappingAsync(guidObj, raw);
+            await Repository.UpdateMappingAsync(guidObj, raw);
         }
 
-        return RedirectToPage(new { id = id });
+        return RedirectToPage(new { id });
     }
 
     public async Task<IActionResult> OnPostResetMapping(string id, string guid)
     {
-        var wireMockServerModel = await _repository.GetModelAsync(int.Parse(id));
+        var wireMockServerModel = await Repository.GetModelAsync(int.Parse(id));
         var client = new HttpClient();
         var request = new HttpRequestMessage()
         {
@@ -78,16 +69,16 @@ public class Mappings : PageModel
             RequestUri = new Uri($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/{guid}"),
         };
         await client.SendAsync(request);
-        return RedirectToPage(new { id = id });
+        return RedirectToPage(new { id });
     }
 
     public async Task<IActionResult> OnPostResetAllMappings(string id)
     {
-        var wireMockServerModel = await _repository.GetModelAsync(int.Parse(id));
+        var wireMockServerModel = await Repository.GetModelAsync(int.Parse(id));
         var client = new HttpClient();
         var context = new StringContent(string.Empty);
         await client.PostAsync($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/reset",
             context);
-        return RedirectToPage(new { id = id });
+        return RedirectToPage(new { id });
     }
 }

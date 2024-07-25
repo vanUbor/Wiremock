@@ -1,5 +1,5 @@
+using System.Text.Json;
 using System.Timers;
-using Newtonsoft.Json;
 using NuGet.Packaging;
 using WireMock.Admin.Mappings;
 using WireMock.Data;
@@ -8,43 +8,38 @@ using Timer = System.Timers.Timer;
 
 namespace WireMock.Server;
 
-public class WireMockService
+public class WireMockService(WireMockServiceModel model)
 {
-    public string Id => _model.Id.ToString();
-    public string Name => _model.Name;
+    public string Id => model.Id.ToString();
+    public string Name => model.Name;
     public bool IsRunning => _server?.IsStarted ?? false;
 
     public EventHandler<ChangedMappingsArgs>? MappingsAdded;
     public EventHandler<ChangedMappingsArgs>? MappingsRemoved;
 
-    private WireMockServer _server;
-    private WireMockServerSettings _settings;
-    private WireMockServiceModel _model;
-    private ILogger _logger;
+    private WireMockServer? _server;
+    private readonly WireMockServerSettings _settings = model.ToSettings();
 
-    private IList<MappingModel> _lastKnonwMappings = new List<MappingModel>();
-    private Timer _checkMappingsTimer = new(2000);
+    private readonly IList<MappingModel> _lastKnonwMappings = new List<MappingModel>();
+    private readonly Timer _checkMappingsTimer = new(2000);
 
-    public WireMockService(ILogger logger, WireMockServiceModel model)
+    public void CreateAndStart(IEnumerable<WireMockServerMapping> mappings)
     {
-        _logger = logger;
-        _model = model;
-        _settings = model.ToSettings();
-        _settings.Logger = new WireMockLogger(logger);
-    }
-
-    public void CreateAndStart(WireMockServiceModel model)
-    {
-        _logger?.LogInformation("WireMock.Net server starting");
         _server = WireMockServer.Start(_settings);
-        foreach (var m in model.Mappings)
+        foreach (var m in mappings
+                     .Where(m => !string.IsNullOrWhiteSpace(m.Raw)))
         {
-            var mapping =JsonConvert.DeserializeObject<MappingModel>(m.Raw);
-            _server.WithMapping(mapping);
+            if (m.Raw == null)
+                continue;
+            
+            var mapping = JsonSerializer.Deserialize<MappingModel>(m.Raw);
+
+            if (mapping != null)
+                _server.WithMapping(mapping);
         }
+
         // create the timer to check for new mappings
         CreateAndStartTimer();
-        _logger?.LogInformation($"WireMock.Net server settings {JsonConvert.SerializeObject(_settings)}");
     }
 
     /// <summary>
@@ -73,6 +68,9 @@ public class WireMockService
         // its probably not needed in RL as the handling is quick enough (hopefully :P)
         lock (this)
         {
+            if (_server == null)
+                return;
+            
             var currentMappings = _server.MappingModels.Select(m => m).ToList();
 
             // var newMappings = currentMappings.Except(_lastKnonwMappings).ToList();
@@ -120,14 +118,8 @@ public class WireMockService
     }
 }
 
-public class ChangedMappingsArgs : EventArgs
+public class ChangedMappingsArgs(IList<MappingModel> mappingModels) : EventArgs
 {
-    public string ServiceId { get; set; }
-    public IList<MappingModel> MapGuid { get; set; }
-
-
-    public ChangedMappingsArgs(IList<MappingModel> mapGuid)
-    {
-        MapGuid = mapGuid;
-    }
+    public required string ServiceId { get; init; }
+    public IList<MappingModel> MappingModels { get; } = mappingModels;
 }
