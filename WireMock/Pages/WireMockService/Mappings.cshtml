@@ -22,12 +22,14 @@
             <td> @map.Title </td>
             <td> @map.UpdatedAt.ToString("dd.MM.yyyy HH:mm:ss") </td>
             <td>
-                <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#details-@map.Guid">Details and Edit</button>
-                <form method="post" asp-page-handler="ResetMapping">
-                    <input type="hidden" asp-for="@Request.Query["id"]" name="id"/>
-                    <input type="hidden" asp-for="@map.Guid" name="guid"/>
-                    <button type="submit" class="btn btn-danger">X</button>
-                </form>
+                <div class="d-flex">
+                    <button class="btn btn-primary me-2" data-bs-toggle="collapse" data-bs-target="#details-@map.Guid">Details and Edit</button>
+                    <form method="post" asp-page-handler="ResetMapping">
+                        <input type="hidden" asp-for="@Request.Query["id"]" name="id"/>
+                        <input type="hidden" asp-for="@map.Guid" name="guid"/>
+                        <button type="submit" class="btn btn-danger">X</button>
+                    </form>
+                </div>
             </td>
         </tr>
         <tr id="details-@map.Guid" class="collapse">

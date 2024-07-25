@@ -24,8 +24,8 @@ public class Mappings(IWireMockRepository Repository) : PageModel
         var response = await client.GetAsync($"http://localhost:{model.Port}/__admin/mappings");
         if (!response.IsSuccessStatusCode)
             return;
-        
-        
+
+
         var mappingString = await response.Content.ReadAsStringAsync();
         Maps = JsonSerializer.Deserialize<WireMockMappingModel[]>(mappingString) ?? [];
         foreach (var map in Maps)
@@ -68,8 +68,10 @@ public class Mappings(IWireMockRepository Repository) : PageModel
             Method = HttpMethod.Delete,
             RequestUri = new Uri($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/{guid}"),
         };
-        await client.SendAsync(request);
-        return RedirectToPage(new { id });
+        var response = await client.SendAsync(request);
+        if (response.IsSuccessStatusCode)
+            return RedirectToPage(new { id });
+        return RedirectToPage("../Error");
     }
 
     public async Task<IActionResult> OnPostResetAllMappings(string id)
@@ -79,6 +81,7 @@ public class Mappings(IWireMockRepository Repository) : PageModel
         var context = new StringContent(string.Empty);
         await client.PostAsync($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/reset",
             context);
+        
         return RedirectToPage(new { id });
     }
 }

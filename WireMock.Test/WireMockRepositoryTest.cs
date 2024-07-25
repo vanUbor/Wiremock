@@ -32,7 +32,7 @@ public class WireMockRepositoryTest
 
     private void InitializeContextWithTestData()
     {
-        var context = _contextFactory.CreateDbContext();
+        var context = _contextFactory!.CreateDbContext();
         context.WireMockServerModel.Add(new WireMockServiceModel() { Name = "InitModel"});
         context.WireMockServerMapping.Add(new WireMockServerMapping() {  });
         context.SaveChanges();
@@ -45,7 +45,7 @@ public class WireMockRepositoryTest
         var model = new WireMockServiceModel() { Name = "AddModelAsyncModel_Test", Id = 42 };
         
         //Act
-        await _repo.AddModelAsync(model);
+        await _repo!.AddModelAsync(model);
         
         //Assert
         Assert.IsTrue(await _repo.CheckModelExistsAsync(model.Id), "Context does not contain model");

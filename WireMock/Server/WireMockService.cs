@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Timers;
+using Newtonsoft.Json;
 using NuGet.Packaging;
 using WireMock.Admin.Mappings;
 using WireMock.Data;
@@ -31,8 +32,8 @@ public class WireMockService(WireMockServiceModel model)
         {
             if (m.Raw == null)
                 continue;
-            
-            var mapping = JsonSerializer.Deserialize<MappingModel>(m.Raw);
+
+            var mapping = JsonConvert.DeserializeObject<MappingModel>(m.Raw);
 
             if (mapping != null)
                 _server.WithMapping(mapping);
@@ -70,7 +71,7 @@ public class WireMockService(WireMockServiceModel model)
         {
             if (_server == null)
                 return;
-            
+
             var currentMappings = _server.MappingModels.Select(m => m).ToList();
 
             // var newMappings = currentMappings.Except(_lastKnonwMappings).ToList();
