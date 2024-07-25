@@ -1,16 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using WireMock.Data;
 using WireMock.Server;
 
 namespace WireMock.Pages_WireMockServers
 {
     public class CreateModel : PageModel
     {
-        private readonly IDbContextFactory _contextFactory;
-
-        public CreateModel(IDbContextFactory contextFactory)
+        private readonly IWireMockRepository _repository;
+        
+        public CreateModel(IWireMockRepository repository)
         {
-            _contextFactory = contextFactory;
+            _repository = repository;
         }
 
         public IActionResult OnGet()
@@ -19,7 +20,7 @@ namespace WireMock.Pages_WireMockServers
         }
 
         [BindProperty]
-        public WireMockServerModel WireMockServerModel { get; set; } = default!;
+        public WireMockServiceModel WireMockServiceModel { get; set; } = default!;
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
@@ -28,9 +29,8 @@ namespace WireMock.Pages_WireMockServers
             {
                 return RedirectToPage("../Error");
             }
-            var context = _contextFactory.CreateDbContext();
-            context.WireMockServerModel.Add(WireMockServerModel);
-            await context.SaveChangesAsync();
+
+            await _repository.AddModelAsync(WireMockServiceModel);
 
             return RedirectToPage("../Server");
         }

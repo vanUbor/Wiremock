@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using WireMock.Data;
 using WireMock.Server;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,8 +9,9 @@ builder.Logging.AddConsole();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddSingleton<IDbContextFactory, DbContextFactory>();
-builder.Services.AddSingleton<ServerOrchestrator>();
+builder.Services.AddSingleton<IWireMockRepository, WireMockRepository>();
+builder.Services.AddSingleton<IDbContextFactory<WireMockServerContext>, DbContextFactory>();
+builder.Services.AddSingleton<ServiceOrchestrator>();
 builder.Services.AddSingleton<WireMockServiceList>();
 
 builder.Services.AddSingleton<DbContextOptions<WireMockServerContext>>(serviceProvider =>

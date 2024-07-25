@@ -13,27 +13,27 @@
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.WireMockServerModel.Name)
+            @Html.DisplayNameFor(model => model.WireMockServiceModel.Name)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.WireMockServerModel.Name)
+            @Html.DisplayFor(model => model.WireMockServiceModel.Name)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.WireMockServerModel.Created)
+            @Html.DisplayNameFor(model => model.WireMockServiceModel.Created)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.WireMockServerModel.Created)
+            @Html.DisplayFor(model => model.WireMockServiceModel.Created)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.WireMockServerModel.Contact)
+            @Html.DisplayNameFor(model => model.WireMockServiceModel.Contact)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.WireMockServerModel.Contact)
+            @Html.DisplayFor(model => model.WireMockServiceModel.Contact)
         </dd>
     </dl>
     
     <form method="post">
-        <input type="hidden" asp-for="WireMockServerModel.Id" />
+        <input type="hidden" asp-for="WireMockServiceModel.Id" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a asp-page="./Index">Back to List</a>
     </form>

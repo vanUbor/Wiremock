@@ -8,7 +8,7 @@
 
 <div class="text-center">
     <h1 class="display-4">Mocking Server Instances</h1>
-    <p>Manage / Create / Stop And Stop Mocking Server</p>
+    <p>Manage / Create / Start And Stop Mocking Server Instances</p>
 </div>
 
 <table class="table">
@@ -41,9 +41,12 @@
                 }
             </td>
             <td>
-                <a class="btn btn-primary" asp-route-id="@server.Id" asp-page="WireMockServers/Mappings">Mappings</a>
-                <a class="btn btn-primary" asp-route-id="@server.Id" asp-page="WireMockServers/Edit">Settings</a>
-                <a class="btn btn-primary" asp-route-id="@server.Id" asp-page="WireMockServers/Details">Details</a>
+                <a class="btn btn-primary @(server.IsRunning ? "" : "disabled")" 
+                   asp-route-id="@server.Id" asp-page="./WireMockService/Mappings">Mappings</a>
+                <a class="btn btn-primary" 
+                   asp-route-id="@server.Id" asp-page="./WireMockService/Edit">Settings</a>
+                <a class="btn btn-primary" 
+                   asp-route-id="@server.Id" asp-page="./WireMockService/Details">Details</a>
             </td>
             @* Start / Stop Button *@
             <td>
@@ -76,6 +79,6 @@
 <br>
 <div class="d-flex flex-row-reverse">
     <div class="p-2">
-        <a class="btn btn-primary" href="./WireMockServers/Create" role="button">Create new Instance</a>
+        <a class="btn btn-primary" href="./WireMockService/Create" role="button">Create new Instance</a>
     </div>
 </div>

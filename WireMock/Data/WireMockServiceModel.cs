@@ -1,9 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using WireMock.Server;
 using WireMock.Settings;
 
-namespace WireMock.Server;
+namespace WireMock.Data;
 
-public class WireMockServerModel
+public class WireMockServiceModel
 {
     public int Id { get; set; }
     
@@ -17,7 +18,7 @@ public class WireMockServerModel
     [MaxLength(255)]public string Description { get; set; } = string.Empty;
     
     public int Port { get; set; }
-    public bool StartAdminInterface { get; set; }
+    public bool StartAdminInterface => true;
     [MaxLength(100)] public string ProxyUrl { get; set; } = string.Empty;
     public bool SaveMapping { get; set; }
     public bool SaveMappingToFile { get; set; }

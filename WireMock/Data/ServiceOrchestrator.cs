@@ -1,22 +1,22 @@
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using NuGet.Packaging;
 using NuGet.Protocol;
+using WireMock.Server;
 
-namespace WireMock.Server;
+namespace WireMock.Data;
 
-public class ServerOrchestrator
+public class ServiceOrchestrator
 {
     private ILogger _logger;
-    private IDbContextFactory _contextFactory;
+    private IDbContextFactory<WireMockServerContext> _contextFactory;
     private WireMockServiceList _services = default!;
 
-    public ServerOrchestrator(ILogger<ServerOrchestrator> logger, WireMockServiceList serviceList,
-        IDbContextFactory contextFactory)
+    public ServiceOrchestrator(ILogger<ServiceOrchestrator> logger, WireMockServiceList serviceList,
+        IDbContextFactory<WireMockServerContext> contextFactory)
     {
         _services = serviceList;
         _services.MappingAdded += SaveMappingToContext;
-        _services.MappingRemoved += RemoveMappingToContext;
+        _services.MappingRemoved += RemoveMappingFromContext;
         _logger = logger;
         _contextFactory = contextFactory;
     }
@@ -57,7 +57,7 @@ public class ServerOrchestrator
         }
     }
 
-    private void RemoveMappingToContext(object? sender, ChangedMappingsArgs e)
+    private void RemoveMappingFromContext(object? sender, ChangedMappingsArgs e)
     {
         var context = _contextFactory.CreateDbContext();
 
@@ -118,7 +118,7 @@ public class ServerOrchestrator
     /// Creates a WireMockService and adds it to the list of services.
     /// </summary>
     /// <returns>Void</returns>
-    private WireMockService CreateService(WireMockServerModel model)
+    private WireMockService CreateService(WireMockServiceModel model)
     {
         var service = new WireMockService(_logger, model);
         return service;

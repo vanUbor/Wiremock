@@ -12,14 +12,39 @@ using WireMock.Server;
 namespace WireMock.Migrations
 {
     [DbContext(typeof(WireMockServerContext))]
-    [Migration("20240621090815_UpdatedModel")]
-    partial class UpdatedModel
+    [Migration("20240724084919_MappingCascadeDeletion")]
+    partial class MappingCascadeDeletion
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
+
+            modelBuilder.Entity("WireMock.Server.WireMockServerMapping", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Raw")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("WireMockServerModelId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
+                    b.HasIndex("WireMockServerModelId");
+
+                    b.ToTable("WireMockServerMapping");
+                });
 
             modelBuilder.Entity("WireMock.Server.WireMockServerModel", b =>
                 {
@@ -29,17 +54,27 @@ namespace WireMock.Migrations
 
                     b.Property<string>("Contact")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Created")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(255)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("Port")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("ProxyUrl")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("SaveMapping")
@@ -47,6 +82,7 @@ namespace WireMock.Migrations
 
                     b.Property<string>("SaveMappingForStatusCodePattern")
                         .IsRequired()
+                        .HasMaxLength(3)
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("SaveMappingToFile")
@@ -55,13 +91,23 @@ namespace WireMock.Migrations
                     b.Property<bool>("StartAdminInterface")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Urls")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
                     b.ToTable("WireMockServerModel");
+                });
+
+            modelBuilder.Entity("WireMock.Server.WireMockServerMapping", b =>
+                {
+                    b.HasOne("WireMock.Server.WireMockServerModel", null)
+                        .WithMany("Mappings")
+                        .HasForeignKey("WireMockServerModelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WireMock.Server.WireMockServerModel", b =>
+                {
+                    b.Navigation("Mappings");
                 });
 #pragma warning restore 612, 618
         }

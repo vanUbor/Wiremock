@@ -1,45 +1,35 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using WireMock.Data;
 using WireMock.Server;
 
 namespace WireMock.Pages;
 
 public class Server : PageModel
 {
+    [BindProperty] public IList<WireMock.Server.WireMockService> Servers { get; set; } = default!;
 
-    [BindProperty] public IList<WireMockService> Servers { get; set; } = default!;
-    private readonly IDbContextFactory _contextFactory;
-    private readonly ServerOrchestrator _serverOrchestrator;
+    private readonly IWireMockRepository _repository;
+    private readonly ServiceOrchestrator _serviceOrchestrator;
 
-    public Server(IDbContextFactory contextFactory, ServerOrchestrator serverOrchestrator)
+    public Server(IWireMockRepository repository, ServiceOrchestrator serviceOrchestrator)
     {
-        _serverOrchestrator = serverOrchestrator;
-        _contextFactory = contextFactory;
+        _repository = repository;
+        _serviceOrchestrator = serviceOrchestrator;
     }
-    
+
     public async Task<IActionResult> OnGet()
     {
-        Servers = await _serverOrchestrator.GetOrCreateServicesAsync();
+        Servers = await _serviceOrchestrator.GetOrCreateServicesAsync();
         return Page();
     }
 
-    public async Task<IActionResult> OnPostDeleteAsync(int? id)
+    public async Task<IActionResult> OnPostDeleteAsync(int id)
     {
-        if (id == null)
-        {
-            return NotFound();
-        }
-
-        var context = _contextFactory.CreateDbContext();
-        var wiremockservermodel = await context.WireMockServerModel.FindAsync(id);
-        if (wiremockservermodel != null)
-        {
-            context.WireMockServerModel.Remove(wiremockservermodel);
-            await context.SaveChangesAsync();
-            _serverOrchestrator.Stop(id);
-            _serverOrchestrator.RemoveService(id);
-        }
-
+        await _repository.RemoveModelAsync(id);
+        _serviceOrchestrator.Stop(id);
+        _serviceOrchestrator.RemoveService(id);
+        
         return RedirectToPage();
     }
 
@@ -48,18 +38,18 @@ public class Server : PageModel
         if (id == null)
             return NotFound($"No service with id {id} found");
 
-        _serverOrchestrator.Start(id.Value);
-        
+        _serviceOrchestrator.Start(id.Value);
+
         return RedirectToPage();
     }
-    
+
     public IActionResult OnPostStopAsync(int? id)
     {
         if (id == null)
             return NotFound($"No service with id {id} found");
 
-        _serverOrchestrator.Stop(id.Value);
-        
+        _serviceOrchestrator.Stop(id.Value);
+
         return RedirectToPage();
     }
 }

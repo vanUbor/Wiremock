@@ -1,11 +1,10 @@
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
-namespace WireMock.Server;
+namespace WireMock.Data;
 
 
-public class WireMockModel
+public class WireMockMappingModel
 {
     public string Guid { get; set; }
     
@@ -52,6 +51,7 @@ public class Response
 {
     public int StatusCode { get; set; }
     public string BodyAsBytes { get; set; }
+    public string Body { get; set; }
     public JsonObject BodyAsJson { get; set; }
     public JsonObject Headers { get; set; }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using WireMock.Data;
 using WireMock.Server;
 
 #nullable disable
@@ -29,7 +30,7 @@ namespace WireMock.Migrations
                     b.Property<string>("Raw")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("WireMockServerModelId")
+                    b.Property<int>("WireMockServerModelId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -96,7 +97,9 @@ namespace WireMock.Migrations
                 {
                     b.HasOne("WireMock.Server.WireMockServerModel", null)
                         .WithMany("Mappings")
-                        .HasForeignKey("WireMockServerModelId");
+                        .HasForeignKey("WireMockServerModelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WireMock.Server.WireMockServerModel", b =>
