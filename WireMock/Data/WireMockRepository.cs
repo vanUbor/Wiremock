@@ -6,9 +6,9 @@ namespace WireMock.Data;
 public class WireMockRepository : IWireMockRepository
 {
     private readonly ILogger<IWireMockRepository> _logger;
-    private readonly IDbContextFactory _contextFactory;
+    private readonly IDbContextFactory<WireMockServerContext> _contextFactory;
 
-    public WireMockRepository(ILogger<IWireMockRepository> logger, IDbContextFactory contextFactory)
+    public WireMockRepository(ILogger<IWireMockRepository> logger, IDbContextFactory<WireMockServerContext> contextFactory)
     {
         _logger = logger;
         _contextFactory = contextFactory;
@@ -69,6 +69,11 @@ public class WireMockRepository : IWireMockRepository
             {
                 _logger.LogWarning("No mapping found with the provided Guid: {Guid}", guid);
             }
-        
+    }
+    
+    public async Task<bool> CheckModelExistsAsync(int id)
+    {
+        using var context = _contextFactory.CreateDbContext();
+        return await context.WireMockServerModel.AnyAsync(x => x.Id == id);
     }
 }

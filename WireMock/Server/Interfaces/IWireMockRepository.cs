@@ -10,4 +10,5 @@ public interface IWireMockRepository
     Task UpdateModelAsync(WireMockServiceModel model);
     Task RemoveModelAsync(int id);
     Task UpdateMappingAsync(Guid guid, string raw);
+    Task<bool> CheckModelExistsAsync(int id);
 }

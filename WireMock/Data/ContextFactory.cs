@@ -3,7 +3,7 @@ using WireMock.Data;
 
 namespace WireMock.Server;
 
-public class DbContextFactory : IDbContextFactory
+public class DbContextFactory : IDbContextFactory<WireMockServerContext>
 {
     private readonly DbContextOptions<WireMockServerContext> _options;
     public DbContextFactory(DbContextOptions<WireMockServerContext> options)

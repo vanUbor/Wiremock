@@ -8,11 +8,11 @@ namespace WireMock.Data;
 public class ServiceOrchestrator
 {
     private ILogger _logger;
-    private IDbContextFactory _contextFactory;
+    private IDbContextFactory<WireMockServerContext> _contextFactory;
     private WireMockServiceList _services = default!;
 
     public ServiceOrchestrator(ILogger<ServiceOrchestrator> logger, WireMockServiceList serviceList,
-        IDbContextFactory contextFactory)
+        IDbContextFactory<WireMockServerContext> contextFactory)
     {
         _services = serviceList;
         _services.MappingAdded += SaveMappingToContext;
