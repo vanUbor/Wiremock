@@ -7,6 +7,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{CBB53A81-229F-447D-ADB6-8B467EB33657}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+		codecov.yml = codecov.yml
 	EndProjectSection
 EndProject
 Global
