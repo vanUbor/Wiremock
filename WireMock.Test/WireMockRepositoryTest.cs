@@ -9,9 +9,9 @@ namespace WireMock.Test;
 [TestClass]
 public class WireMockRepositoryTest
 {
-    private IDbContextFactory<WireMockServerContext> _contextFactory;
-    private ILogger<IWireMockRepository> _logger;
-    private WireMockRepository _repo;
+    private IDbContextFactory<WireMockServerContext>? _contextFactory;
+    private ILogger<IWireMockRepository>? _logger;
+    private WireMockRepository? _repo;
     
     [TestInitialize]
     public void Setup()

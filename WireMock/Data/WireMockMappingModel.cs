@@ -16,7 +16,7 @@ public class WireMockMappingModel
     public required Request Request { get; set; }
     public required Response Response { get; set; }
 
-    [JsonIgnore] public required string Raw { get; set; }
+    [JsonIgnore] public string? Raw { get; set; }
 }
 
 public class Request
