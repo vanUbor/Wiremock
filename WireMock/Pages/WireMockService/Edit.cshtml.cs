@@ -39,7 +39,7 @@ namespace WireMock.Pages_WireMockServers
                 await _repository.UpdateModelAsync(WireMockServiceModel);
                 _serviceOrchestrator.Stop(WireMockServiceModel.Id);
                 _serviceOrchestrator.RemoveService(WireMockServiceModel.Id);
-                _serviceOrchestrator.CreateService(WireMockServiceModel.Id);
+                await _serviceOrchestrator.CreateServiceAsync(WireMockServiceModel.Id);
             }
             catch (DbUpdateConcurrencyException)
             {

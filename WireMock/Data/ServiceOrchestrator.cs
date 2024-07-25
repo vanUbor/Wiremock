@@ -7,7 +7,7 @@ namespace WireMock.Data;
 
 public class ServiceOrchestrator
 {
-    private ILogger _logger;
+    private ILogger<ServiceOrchestrator> _logger;
     private IDbContextFactory<WireMockServerContext> _contextFactory;
     private WireMockServiceList _services = default!;
 
@@ -31,21 +31,23 @@ public class ServiceOrchestrator
         try
         {
             var context = _contextFactory.CreateDbContext();
-            var serviceModel = context.WireMockServerModel.Single(m
-                => m.Id.ToString()
-                    .Equals(e.ServiceId));
+            var serviceModel = context.WireMockServerModel
+                .Include(wireMockServiceModel => wireMockServiceModel.Mappings)
+                .Single(m
+                    => m.Id.ToString()
+                        .Equals(e.ServiceId));
 
-            foreach (var guid in e.MapGuid)
+            foreach (var mappingModel in e.MappingModels)
             {
                 // TODO: fix this
                 // no need to save new mappings if already existing
                 // this happens during the startup, no idea why
-                if (serviceModel.Mappings.Any(m => m.Guid.Equals(guid.Guid)))
+                if (serviceModel.Mappings.Any(m => m.Guid.Equals(mappingModel.Guid)))
                     continue;
                 serviceModel.Mappings.Add(new WireMockServerMapping()
                 {
-                    Guid = guid.Guid.Value,
-                    Raw = guid.ToJson()
+                    Guid = mappingModel.Guid!.Value,
+                    Raw = mappingModel.ToJson()
                 });
             }
 
@@ -65,7 +67,7 @@ public class ServiceOrchestrator
         List<WireMockServerMapping> mappingsToRemove = context.WireMockServerMapping
             .AsEnumerable()
             .Where(m
-                => e.MapGuid.Any(iMapping => iMapping.Guid.Equals(m.Guid)))
+                => e.MappingModels.Any(iMapping => iMapping.Guid.Equals(m.Guid)))
             .ToList();
 
         context.WireMockServerMapping.RemoveRange(mappingsToRemove);
@@ -106,7 +108,7 @@ public class ServiceOrchestrator
     }
 
 
-    public async Task CreateService(int id)
+    public async Task CreateServiceAsync(int id)
     {
         var context = _contextFactory.CreateDbContext();
         var models = await context.WireMockServerModel.ToListAsync();
@@ -120,11 +122,11 @@ public class ServiceOrchestrator
     /// <returns>Void</returns>
     private WireMockService CreateService(WireMockServiceModel model)
     {
-        var service = new WireMockService(_logger, model);
+        var service = new WireMockService(model);
         return service;
     }
 
-    internal async Task Start(int id)
+    internal async Task StartAsync(int id)
     {
         var service = _services.Single(i => i.Id.Equals(id.ToString()
             , StringComparison.InvariantCultureIgnoreCase));
@@ -133,7 +135,7 @@ public class ServiceOrchestrator
         var models = await context.WireMockServerModel.ToListAsync();
         var mappings = await context.WireMockServerMapping.ToListAsync();
         var m = models.Single(model => model.Id == id);
-        service.CreateAndStart(m);
+        service.CreateAndStart(m.Mappings);
     }
 
     internal void Stop(int? id)

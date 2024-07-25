@@ -33,12 +33,12 @@ public class Server : PageModel
         return RedirectToPage();
     }
 
-    public IActionResult OnPostStartAsync(int? id)
+    public async Task<IActionResult> OnPostStartAsync(int? id)
     {
         if (id == null)
             return NotFound($"No service with id {id} found");
 
-        _serviceOrchestrator.Start(id.Value);
+        await _serviceOrchestrator.StartAsync(id.Value);
 
         return RedirectToPage();
     }
