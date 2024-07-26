@@ -79,7 +79,7 @@ public class ServiceOrchestrator
     {
         if (_services is { Count: > 0 })
         {
-            var context = _contextFactory.CreateDbContext();
+            var context = await _contextFactory.CreateDbContextAsync();
             var models = await context.WireMockServerModel.ToListAsync();
 
             // create new services for each model found in configuration that is not already in the service list
@@ -102,7 +102,7 @@ public class ServiceOrchestrator
 
     private async Task CreateServices()
     {
-        var context = _contextFactory.CreateDbContext();
+        var context = await _contextFactory.CreateDbContextAsync();
         var models = await context.WireMockServerModel.ToListAsync();
         _services.AddRange(models.Select(CreateService));
     }
@@ -110,7 +110,7 @@ public class ServiceOrchestrator
 
     public async Task CreateServiceAsync(int id)
     {
-        var context = _contextFactory.CreateDbContext();
+        var context = await _contextFactory.CreateDbContextAsync();
         var models = await context.WireMockServerModel.ToListAsync();
         var m = models.Single(model => model.Id == id);
         _services.Add(CreateService(m));
@@ -131,9 +131,10 @@ public class ServiceOrchestrator
         var service = _services.Single(i => i.Id.Equals(id.ToString()
             , StringComparison.InvariantCultureIgnoreCase));
 
-        var context = _contextFactory.CreateDbContext();
-        var models = await context.WireMockServerModel.ToListAsync();
-        var mappings = await context.WireMockServerMapping.ToListAsync();
+        var context = await _contextFactory.CreateDbContextAsync();
+        var models = await context.WireMockServerModel
+            .Include(wireMockServiceModel 
+                => wireMockServiceModel.Mappings).ToListAsync();
         var m = models.Single(model => model.Id == id);
         service.CreateAndStart(m.Mappings);
     }

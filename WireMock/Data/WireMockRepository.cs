@@ -4,7 +4,6 @@ using WireMock.Server;
 namespace WireMock.Data;
 
 public class WireMockRepository(
-    ILogger<IWireMockRepository> Logger,
     IDbContextFactory<WireMockServerContext> ContextFactory)
     : IWireMockRepository
 {
@@ -58,10 +57,6 @@ public class WireMockRepository(
 
                 context.WireMockServerMapping.Update(existingMapping);
                 await context.SaveChangesAsync();
-            }
-            else
-            {
-                Logger.LogWarning("No mapping found with the provided Guid: {Guid}", guid);
             }
     }
     

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using WireMock.Data;
 using WireMock.Server;
 
-namespace WireMock.Pages_WireMockServers
+namespace WireMock.Pages.WireMockService
 {
     public class IndexModel : PageModel
     {
