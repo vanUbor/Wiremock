@@ -6,7 +6,7 @@ namespace WireMock.Data;
 
 public class WireMockMappingModel
 {
-    public string Guid { get; set; }
+    public string? Guid { get; set; }
     
 
     public DateTime UpdatedAt { get; set; }
