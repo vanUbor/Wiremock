@@ -50,21 +50,20 @@ public class WireMockRepositoryTest
         Assert.IsTrue(await _repo.CheckModelExistsAsync(model.Id), "Context does not contain model");
     }
 
-    [TestMethod]
-    public async Task GetModelsAsync()
-    {
-        //Arrange
-        var model = new WireMockServiceModel() { Name = "AddModelAsyncModel_Test", Id = 43 };
+
         
+    [TestMethod]
+    public async Task GetModelAsync()
+    {
         //Act
-        await _repo!.AddModelAsync(model);
+        var model = await _repo!.GetModelAsync(42);
         
         //Assert
-        Assert.IsTrue(await _repo.CheckModelExistsAsync(model.Id), "Context does not contain model");
+        Assert.AreEqual("InitModel", model.Name);
     }
 
     [TestMethod]
-    public async Task GetModelAsync()
+    public async Task GetModelsAsync()
     {
         //Act
         var models = await _repo!.GetModelsAsync();
