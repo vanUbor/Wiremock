@@ -11,4 +11,7 @@ public interface IWireMockRepository
     Task RemoveModelAsync(int id);
     Task UpdateMappingAsync(Guid guid, string raw);
     Task<bool> CheckModelExistsAsync(int id);
+    Task AddMappingsAsync(int serviceId, IEnumerable<Tuple<Guid, string>> newMappings);
+    Task UpdateMappingsAsync(IEnumerable<Tuple<Guid, string>> mappings);
+    Task RemoveMappingsAsync(IEnumerable<Guid> guids);
 }

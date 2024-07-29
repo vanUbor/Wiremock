@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Packaging;
 using NuGet.Protocol;
@@ -7,18 +8,18 @@ namespace WireMock.Data;
 
 public class ServiceOrchestrator
 {
-    private ILogger<ServiceOrchestrator> _logger;
-    private IDbContextFactory<WireMockServerContext> _contextFactory;
+    private IWireMockRepository _repo;
     private WireMockServiceList _services = default!;
 
-    public ServiceOrchestrator(ILogger<ServiceOrchestrator> logger, WireMockServiceList serviceList,
-        IDbContextFactory<WireMockServerContext> contextFactory)
+    public ServiceOrchestrator(WireMockServiceList serviceList,
+        IWireMockRepository repository)
     {
         _services = serviceList;
-        _services.MappingAdded += SaveMappingToContext;
+        _services.MappingAdded += (sender, changedMappingsArgs) 
+            => _ = SaveMappingToContextAsync(sender, changedMappingsArgs);
+        
         _services.MappingRemoved += RemoveMappingFromContext;
-        _logger = logger;
-        _contextFactory = contextFactory;
+        _repo = repository;
     }
 
     /// <summary>
@@ -26,32 +27,12 @@ public class ServiceOrchestrator
     /// </summary>
     /// <param name="sender">The object that raised the event.</param>
     /// <param name="e">The event arguments containing the service ID and mapping GUIDs.</param>
-    private void SaveMappingToContext(object? sender, ChangedMappingsArgs e)
+    private async Task SaveMappingToContextAsync(object? sender, ChangedMappingsArgs e)
     {
         try
         {
-            var context = _contextFactory.CreateDbContext();
-            var serviceModel = context.WireMockServerModel
-                .Include(wireMockServiceModel => wireMockServiceModel.Mappings)
-                .Single(m
-                    => m.Id.ToString()
-                        .Equals(e.ServiceId));
-
-            foreach (var mappingModel in e.MappingModels)
-            {
-                // TODO: fix this
-                // no need to save new mappings if already existing
-                // this happens during the startup, no idea why
-                if (serviceModel.Mappings.Any(m => m.Guid.Equals(mappingModel.Guid)))
-                    continue;
-                serviceModel.Mappings.Add(new WireMockServerMapping()
-                {
-                    Guid = mappingModel.Guid!.Value,
-                    Raw = mappingModel.ToJson()
-                });
-            }
-
-            context.SaveChanges();
+            await _repo.AddMappingsAsync(int.Parse(e.ServiceId), e.MappingModels.Select(mm
+                => new Tuple<Guid, string>(mm.Guid!.Value, mm.ToJson())));
         }
         catch (Exception exception)
         {
@@ -61,26 +42,14 @@ public class ServiceOrchestrator
 
     private void RemoveMappingFromContext(object? sender, ChangedMappingsArgs e)
     {
-        var context = _contextFactory.CreateDbContext();
-
-
-        List<WireMockServerMapping> mappingsToRemove = context.WireMockServerMapping
-            .AsEnumerable()
-            .Where(m
-                => e.MappingModels.Any(iMapping => iMapping.Guid.Equals(m.Guid)))
-            .ToList();
-
-        context.WireMockServerMapping.RemoveRange(mappingsToRemove);
-
-        context.SaveChanges();
+        _repo.RemoveMappingsAsync(e.MappingModels.Select(mm => mm.Guid!.Value));
     }
 
     public async Task<IList<WireMockService>> GetOrCreateServicesAsync()
     {
         if (_services is { Count: > 0 })
         {
-            var context = await _contextFactory.CreateDbContextAsync();
-            var models = await context.WireMockServerModel.ToListAsync();
+            var models = await _repo.GetModelsAsync();
 
             // create new services for each model found in configuration that is not already in the service list
             foreach (var model in models)
@@ -102,16 +71,14 @@ public class ServiceOrchestrator
 
     private async Task CreateServices()
     {
-        var context = await _contextFactory.CreateDbContextAsync();
-        var models = await context.WireMockServerModel.ToListAsync();
+        var models = await _repo.GetModelsAsync();
         _services.AddRange(models.Select(CreateService));
     }
 
 
     public async Task CreateServiceAsync(int id)
     {
-        var context = await _contextFactory.CreateDbContextAsync();
-        var models = await context.WireMockServerModel.ToListAsync();
+        var models = await _repo.GetModelsAsync();
         var m = models.Single(model => model.Id == id);
         _services.Add(CreateService(m));
     }
@@ -131,10 +98,8 @@ public class ServiceOrchestrator
         var service = _services.Single(i => i.Id.Equals(id.ToString()
             , StringComparison.InvariantCultureIgnoreCase));
 
-        var context = await _contextFactory.CreateDbContextAsync();
-        var models = await context.WireMockServerModel
-            .Include(wireMockServiceModel 
-                => wireMockServiceModel.Mappings).ToListAsync();
+        var models = await _repo.GetModelsAsync();
+            
         var m = models.Single(model => model.Id == id);
         service.CreateAndStart(m.Mappings);
     }
