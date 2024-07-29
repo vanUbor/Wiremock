@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using WireMock.Server;
 
@@ -24,7 +23,7 @@ public class WireMockRepository(
     public async Task<IList<WireMockServiceModel>> GetModelsAsync()
     {
         await using var context = await ContextFactory.CreateDbContextAsync();
-        return await context.WireMockServerModel.Include(wireMockServiceModel 
+        return await context.WireMockServerModel.Include(wireMockServiceModel
             => wireMockServiceModel.Mappings).ToListAsync();
     }
 
@@ -75,13 +74,13 @@ public class WireMockRepository(
             .Include(wireMockServiceModel => wireMockServiceModel.Mappings)
             .Single(m
                 => m.Id == serviceId);
-        
+
         var existingMappings = service.Mappings.ToList();
         foreach (var newMapping in newMappings)
         {
             if (existingMappings.Any(existingMapping => existingMapping.Guid.Equals(newMapping.Item1)))
                 continue; // skip if the mapping already exists
-            
+
             service.Mappings.Add(new WireMockServerMapping
             {
                 Guid = newMapping.Item1, Raw = newMapping.Item2
@@ -100,16 +99,16 @@ public class WireMockRepository(
     public async Task UpdateMappingAsync(Guid guid, string raw)
     {
         await using var context = await ContextFactory.CreateDbContextAsync();
-            var existingMapping = await context.WireMockServerMapping
-                .FirstOrDefaultAsync(m => m.Guid == guid);
+        var existingMapping = await context.WireMockServerMapping
+            .FirstOrDefaultAsync(m => m.Guid == guid);
 
-            if (existingMapping != null)
-            {
-                existingMapping.Raw = raw;
+        if (existingMapping != null)
+        {
+            existingMapping.Raw = raw;
 
-                context.WireMockServerMapping.Update(existingMapping);
-                await context.SaveChangesAsync();
-            }
+            context.WireMockServerMapping.Update(existingMapping);
+            await context.SaveChangesAsync();
+        }
     }
 
     /// <summary>
@@ -127,7 +126,7 @@ public class WireMockRepository(
         {
             if (!existingMappings.Any(existingMapping => existingMapping.Guid.Equals(updatedMapping.Item1)))
                 continue;
-            
+
             existingMappings.First(existingMapping => existingMapping.Guid.Equals(updatedMapping.Item1))
                 .Raw = updatedMapping.Item2;
         }
