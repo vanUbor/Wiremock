@@ -25,22 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="WireMock.Test\UnitTest1.cs">
-      <Link>TestProject1\UnitTest1.cs</Link>
-    </Compile>
     <Compile Update="WireMock.Test\GlobalUsings.cs">
       <Link>TestProject1\GlobalUsings.cs</Link>
     </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="__admin\mappings\IP Address Request_GET_.json" />
-    <_ContentIncludedByDefault Remove="__admin\mappings\Public Test API_GET_.json" />
-    <_ContentIncludedByDefault Remove="__admin\mappings\Public Test API_GET_objects.json" />
-    <_ContentIncludedByDefault Remove="__admin\mappings\Public Test API_GET_objects_.json" />
-    <_ContentIncludedByDefault Remove="__admin\mappings\Public Test API_GET_objects_13.json" />
-    <_ContentIncludedByDefault Remove="__admin\mappings\Public Test API_GET_objects_14.json" />
-    <_ContentIncludedByDefault Remove="__admin\mappings\Public Test API_GET_objects_7.json" />
   </ItemGroup>
 
   <ItemGroup>

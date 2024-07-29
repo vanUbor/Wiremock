@@ -38,7 +38,7 @@ jobs:
       run: dotnet build --no-restore
     
     - name: Test
-      run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
+      run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:Exclude="[WireMock.Migrations]*" /p:CoverletOutputFormat=cobertura
 
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4.0.1
