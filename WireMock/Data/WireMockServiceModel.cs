@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using WireMock.Server;
 using WireMock.Settings;
 
@@ -10,11 +11,14 @@ public class WireMockServiceModel
     
     public required string Name { get; set; }
     
+    [ExcludeFromCodeCoverage]
     [DataType(DataType.Date)]
     public DateTime Created { get; set; }
 
+    [ExcludeFromCodeCoverage]
     [MaxLength(100)]public string Contact { get; set; } = string.Empty;
 
+    [ExcludeFromCodeCoverage]
     [MaxLength(255)]public string Description { get; set; } = string.Empty;
     
     public int Port { get; set; }
