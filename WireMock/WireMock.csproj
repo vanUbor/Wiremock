@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
@@ -40,6 +41,18 @@
     <_ContentIncludedByDefault Remove="__admin\mappings\Public Test API_GET_objects_13.json" />
     <_ContentIncludedByDefault Remove="__admin\mappings\Public Test API_GET_objects_14.json" />
     <_ContentIncludedByDefault Remove="__admin\mappings\Public Test API_GET_objects_7.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\.dockerignore">
+      <Link>.dockerignore</Link>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="WireMockServerContext-68c5c659-b9ed-4b3a-bc7d-345567f37772.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
