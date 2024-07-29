@@ -74,8 +74,7 @@ public class WireMockRepository(
         var service = context.WireMockServerModel
             .Include(wireMockServiceModel => wireMockServiceModel.Mappings)
             .Single(m
-                => m.Id.ToString()
-                    .Equals(serviceId));
+                => m.Id == serviceId);
         
         var existingMappings = service.Mappings.ToList();
         foreach (var newMapping in newMappings)
