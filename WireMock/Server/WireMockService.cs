@@ -24,25 +24,26 @@ public class WireMockService(WireMockServiceModel model)
     private readonly IList<MappingModel> _lastKnonwMappings = new List<MappingModel>();
     private readonly Timer _checkMappingsTimer = new(2000);
 
-    public void CreateAndStart(IEnumerable<WireMockServerMapping> mappings)
+    public void CreateAndStart(IEnumerable<WireMockServerMapping>? mappings = default)
     {
         _server = WireMockServer.Start(_settings);
-        foreach (var m in mappings
-                     .Where(m => !string.IsNullOrWhiteSpace(m.Raw)))
-        {
-            if (m.Raw == null)
-                continue;
+        if (mappings != null)
+            foreach (var m in mappings
+                         .Where(m => !string.IsNullOrWhiteSpace(m.Raw)))
+            {
+                if (m.Raw == null)
+                    continue;
 
-            var mapping = JsonConvert.DeserializeObject<MappingModel>(m.Raw);
+                var mapping = JsonConvert.DeserializeObject<MappingModel>(m.Raw);
 
-            if (mapping != null)
-                _server.WithMapping(mapping);
-        }
+                if (mapping != null)
+                    _server.WithMapping(mapping);
+            }
 
         // create the timer to check for new mappings
         CreateAndStartTimer();
     }
-
+    
     /// <summary>
     /// Creates and starts the timer to periodically check for new mappings.
     /// </summary>
@@ -110,7 +111,6 @@ public class WireMockService(WireMockServiceModel model)
             ServiceId = Id,
         });
     }
-
 
     public void Stop()
     {
