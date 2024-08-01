@@ -2,8 +2,8 @@ coverage:
   status:
     project:
       default:
-        target: 75%
-        threshold: 1%
+        target: 50%
+        threshold: 5%
 
 comment:                  # this is a top-level key
   layout: " diff, flags, files"

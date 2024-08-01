@@ -1,4 +1,3 @@
-using System.Text.Json;
 using System.Timers;
 using Newtonsoft.Json;
 using NuGet.Packaging;
@@ -21,7 +20,7 @@ public class WireMockService(WireMockServiceModel model)
     private WireMockServer? _server;
     private readonly WireMockServerSettings _settings = model.ToSettings();
 
-    private readonly IList<MappingModel> _lastKnonwMappings = new List<MappingModel>();
+    private readonly IList<MappingModel> _lastKnownMappings = new List<MappingModel>();
     private readonly Timer _checkMappingsTimer = new(2000);
 
     public void CreateAndStart(IEnumerable<WireMockServerMapping>? mappings = default)
@@ -42,6 +41,12 @@ public class WireMockService(WireMockServiceModel model)
 
         // create the timer to check for new mappings
         CreateAndStartTimer();
+    }
+    
+    public void Stop()
+    {
+        _server?.Stop();
+        _checkMappingsTimer.Stop();
     }
     
     /// <summary>
@@ -76,10 +81,10 @@ public class WireMockService(WireMockServiceModel model)
             var currentMappings = _server.MappingModels.Select(m => m).ToList();
 
             var newMappings = currentMappings
-                .Where(m => _lastKnonwMappings.All(lm => lm.Guid != m.Guid))
+                .Where(m => _lastKnownMappings.All(lm => lm.Guid != m.Guid))
                 .ToList();
 
-            var removedMapping = _lastKnonwMappings
+            var removedMapping = _lastKnownMappings
                 .Where(lkm => currentMappings.All(cm => cm.Guid != lkm.Guid))
                 .ToList();
 
@@ -89,8 +94,8 @@ public class WireMockService(WireMockServiceModel model)
             if (removedMapping is { Count: > 0 })
                 RaiseMappingRemoved(removedMapping);
 
-            _lastKnonwMappings.Clear();
-            _lastKnonwMappings.AddRange(currentMappings);
+            _lastKnownMappings.Clear();
+            _lastKnownMappings.AddRange(currentMappings);
         }
     }
 
@@ -110,11 +115,7 @@ public class WireMockService(WireMockServiceModel model)
         });
     }
 
-    public void Stop()
-    {
-        _server?.Stop();
-        _checkMappingsTimer.Stop();
-    }
+ 
 }
 
 public class ChangedMappingsArgs(IList<MappingModel> mappingModels) : EventArgs
