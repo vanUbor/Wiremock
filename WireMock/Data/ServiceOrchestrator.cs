@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.CodeAnalysis;
 using NuGet.Packaging;
 using NuGet.Protocol;
 using WireMock.Server;
@@ -7,80 +7,34 @@ namespace WireMock.Data;
 
 public class ServiceOrchestrator
 {
-    private ILogger<ServiceOrchestrator> _logger;
-    private IDbContextFactory<WireMockServerContext> _contextFactory;
-    private WireMockServiceList _services = default!;
+    private readonly IWireMockRepository _repo;
+    private readonly WireMockServiceList _services;
 
-    public ServiceOrchestrator(ILogger<ServiceOrchestrator> logger, WireMockServiceList serviceList,
-        IDbContextFactory<WireMockServerContext> contextFactory)
+    public ServiceOrchestrator(WireMockServiceList serviceList,
+        IWireMockRepository repository)
     {
         _services = serviceList;
-        _services.MappingAdded += SaveMappingToContext;
+        _services.MappingAdded += (sender, changedMappingsArgs)
+            => _ = SaveMappingToContextAsync(changedMappingsArgs);
+
         _services.MappingRemoved += RemoveMappingFromContext;
-        _logger = logger;
-        _contextFactory = contextFactory;
+        _repo = repository;
     }
+
 
     /// <summary>
-    /// Saves the mappings to the database context.
+    /// Retrieves the existing WireMock services from the service list,
+    /// or creates new services based on the models obtained from the repository,
+    /// and adds them to the service list.
+    /// The Services will only be created and NOT started
     /// </summary>
-    /// <param name="sender">The object that raised the event.</param>
-    /// <param name="e">The event arguments containing the service ID and mapping GUIDs.</param>
-    private void SaveMappingToContext(object? sender, ChangedMappingsArgs e)
-    {
-        try
-        {
-            var context = _contextFactory.CreateDbContext();
-            var serviceModel = context.WireMockServerModel
-                .Include(wireMockServiceModel => wireMockServiceModel.Mappings)
-                .Single(m
-                    => m.Id.ToString()
-                        .Equals(e.ServiceId));
-
-            foreach (var mappingModel in e.MappingModels)
-            {
-                // TODO: fix this
-                // no need to save new mappings if already existing
-                // this happens during the startup, no idea why
-                if (serviceModel.Mappings.Any(m => m.Guid.Equals(mappingModel.Guid)))
-                    continue;
-                serviceModel.Mappings.Add(new WireMockServerMapping()
-                {
-                    Guid = mappingModel.Guid!.Value,
-                    Raw = mappingModel.ToJson()
-                });
-            }
-
-            context.SaveChanges();
-        }
-        catch (Exception exception)
-        {
-            Console.WriteLine(exception);
-        }
-    }
-
-    private void RemoveMappingFromContext(object? sender, ChangedMappingsArgs e)
-    {
-        var context = _contextFactory.CreateDbContext();
-
-
-        List<WireMockServerMapping> mappingsToRemove = context.WireMockServerMapping
-            .AsEnumerable()
-            .Where(m
-                => e.MappingModels.Any(iMapping => iMapping.Guid.Equals(m.Guid)))
-            .ToList();
-
-        context.WireMockServerMapping.RemoveRange(mappingsToRemove);
-
-        context.SaveChanges();
-    }
-
+    /// <returns>A Task representing the asynchronous operation.
+    /// The result contains a list of WireMockService objects.</returns>
     public async Task<IList<WireMockService>> GetOrCreateServicesAsync()
     {
         if (_services is { Count: > 0 })
         {
-            var context = _contextFactory.CreateDbContext();
-            var models = await context.WireMockServerModel.ToListAsync();
+            var models = await _repo.GetModelsAsync();
 
             // create new services for each model found in configuration that is not already in the service list
             foreach (var model in models)
@@ -95,50 +49,39 @@ public class ServiceOrchestrator
         }
 
         // if no service is created yet, create all services in the models configuration
-        await CreateServices();
+        await CreateServicesAsync();
         return _services;
     }
 
-
-    private async Task CreateServices()
-    {
-        var context = _contextFactory.CreateDbContext();
-        var models = await context.WireMockServerModel.ToListAsync();
-        _services.AddRange(models.Select(CreateService));
-    }
-
-
+    /// <summary>
+    /// Creates a WireMockService with the specified ID and adds it to the list of services.
+    /// A Model with the ID must be present in the database, otherwise an exception is thrown
+    /// The Service itself will only be created and NOT started
+    /// </summary>
+    /// <param name="id">The ID of the service.</param>
     public async Task CreateServiceAsync(int id)
     {
-        var context = _contextFactory.CreateDbContext();
-        var models = await context.WireMockServerModel.ToListAsync();
+        var models = await _repo.GetModelsAsync();
         var m = models.Single(model => model.Id == id);
         _services.Add(CreateService(m));
     }
 
     /// <summary>
-    /// Creates a WireMockService and adds it to the list of services.
+    /// Removes a WireMockService from the list of services.    
     /// </summary>
-    /// <returns>Void</returns>
-    private WireMockService CreateService(WireMockServiceModel model)
-    {
-        var service = new WireMockService(model);
-        return service;
-    }
-
-    internal async Task StartAsync(int id)
+    /// <param name="id">The ID of the service to remove.</param>
+    public void RemoveService(int id)
     {
         var service = _services.Single(i => i.Id.Equals(id.ToString()
             , StringComparison.InvariantCultureIgnoreCase));
-
-        var context = _contextFactory.CreateDbContext();
-        var models = await context.WireMockServerModel.ToListAsync();
-        var mappings = await context.WireMockServerMapping.ToListAsync();
-        var m = models.Single(model => model.Id == id);
-        service.CreateAndStart(m.Mappings);
+        _services.Remove(service);
     }
 
-    internal void Stop(int? id)
+    /// <summary>
+    /// Stops the WireMockService with the specified ID.
+    /// </summary>
+    /// <param name="id">The ID of the service.</param>
+    internal void Stop(int id)
     {
         var service = _services.Single(i => i.Id.Equals(id.ToString()
             , StringComparison.InvariantCultureIgnoreCase));
@@ -146,10 +89,47 @@ public class ServiceOrchestrator
         service.Stop();
     }
 
-    public void RemoveService(int? id)
+    /// <summary>
+    /// Asynchronously starts a WireMockService with the specified ID.
+    /// </summary>
+    /// <param name="id">The ID of the service.</param>
+    /// <returns>Task</returns>
+    internal async Task StartServiceAsync(int id)
     {
         var service = _services.Single(i => i.Id.Equals(id.ToString()
             , StringComparison.InvariantCultureIgnoreCase));
-        _services.Remove(service);
+
+        var models = await _repo.GetModelsAsync();
+
+        var m = models.Single(model => model.Id == id);
+        service.CreateAndStart(m.Mappings);
     }
+
+    /// <summary>
+    /// Saves the mappings to the database context.
+    /// </summary>
+    /// <param name="e">The event arguments containing the service ID and mapping GUIDs.</param>
+    [ExcludeFromCodeCoverage]
+    private async Task SaveMappingToContextAsync(ChangedMappingsArgs e)
+    => await _repo.AddMappingsAsync(int.Parse(e.ServiceId), e.MappingModels.Select(mm
+            => new Tuple<Guid, string>(mm.Guid!.Value, mm.ToJson())));
+    
+
+    [ExcludeFromCodeCoverage]
+    private void RemoveMappingFromContext(object? sender, ChangedMappingsArgs e)
+      => _repo.RemoveMappingsAsync(e.MappingModels.Select(mm => mm.Guid!.Value));
+    
+
+    private async Task CreateServicesAsync()
+    {
+        var models = await _repo.GetModelsAsync();
+        _services.AddRange(models.Select(CreateService));
+    }
+
+    /// <summary>
+    /// Creates a new WireMockService based on the provided WireMockServiceModel
+    /// </summary>
+    /// <param name="model">The WireMockServiceModel used to create the service.</param>
+    private WireMockService CreateService(WireMockServiceModel model)
+        => new WireMockService(model);
 }

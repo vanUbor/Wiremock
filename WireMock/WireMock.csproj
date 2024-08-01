@@ -4,9 +4,12 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2024.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.6">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -23,24 +26,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="wwwroot\lib\jsoneditor\jsoneditor.min.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\jsoneditor\jsoneditor.min.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\jsoneditor\img\jsoneditor-icons.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Compile Update="WireMock.Test\GlobalUsings.cs">
+      <Link>TestProject1\GlobalUsings.cs</Link>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\.dockerignore">
+      <Link>.dockerignore</Link>
     </Content>
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="WireMock.Test\UnitTest1.cs">
-      <Link>TestProject1\UnitTest1.cs</Link>
-    </Compile>
-    <Compile Update="WireMock.Test\GlobalUsings.cs">
-      <Link>TestProject1\GlobalUsings.cs</Link>
-    </Compile>
+    <None Update="WireMockServerContext-68c5c659-b9ed-4b3a-bc7d-345567f37772.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

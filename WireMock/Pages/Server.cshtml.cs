@@ -38,7 +38,7 @@ public class Server : PageModel
         if (id == null)
             return NotFound($"No service with id {id} found");
 
-        await _serviceOrchestrator.StartAsync(id.Value);
+        await _serviceOrchestrator.StartServiceAsync(id.Value);
 
         return RedirectToPage();
     }

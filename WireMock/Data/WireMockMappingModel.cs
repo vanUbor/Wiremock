@@ -1,14 +1,14 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
 namespace WireMock.Data;
 
 
+[ExcludeFromCodeCoverage]
 public class WireMockMappingModel
 {
-    public string Guid { get; set; }
-    
-
+    public string? Guid { get; set; }
     public DateTime UpdatedAt { get; set; }
     public required string Title { get; set; }
     public string? Description { get; set; }
@@ -19,6 +19,7 @@ public class WireMockMappingModel
     [JsonIgnore] public string? Raw { get; set; }
 }
 
+[ExcludeFromCodeCoverage]
 public class Request
 {
     public Path? Path { get; set; }
@@ -27,12 +28,13 @@ public class Request
     public Header[]? Headers { get; set; }
 }
 
+[ExcludeFromCodeCoverage]
 public class Path
 {
     public Matcher[]? Matchers { get; set; }
 }
 
-
+[ExcludeFromCodeCoverage]
 public class Header
 {
     public string? Name { get; set; }
@@ -40,6 +42,7 @@ public class Header
     public bool IgnoreCase { get; set; }
 }
 
+[ExcludeFromCodeCoverage]
 public class Matcher
 {
     public string? Name { get; set; }
@@ -47,6 +50,7 @@ public class Matcher
     public bool IgnoreCase { get; set; }
 }
 
+[ExcludeFromCodeCoverage]
 public class Response
 {
     public int StatusCode { get; set; }
@@ -56,6 +60,7 @@ public class Response
     public JsonObject? Headers { get; set; }
 }
 
+[ExcludeFromCodeCoverage]
 public class ResponseHeader
 {
     public string? Content_Type { get; set; }
