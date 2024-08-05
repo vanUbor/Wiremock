@@ -34,10 +34,9 @@
         </tr>
         <tr id="details-@map.Guid" class="collapse">
             <td colspan="4">
-                <form method="post" asp-page-handler="SaveAndUpdate">
+                <form id="UpdateMappingForm" method="post" asp-page-handler="SaveAndUpdate">
                     <div class="form-floating">
-                        <textarea asp-for="@map.Raw" class="form-control" style="height: 300px; white-space: pre-line" name="raw">
-                                  </textarea>
+                        <textarea id="rawMap" asp-for="@map.Raw" class="form-control" style="height: 300px; white-space: pre-line" name="raw"></textarea>
                     </div>
                     <p>
                     <div class="d-flex flex-row-reverse">
@@ -62,3 +61,28 @@
 <div>
     <a asp-page="../Server">Back to List</a>
 </div>
+
+<script>
+    function isValidJson(json) {
+        try {
+            JSON.parse(json);
+            return [true, "isValid"];
+        } catch (e) {
+            return [false, e];
+        }
+    }
+    $(document).ready(function(){
+        $( "#UpdateMappingForm" ).submit(function( event ) {
+            let jsonInput = $("#rawMap").val();
+            let isValid = isValidJson(jsonInput);
+            if (!isValid[0]) {
+                event.preventDefault();
+                showErrorModal(isValid[1].message);
+            }
+        });
+    });
+    function showErrorModal(errorMessage) {
+        $('#errorModal .modal-body').text(errorMessage);
+        $('#errorModal').modal('show');
+    }
+</script>
