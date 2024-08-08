@@ -1,5 +1,84 @@
-﻿@page
-@model IndexModel
+@page
+@model WireMock.Pages.Index
+
+
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Server Overview";
 }
+
+<div class="text-center">
+    <h1 class="display-4">Mocking Server Instances</h1>
+    <p>Manage / Create / Start And Stop Mocking Server Instances</p>
+</div>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">@Html.DisplayNameFor(model => model.Servers[0].Name)</th>
+        <th scope="col">Status</th>
+        <th scope="col">Configuration</th>
+        <th scope="col">Manage</th>
+        <th scope="col">Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var server in Model.Servers.OrderByDescending(m => m.Id))
+    {
+        <tr>
+            @* ID *@
+            <th scope="row">@Html.DisplayFor(modelItem => server.Id)</th>
+            @* Name *@
+            <td>@server.Name</td>
+            <td>
+                @if (server.IsRunning)
+                {
+                    <span class="badge bg-success">Running</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">Stopped</span>
+                }
+            </td>
+            <td>
+                <a class="btn btn-primary @(server.IsRunning ? "" : "disabled")" 
+                   asp-route-id="@server.Id" asp-page="./WireMockService/Mappings">Mappings</a>
+                <a class="btn btn-primary" 
+                   asp-route-id="@server.Id" asp-page="./WireMockService/Edit">Settings</a>
+                <a class="btn btn-primary" 
+                   asp-route-id="@server.Id" asp-page="./WireMockService/Details">Details</a>
+            </td>
+            @* Start / Stop Button *@
+            <td>
+                @if (server.IsRunning)
+                {
+                    <form method="post">
+                        <input type="hidden" name="id" value="@server.Id"/>
+                        <input type="submit" value="Stop" asp-page-handler="Stop" class="btn btn-warning"/>
+                    </form>
+                }
+                else
+                {
+                    <form method="post">
+                        <input type="hidden" name="id" value="@server.Id"/>
+                        <input type="submit" value="Start" asp-page-handler="Start" class="btn btn-success"/>
+                    </form>
+                    
+                }
+            </td>
+            <td>
+                <form method="post">
+                    <input type="hidden" name="id" value="@server.Id"/>
+                    <input type="submit" value="X" asp-page-handler="Delete" class="btn btn-danger"/>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+<br>
+<div class="d-flex flex-row-reverse">
+    <div class="p-2">
+        <a class="btn btn-primary" href="./WireMockService/Create" role="button">Create new Instance</a>
+    </div>
+</div>

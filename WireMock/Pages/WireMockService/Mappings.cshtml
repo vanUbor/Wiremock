@@ -8,9 +8,21 @@
 <table class="table">
     <thead>
     <tr>
-        <th>GUID</th>
-        <th>Title</th>
-        <th>Updated</th>
+        <th>
+            <a asp-route-id="@Model.ServiceId" asp-route-sortOrder="@Model.GuidSort">
+                @Html.DisplayNameFor(model => model.Maps[0].Guid)
+            </a>
+        </th>
+        <th>
+            <a asp-route-id="@Model.ServiceId" asp-route-sortOrder="@Model.TitleSort">
+                @Html.DisplayNameFor(model => model.Maps[0].Title)
+            </a>
+        </th>
+        <th>
+            <a asp-route-id="@Model.ServiceId" asp-route-sortOrder="@Model.DateSort">
+                @Html.DisplayNameFor(model => model.Maps[0].UpdatedAt)
+            </a>
+        </th>
         <th></th>
     </tr>
     </thead>
@@ -59,7 +71,7 @@
 </div>
 
 <div>
-    <a asp-page="../Server">Back to List</a>
+    <a asp-page="../Index">Back to List</a>
 </div>
 
 <script>
