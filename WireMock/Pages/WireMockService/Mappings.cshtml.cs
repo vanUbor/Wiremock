@@ -1,6 +1,8 @@
+using System.Runtime.InteropServices.JavaScript;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WireMock.Data;
@@ -11,29 +13,62 @@ namespace WireMock.Pages.WireMockService;
 
 public class Mappings(IWireMockRepository Repository) : PageModel
 {
-    [BindProperty] public WireMockMappingModel[] Maps { get; set; } = [];
+    public int ServiceId { get; set; }
+    public string GuidSort { get; set; }
+    public string TitleSort { get; set; }
+    public string DateSort { get; set; }
+    
+    [BindProperty] public IList<WireMockMappingModel> Maps { get; set; }
     [BindProperty] public string MapJsonContent { get; set; } = string.Empty;
-
-    public async Task<IActionResult> OnGet(int id)
+    
+    public async Task<IActionResult> OnGet(int id, string sortOrder)
     {
+        ServiceId = id;
+        GuidSort = String.IsNullOrEmpty(sortOrder) ? "guid_desc" : "";
+        TitleSort = sortOrder == "title" ? "title_desc" : "title";
+        DateSort = sortOrder == "date" ? "date_desc" : "date";
+        
         var wireMockServerModel = await Repository.GetModelAsync(id);
-        await GetMappings(wireMockServerModel);
+        var mappings = await GetMappings(wireMockServerModel);
+        Maps = SetMapsOrdered(mappings, sortOrder).ToList();
+        
         return Page();
     }
 
-    private async Task GetMappings(WireMockServiceModel model)
+    private async Task<IList<WireMockMappingModel>> GetMappings(WireMockServiceModel model)
     {
         var client = new HttpClient();
         var response = await client.GetAsync($"http://localhost:{model.Port}/__admin/mappings");
         if (!response.IsSuccessStatusCode)
-            return;
+            return Array.Empty<WireMockMappingModel>();
 
 
         var mappingString = await response.Content.ReadAsStringAsync();
-        Maps = JsonSerializer.Deserialize<WireMockMappingModel[]>(mappingString) ?? [];
-        foreach (var map in Maps)
+        var maps = JsonSerializer.Deserialize<WireMockMappingModel[]>(mappingString) ?? [];
+        foreach (var map in maps)
         {
             map.Raw = JsonSerializer.Serialize(map, new JsonSerializerOptions() { WriteIndented = true });
+        }
+
+        return maps;
+    }
+
+    private IEnumerable<WireMockMappingModel> SetMapsOrdered(IList<WireMockMappingModel> mappings, string sortOrder)
+    {
+        switch (sortOrder)
+        {
+            case "date":
+                return mappings.OrderBy(m => m.UpdatedAt);
+            case "date_desc":
+                return mappings.OrderByDescending(m => m.UpdatedAt);
+            case "title":
+                return mappings.OrderBy(m => m.Title);
+            case "title_desc":
+                return mappings.OrderByDescending(m => m.Title);
+            case "guid_desc":
+                return mappings.OrderByDescending(m => m.Guid);
+            default:
+                return mappings.OrderBy(m => m.Guid);
         }
     }
 
