@@ -1,3 +1,4 @@
+using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
 using WireMock.Server;
 
@@ -76,16 +77,16 @@ public class WireMockRepository(
                 => m.Id == serviceId);
 
         var existingMappings = service.Mappings.ToList();
-        foreach (var newMapping in newMappings)
-        {
-            if (existingMappings.Any(existingMapping => existingMapping.Guid.Equals(newMapping.Item1)))
-                continue; // skip if the mapping already exists
+        var mappingsToAdd =
+            (from newMapping in newMappings
+                where !existingMappings.Any(existingMapping
+                    => existingMapping.Guid.Equals(newMapping.Item1))
+                select new WireMockServerMapping
+                    { Guid = newMapping.Item1, Raw = newMapping.Item2 })
+            .ToList();
 
-            service.Mappings.Add(new WireMockServerMapping
-            {
-                Guid = newMapping.Item1, Raw = newMapping.Item2
-            });
-        }
+        if (mappingsToAdd.Count != 0)
+            await context.BulkInsertAsync(mappingsToAdd);
 
         await context.SaveChangesAsync();
     }
@@ -140,7 +141,10 @@ public class WireMockRepository(
         var mappingsToRemove = context.WireMockServerMapping
             .ToList()
             .Where(m => guids.Any(guid => guid.Equals(m.Guid)));
-        context.WireMockServerMapping.RemoveRange(mappingsToRemove);
+
+        await context.BulkDeleteAsync(mappingsToRemove);
+        // context.WireMockServerMapping.RemoveRange(mappingsToRemove);
+
         await context.SaveChangesAsync();
     }
 }
