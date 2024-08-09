@@ -34,8 +34,12 @@
             <td> @map.Title </td>
             <td> @map.UpdatedAt.ToString("dd.MM.yyyy HH:mm:ss") </td>
             <td>
-                <div class="d-flex">
-                    <button class="btn btn-primary me-2" data-bs-toggle="collapse" data-bs-target="#details-@map.Guid">Details and Edit</button>
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-primary me-2"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#details-@map.Guid">
+                        Details and Edit
+                    </button>
                     <form method="post" asp-page-handler="ResetMapping">
                         <input type="hidden" asp-for="@Request.Query["id"]" name="id"/>
                         <input type="hidden" asp-for="@map.Guid" name="guid"/>
@@ -63,15 +67,37 @@
     }
     </tbody>
 </table>
-<div class="d-flex flex-row-reverse">
-    <form method="post" asp-page-handler="ResetAllMappings">
-        <input type="hidden" asp-for="@Model.Request.Query["id"]" name="id"/>
-        <button type="submit" class="btn btn-danger">Reset All Mappings</button>
-    </form>
-</div>
 
+@{
+    var prevDisabled = !Model.Maps.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.Maps.HasNextPage ? "disabled" : "";
+}
+<div class="d-flex justify-content-between">
+    <div>
+        <a asp-route-id="@Model.ServiceId"
+           asp-route-sortOrder="@Model.DateSort"
+           asp-route-pageIndex="@(Model.Maps.PageIndex - 1)"
+           class="btn btn-primary @prevDisabled">
+            Previous
+        </a>
+        <a asp-route-id="@Model.ServiceId"
+           asp-route-sortOrder="@Model.DateSort"
+           asp-route-pageIndex="@(Model.Maps.PageIndex + 1)"
+           class="btn btn-primary @nextDisabled">
+            Next
+        </a>
+    </div>
+    
+    <div class="d-flex flex-row-reverse">
+        <form method="post" asp-page-handler="ResetAllMappings">
+            <input type="hidden" asp-for="@Model.Request.Query["id"]" name="id"/>
+            <button type="submit" class="btn btn-danger">Reset All Mappings</button>
+        </form>
+    </div>
+</div>
+<br/>
 <div>
-    <a asp-page="../Index">Back to List</a>
+    <a asp-page="../Index">Back to Service List</a>
 </div>
 
 <script>

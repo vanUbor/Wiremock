@@ -11,27 +11,32 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace WireMock.Pages.WireMockService;
 
-public class Mappings(IWireMockRepository Repository) : PageModel
+public class Mappings(IWireMockRepository Repository, IConfiguration Config) : PageModel
 {
     public int ServiceId { get; set; }
     public string GuidSort { get; set; }
     public string TitleSort { get; set; }
     public string DateSort { get; set; }
-    
-    [BindProperty] public IList<WireMockMappingModel> Maps { get; set; }
+
+    public PaginatedList<WireMockMappingModel> Maps { get; set; }
+
     [BindProperty] public string MapJsonContent { get; set; } = string.Empty;
-    
-    public async Task<IActionResult> OnGet(int id, string sortOrder)
+
+
+    public async Task<IActionResult> OnGet(int id, string sortOrder, int? pageIndex)
     {
         ServiceId = id;
         GuidSort = String.IsNullOrEmpty(sortOrder) ? "guid_desc" : "";
         TitleSort = sortOrder == "title" ? "title_desc" : "title";
         DateSort = sortOrder == "date" ? "date_desc" : "date";
-        
+
         var wireMockServerModel = await Repository.GetModelAsync(id);
         var mappings = await GetMappings(wireMockServerModel);
-        Maps = SetMapsOrdered(mappings, sortOrder).ToList();
-        
+
+        var maps = SetMapsOrdered(mappings, sortOrder).ToList();
+        var pageSize = Config.GetValue("PageSize", 4);
+        Maps = await PaginatedList<WireMockMappingModel>.CreateAsync(maps, pageIndex ?? 1, pageSize);
+
         return Page();
     }
 
@@ -119,7 +124,7 @@ public class Mappings(IWireMockRepository Repository) : PageModel
         var context = new StringContent(string.Empty);
         await client.PostAsync($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/reset",
             context);
-        
+
         return RedirectToPage(new { id });
     }
 }
