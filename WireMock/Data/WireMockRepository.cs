@@ -82,7 +82,11 @@ public class WireMockRepository(
                 where !existingMappings.Any(existingMapping
                     => existingMapping.Guid.Equals(newMapping.Item1))
                 select new WireMockServerMapping
-                    { Guid = newMapping.Item1, Raw = newMapping.Item2 })
+                {
+                    Guid = newMapping.Item1, 
+                    Raw = newMapping.Item2, 
+                    WireMockServerModelId = serviceId
+                })
             .ToList();
 
         if (mappingsToAdd.Count != 0)
