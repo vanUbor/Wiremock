@@ -43,12 +43,12 @@ public class Index : PageModel
         return RedirectToPage();
     }
 
-    public IActionResult OnPostStopAsync(int? id)
+    public async Task<IActionResult> OnPostStopAsync(int? id)
     {
         if (id == null)
             return NotFound($"No service with id {id} found");
 
-        _serviceOrchestrator.Stop(id.Value);
+        await Task.Run(() => _serviceOrchestrator.Stop(id.Value));
 
         return RedirectToPage();
     }

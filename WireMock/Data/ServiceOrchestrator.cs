@@ -70,7 +70,7 @@ public class ServiceOrchestrator
     /// Removes a WireMockService from the list of services.    
     /// </summary>
     /// <param name="id">The ID of the service to remove.</param>
-    public void RemoveService(int id)
+    public virtual void RemoveService(int id)
     {
         var service = _services.Single(i => i.Id.Equals(id.ToString()
             , StringComparison.InvariantCultureIgnoreCase));
@@ -81,7 +81,7 @@ public class ServiceOrchestrator
     /// Stops the WireMockService with the specified ID.
     /// </summary>
     /// <param name="id">The ID of the service.</param>
-    internal void Stop(int id)
+    public virtual void Stop(int id)
     {
         var service = _services.Single(i => i.Id.Equals(id.ToString()
             , StringComparison.InvariantCultureIgnoreCase));
@@ -94,7 +94,7 @@ public class ServiceOrchestrator
     /// </summary>
     /// <param name="id">The ID of the service.</param>
     /// <returns>Task</returns>
-    internal async Task StartServiceAsync(int id)
+    public virtual async Task StartServiceAsync(int id)
     {
         var service = _services.Single(i => i.Id.Equals(id.ToString()
             , StringComparison.InvariantCultureIgnoreCase));
