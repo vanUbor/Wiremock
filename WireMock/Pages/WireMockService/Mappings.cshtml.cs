@@ -1,6 +1,8 @@
+using System.Runtime.InteropServices.JavaScript;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WireMock.Data;
@@ -9,31 +11,70 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace WireMock.Pages.WireMockService;
 
-public class Mappings(IWireMockRepository Repository) : PageModel
+public class Mappings(IHttpClientFactory clientFactory, IWireMockRepository Repository, IConfiguration Config) 
+    : PageModel
 {
-    [BindProperty] public WireMockMappingModel[] Maps { get; set; } = [];
+    public int ServiceId { get; set; }
+    public string GuidSort { get; set; }
+    public string TitleSort { get; set; }
+    public string DateSort { get; set; }
+
+    public PaginatedList<WireMockMappingModel> Maps { get; set; }
+
     [BindProperty] public string MapJsonContent { get; set; } = string.Empty;
 
-    public async Task<IActionResult> OnGet(int id)
+    private HttpClient _client = clientFactory.CreateClient();
+    public async Task<IActionResult> OnGet(int id, string sortOrder, int? pageIndex)
     {
-        var wireMockServerModel = await Repository.GetModelAsync(id);
-        await GetMappings(wireMockServerModel);
+        
+        ServiceId = id;
+        GuidSort = String.IsNullOrEmpty(sortOrder) ? "guid_desc" : "";
+        TitleSort = sortOrder == "title" ? "title_desc" : "title";
+        DateSort = sortOrder == "date" ? "date_desc" : "date";
+
+        var serviceModel = await Repository.GetModelAsync(id);
+        var mappings = await GetMappings(serviceModel);
+
+        var maps = SetMapsOrdered(mappings, sortOrder).ToList();
+        var pageSize = Config.GetValue("PageSize", 4);
+        Maps = PaginatedList<WireMockMappingModel>.CreatePage(maps, pageIndex ?? 1, pageSize);
+
         return Page();
     }
 
-    private async Task GetMappings(WireMockServiceModel model)
+    private async Task<IList<WireMockMappingModel>> GetMappings(WireMockServiceModel model)
     {
-        var client = new HttpClient();
-        var response = await client.GetAsync($"http://localhost:{model.Port}/__admin/mappings");
+        var response = await _client.GetAsync($"http://localhost:{model.Port}/__admin/mappings");
         if (!response.IsSuccessStatusCode)
-            return;
+            return Array.Empty<WireMockMappingModel>();
 
 
         var mappingString = await response.Content.ReadAsStringAsync();
-        Maps = JsonSerializer.Deserialize<WireMockMappingModel[]>(mappingString) ?? [];
-        foreach (var map in Maps)
+        var maps = JsonSerializer.Deserialize<WireMockMappingModel[]>(mappingString) ?? [];
+        foreach (var map in maps)
         {
             map.Raw = JsonSerializer.Serialize(map, new JsonSerializerOptions() { WriteIndented = true });
+        }
+
+        return maps;
+    }
+
+    private IEnumerable<WireMockMappingModel> SetMapsOrdered(IList<WireMockMappingModel> mappings, string sortOrder)
+    {
+        switch (sortOrder)
+        {
+            case "date":
+                return mappings.OrderBy(m => m.UpdatedAt);
+            case "date_desc":
+                return mappings.OrderByDescending(m => m.UpdatedAt);
+            case "title":
+                return mappings.OrderBy(m => m.Title);
+            case "title_desc":
+                return mappings.OrderByDescending(m => m.Title);
+            case "guid_desc":
+                return mappings.OrderByDescending(m => m.Guid);
+            default:
+                return mappings.OrderBy(m => m.Guid);
         }
     }
 
@@ -41,7 +82,6 @@ public class Mappings(IWireMockRepository Repository) : PageModel
     {
         var model = JsonSerializer.Deserialize<WireMockMappingModel>(raw);
         var wireMockServerModel = await Repository.GetModelAsync(int.Parse(id));
-        var client = new HttpClient();
         var content = JsonContent.Create(model);
         var request = new HttpRequestMessage()
         {
@@ -49,7 +89,7 @@ public class Mappings(IWireMockRepository Repository) : PageModel
             RequestUri = new Uri($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/{guid}"),
             Content = content
         };
-        var response = await client.SendAsync(request);
+        var response = await _client.SendAsync(request);
         if (!response.IsSuccessStatusCode)
             return RedirectToPage(new { id });
 
@@ -65,13 +105,12 @@ public class Mappings(IWireMockRepository Repository) : PageModel
     public async Task<IActionResult> OnPostResetMapping(string id, string guid)
     {
         var wireMockServerModel = await Repository.GetModelAsync(int.Parse(id));
-        var client = new HttpClient();
         var request = new HttpRequestMessage()
         {
             Method = HttpMethod.Delete,
             RequestUri = new Uri($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/{guid}"),
         };
-        var response = await client.SendAsync(request);
+        var response = await _client.SendAsync(request);
         if (response.IsSuccessStatusCode)
             return RedirectToPage(new { id });
         return RedirectToPage("../Error");
@@ -80,11 +119,10 @@ public class Mappings(IWireMockRepository Repository) : PageModel
     public async Task<IActionResult> OnPostResetAllMappings(string id)
     {
         var wireMockServerModel = await Repository.GetModelAsync(int.Parse(id));
-        var client = new HttpClient();
         var context = new StringContent(string.Empty);
-        await client.PostAsync($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/reset",
+        await _client.PostAsync($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/reset",
             context);
-        
+
         return RedirectToPage(new { id });
     }
 }

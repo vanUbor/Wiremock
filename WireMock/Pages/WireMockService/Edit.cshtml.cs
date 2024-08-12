@@ -46,7 +46,7 @@ namespace WireMock.Pages.WireMockService
                 return NotFound();
             }
 
-            return RedirectToPage("../Server");
+            return RedirectToPage("../Index");
         }
     }
 }

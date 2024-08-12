@@ -1,19 +1,55 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using WireMock.Data;
+using WireMock.Server;
 
 namespace WireMock.Pages;
 
-public class IndexModel : PageModel
+public class Index : PageModel
 {
-    private readonly ILogger<IndexModel> _logger;
+    [BindProperty] public IList<WireMock.Server.WireMockService> Servers { get; set; } = default!;
 
-    public IndexModel(ILogger<IndexModel> logger)
+    private readonly IWireMockRepository _repository;
+    private readonly ServiceOrchestrator _serviceOrchestrator;
+
+    public Index(IWireMockRepository repository, ServiceOrchestrator serviceOrchestrator)
     {
-        _logger = logger;
+        _repository = repository;
+        _serviceOrchestrator = serviceOrchestrator;
     }
 
-    public IActionResult OnGet()
+    public async Task<IActionResult> OnGet()
     {
-        return RedirectToPage("Server");
+        Servers = await _serviceOrchestrator.GetOrCreateServicesAsync();
+        return Page();
+    }
+
+    public async Task<IActionResult> OnPostDeleteAsync(int id)
+    {
+        await _repository.RemoveModelAsync(id);
+        _serviceOrchestrator.Stop(id);
+        _serviceOrchestrator.RemoveService(id);
+        
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostStartAsync(int? id)
+    {
+        if (id == null)
+            return NotFound($"No service with id {id} found");
+
+        await _serviceOrchestrator.StartServiceAsync(id.Value);
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostStopAsync(int? id)
+    {
+        if (id == null)
+            return NotFound($"No service with id {id} found");
+
+        await Task.Run(() => _serviceOrchestrator.Stop(id.Value));
+
+        return RedirectToPage();
     }
 }

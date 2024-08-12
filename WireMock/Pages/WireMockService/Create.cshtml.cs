@@ -32,7 +32,7 @@ namespace WireMock.Pages.WireMockService
 
             await _repository.AddModelAsync(WireMockServiceModel);
 
-            return RedirectToPage("../Server");
+            return RedirectToPage("../Index");
         }
     }
 }
