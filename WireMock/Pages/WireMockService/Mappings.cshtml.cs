@@ -35,7 +35,7 @@ public class Mappings(IWireMockRepository Repository, IConfiguration Config) : P
 
         var maps = SetMapsOrdered(mappings, sortOrder).ToList();
         var pageSize = Config.GetValue("PageSize", 4);
-        Maps = await PaginatedList<WireMockMappingModel>.CreateAsync(maps, pageIndex ?? 1, pageSize);
+        Maps = PaginatedList<WireMockMappingModel>.CreatePage(maps, pageIndex ?? 1, pageSize);
 
         return Page();
     }

@@ -76,13 +76,13 @@
     <div>
         <a asp-route-id="@Model.ServiceId"
            asp-route-sortOrder="@Model.DateSort"
-           asp-route-pageIndex="@(Model.Maps.PageIndex - 1)"
+           asp-route-pageIndex="@(Model.Maps.Page - 1)"
            class="btn btn-primary @prevDisabled">
             Previous
         </a>
         <a asp-route-id="@Model.ServiceId"
            asp-route-sortOrder="@Model.DateSort"
-           asp-route-pageIndex="@(Model.Maps.PageIndex + 1)"
+           asp-route-pageIndex="@(Model.Maps.Page + 1)"
            class="btn btn-primary @nextDisabled">
             Next
         </a>
