@@ -11,7 +11,8 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace WireMock.Pages.WireMockService;
 
-public class Mappings(IWireMockRepository Repository, IConfiguration Config) : PageModel
+public class Mappings(IHttpClientFactory clientFactory, IWireMockRepository Repository, IConfiguration Config) 
+    : PageModel
 {
     public int ServiceId { get; set; }
     public string GuidSort { get; set; }
@@ -22,16 +23,17 @@ public class Mappings(IWireMockRepository Repository, IConfiguration Config) : P
 
     [BindProperty] public string MapJsonContent { get; set; } = string.Empty;
 
-
+    private HttpClient _client = clientFactory.CreateClient();
     public async Task<IActionResult> OnGet(int id, string sortOrder, int? pageIndex)
     {
+        
         ServiceId = id;
         GuidSort = String.IsNullOrEmpty(sortOrder) ? "guid_desc" : "";
         TitleSort = sortOrder == "title" ? "title_desc" : "title";
         DateSort = sortOrder == "date" ? "date_desc" : "date";
 
-        var wireMockServerModel = await Repository.GetModelAsync(id);
-        var mappings = await GetMappings(wireMockServerModel);
+        var serviceModel = await Repository.GetModelAsync(id);
+        var mappings = await GetMappings(serviceModel);
 
         var maps = SetMapsOrdered(mappings, sortOrder).ToList();
         var pageSize = Config.GetValue("PageSize", 4);
@@ -42,8 +44,7 @@ public class Mappings(IWireMockRepository Repository, IConfiguration Config) : P
 
     private async Task<IList<WireMockMappingModel>> GetMappings(WireMockServiceModel model)
     {
-        var client = new HttpClient();
-        var response = await client.GetAsync($"http://localhost:{model.Port}/__admin/mappings");
+        var response = await _client.GetAsync($"http://localhost:{model.Port}/__admin/mappings");
         if (!response.IsSuccessStatusCode)
             return Array.Empty<WireMockMappingModel>();
 
@@ -81,7 +82,6 @@ public class Mappings(IWireMockRepository Repository, IConfiguration Config) : P
     {
         var model = JsonSerializer.Deserialize<WireMockMappingModel>(raw);
         var wireMockServerModel = await Repository.GetModelAsync(int.Parse(id));
-        var client = new HttpClient();
         var content = JsonContent.Create(model);
         var request = new HttpRequestMessage()
         {
@@ -89,7 +89,7 @@ public class Mappings(IWireMockRepository Repository, IConfiguration Config) : P
             RequestUri = new Uri($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/{guid}"),
             Content = content
         };
-        var response = await client.SendAsync(request);
+        var response = await _client.SendAsync(request);
         if (!response.IsSuccessStatusCode)
             return RedirectToPage(new { id });
 
@@ -105,13 +105,12 @@ public class Mappings(IWireMockRepository Repository, IConfiguration Config) : P
     public async Task<IActionResult> OnPostResetMapping(string id, string guid)
     {
         var wireMockServerModel = await Repository.GetModelAsync(int.Parse(id));
-        var client = new HttpClient();
         var request = new HttpRequestMessage()
         {
             Method = HttpMethod.Delete,
             RequestUri = new Uri($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/{guid}"),
         };
-        var response = await client.SendAsync(request);
+        var response = await _client.SendAsync(request);
         if (response.IsSuccessStatusCode)
             return RedirectToPage(new { id });
         return RedirectToPage("../Error");
@@ -120,9 +119,8 @@ public class Mappings(IWireMockRepository Repository, IConfiguration Config) : P
     public async Task<IActionResult> OnPostResetAllMappings(string id)
     {
         var wireMockServerModel = await Repository.GetModelAsync(int.Parse(id));
-        var client = new HttpClient();
         var context = new StringContent(string.Empty);
-        await client.PostAsync($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/reset",
+        await _client.PostAsync($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/reset",
             context);
 
         return RedirectToPage(new { id });

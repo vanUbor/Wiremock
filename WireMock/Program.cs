@@ -9,6 +9,7 @@ builder.Logging.AddConsole();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddHttpClient();
 builder.Services.AddSingleton<IWireMockRepository, WireMockRepository>();
 builder.Services.AddSingleton<IDbContextFactory<WireMockServerContext>, DbContextFactory>();
 builder.Services.AddSingleton<ServiceOrchestrator>();
