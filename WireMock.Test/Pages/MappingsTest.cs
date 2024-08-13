@@ -16,6 +16,7 @@ public class MappingsTest
     private IHttpClientFactory clientFactory;
     private IWireMockRepository repository;
     private Mock<HttpMessageHandler> handlerMock;
+    private ServiceOrchestrator orchestrator;
 
     [TestInitialize]
     public void Setup()
@@ -52,6 +53,11 @@ public class MappingsTest
                 Name = "UnitTestServiceModel",
                 Port = 8081
             });
+        var list = new Mock<WireMockServiceList>();
+        var orchestratorMock = new Mock<ServiceOrchestrator>(list.Object, repository);
+        orchestratorMock.Setup(o => o.IsRunning(42))
+            .Returns(true);
+        orchestrator = orchestratorMock.Object;
     }
 
 
@@ -70,8 +76,8 @@ public class MappingsTest
         configSectionMock.SetupGet(m => m.Value).Returns("42");
         configMock.Setup(m => m.GetSection("PageSize"))
             .Returns(configSectionMock.Object);
-        
-        var mappings = new Mappings(clientFactory, repository, configMock.Object);
+
+        var mappings = new Mappings(clientFactory, orchestrator, repository, configMock.Object);
 
         var serviceId = 42;
         var pageIndex = 1;
@@ -83,6 +89,32 @@ public class MappingsTest
         Assert.IsNotNull(actionResult);
     }
 
+    [TestMethod]
+    public async Task OnGet_WithNoServiceRunningTest()
+    {
+        // Arrange
+        const string sortOrder = "date";
+        var configMock = new Mock<IConfiguration>();
+        var configSectionMock = new Mock<IConfigurationSection>();
+        configSectionMock.SetupGet(m => m.Value).Returns("42");
+        configMock.Setup(m => m.GetSection("PageSize"))
+            .Returns(configSectionMock.Object);
+
+        var mappings = new Mappings(clientFactory, orchestrator, repository, configMock.Object);
+
+        const int serviceId = 69;
+        const int pageIndex = 1;
+
+        // Act
+        var actionResult = await mappings.OnGet(serviceId, sortOrder, pageIndex);
+
+        // Assert
+        Assert.IsNotNull(actionResult);
+        Assert.IsInstanceOfType(actionResult, typeof(RedirectToPageResult));
+        var redirectResult = actionResult as RedirectToPageResult;
+        Assert.AreEqual("../Error", redirectResult?.PageName);
+    }
+    
     [TestMethod]
     public async Task OnPostSaveAndUpdateTest()
     {
@@ -103,7 +135,7 @@ public class MappingsTest
         repositoryMock.Setup(x => x.UpdateMappingAsync(It.IsAny<Guid>(), It.IsAny<string>()))
             .Returns(Task.CompletedTask);
 
-        var mappings = new Mappings(clientFactory, repositoryMock.Object, configMock.Object);
+        var mappings = new Mappings(clientFactory, orchestrator, repositoryMock.Object, configMock.Object);
 
         string serviceId = "42";
         string guid = Guid.NewGuid().ToString();
@@ -137,7 +169,7 @@ public class MappingsTest
                 Port = 8081
             });
 
-        var mappings = new Mappings(clientFactory, repositoryMock.Object, configMock.Object);
+        var mappings = new Mappings(clientFactory, orchestrator, repositoryMock.Object, configMock.Object);
 
         var serviceId = "42";
         var guid = new Guid().ToString();
@@ -167,7 +199,7 @@ public class MappingsTest
                 Port = 8081
             });
 
-        var mappings = new Mappings(clientFactory, repositoryMock.Object, configMock.Object);
+        var mappings = new Mappings(clientFactory, orchestrator, repositoryMock.Object, configMock.Object);
         var serviceId = "42";
 
         // Act
