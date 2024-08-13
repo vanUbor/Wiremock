@@ -159,7 +159,7 @@ public class ServerOrchestratorTest
     [DataRow(69, false)]
     public void IsRunning_Successful(int serviceId, bool isRunning)
     {
-        var model = new WireMockServiceModel()
+        var model = new WireMockServiceModel
         {
             Id = 42,
             Name = "UnitTestModel"

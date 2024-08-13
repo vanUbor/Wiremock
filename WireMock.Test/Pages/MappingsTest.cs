@@ -93,7 +93,7 @@ public class MappingsTest
     public async Task OnGet_WithNoServiceRunningTest()
     {
         // Arrange
-        var sortOrder = "date";
+        const string sortOrder = "date";
         var configMock = new Mock<IConfiguration>();
         var configSectionMock = new Mock<IConfigurationSection>();
         configSectionMock.SetupGet(m => m.Value).Returns("42");
@@ -102,8 +102,8 @@ public class MappingsTest
 
         var mappings = new Mappings(clientFactory, orchestrator, repository, configMock.Object);
 
-        var serviceId = 69;
-        var pageIndex = 1;
+        const int serviceId = 69;
+        const int pageIndex = 1;
 
         // Act
         var actionResult = await mappings.OnGet(serviceId, sortOrder, pageIndex);
