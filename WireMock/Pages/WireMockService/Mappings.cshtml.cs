@@ -26,7 +26,9 @@ public class Mappings(IHttpClientFactory clientFactory,
     public async Task<IActionResult> OnGet(int id, string sortOrder, int? pageIndex)
     {
         if (!serviceOrchestrator.IsRunning(id))
+        {
             return RedirectToPage("../Error");
+        }
         
         ServiceId = id;
         GuidSort = String.IsNullOrEmpty(sortOrder) ? "guid_desc" : "";
