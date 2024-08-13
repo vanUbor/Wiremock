@@ -1,4 +1,5 @@
-﻿using NSubstitute;
+﻿using Moq;
+using NSubstitute;
 using WireMock.Data;
 using WireMock.Server;
 
@@ -151,5 +152,27 @@ public class ServerOrchestratorTest
         // Assert
         var service = _serviceList!.Single(s => s.Id == 1.ToString());
         Assert.IsTrue(service.IsRunning);
+    }
+
+    [TestMethod]
+    [DataRow(42, true)]
+    [DataRow(69, false)]
+    public void IsRunning_Successful(int serviceId, bool isRunning)
+    {
+        var model = new WireMockServiceModel()
+        {
+            Id = 42,
+            Name = "UnitTestModel"
+        };
+        var serviceMock = new Mock<WireMockService>(model);
+        serviceMock.SetupGet(s => s.IsRunning).Returns(isRunning);
+        _serviceList!.Add(serviceMock.Object);
+        var orchestrator = new ServiceOrchestrator(_serviceList!, _repo!);
+        
+        // Act
+        var runns = orchestrator.IsRunning(serviceId);
+        
+        // Assert
+        Assert.AreEqual(isRunning, runns);
     }
 }

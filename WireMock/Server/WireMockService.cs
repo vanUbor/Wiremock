@@ -12,7 +12,7 @@ public class WireMockService(WireMockServiceModel model)
 {
     public string Id => model.Id.ToString();
     public string Name => model.Name;
-    public bool IsRunning => _server?.IsStarted ?? false;
+    public virtual bool IsRunning => _server?.IsStarted ?? false;
 
     public EventHandler<ChangedMappingsArgs>? MappingsAdded;
     public EventHandler<ChangedMappingsArgs>? MappingsRemoved;
