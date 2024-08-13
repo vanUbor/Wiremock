@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace WireMock.Pages.WireMockService
+﻿namespace WireMock.Pages.WireMockService
 {
     public class PaginatedList<T> : List<T>
     {

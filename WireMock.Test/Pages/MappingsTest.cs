@@ -16,10 +16,12 @@ public class MappingsTest
     private IHttpClientFactory clientFactory;
     private IWireMockRepository repository;
     private Mock<HttpMessageHandler> handlerMock;
+    private ServiceOrchestrator orchestrator;
 
     [TestInitialize]
     public void Setup()
     {
+        
         handlerMock = new Mock<HttpMessageHandler>();
         var response = new HttpResponseMessage
         {
@@ -52,6 +54,8 @@ public class MappingsTest
                 Name = "UnitTestServiceModel",
                 Port = 8081
             });
+        var list = new Mock<WireMockServiceList>();
+        orchestrator = new Mock<ServiceOrchestrator>(list.Object, repository).Object;
     }
 
 
@@ -71,7 +75,7 @@ public class MappingsTest
         configMock.Setup(m => m.GetSection("PageSize"))
             .Returns(configSectionMock.Object);
         
-        var mappings = new Mappings(clientFactory, repository, configMock.Object);
+        var mappings = new Mappings(clientFactory, orchestrator, repository, configMock.Object);
 
         var serviceId = 42;
         var pageIndex = 1;
@@ -103,7 +107,7 @@ public class MappingsTest
         repositoryMock.Setup(x => x.UpdateMappingAsync(It.IsAny<Guid>(), It.IsAny<string>()))
             .Returns(Task.CompletedTask);
 
-        var mappings = new Mappings(clientFactory, repositoryMock.Object, configMock.Object);
+        var mappings = new Mappings(clientFactory, orchestrator, repositoryMock.Object, configMock.Object);
 
         string serviceId = "42";
         string guid = Guid.NewGuid().ToString();
@@ -137,7 +141,7 @@ public class MappingsTest
                 Port = 8081
             });
 
-        var mappings = new Mappings(clientFactory, repositoryMock.Object, configMock.Object);
+        var mappings = new Mappings(clientFactory, orchestrator, repositoryMock.Object, configMock.Object);
 
         var serviceId = "42";
         var guid = new Guid().ToString();
@@ -167,7 +171,7 @@ public class MappingsTest
                 Port = 8081
             });
 
-        var mappings = new Mappings(clientFactory, repositoryMock.Object, configMock.Object);
+        var mappings = new Mappings(clientFactory, orchestrator, repositoryMock.Object, configMock.Object);
         var serviceId = "42";
 
         // Act

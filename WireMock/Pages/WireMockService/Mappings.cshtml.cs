@@ -1,17 +1,16 @@
-using System.Runtime.InteropServices.JavaScript;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using WireMock.Data;
 using WireMock.Server;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace WireMock.Pages.WireMockService;
 
-public class Mappings(IHttpClientFactory clientFactory, IWireMockRepository Repository, IConfiguration Config) 
+public class Mappings(IHttpClientFactory clientFactory,
+    ServiceOrchestrator serviceOrchestrator,
+    IWireMockRepository Repository, 
+    IConfiguration Config) 
     : PageModel
 {
     public int ServiceId { get; set; }
@@ -26,6 +25,8 @@ public class Mappings(IHttpClientFactory clientFactory, IWireMockRepository Repo
     private HttpClient _client = clientFactory.CreateClient();
     public async Task<IActionResult> OnGet(int id, string sortOrder, int? pageIndex)
     {
+        if (!serviceOrchestrator.IsRunning(id))
+            return RedirectToPage("../Error");
         
         ServiceId = id;
         GuidSort = String.IsNullOrEmpty(sortOrder) ? "guid_desc" : "";
