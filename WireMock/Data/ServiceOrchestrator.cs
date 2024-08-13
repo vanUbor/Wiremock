@@ -137,7 +137,7 @@ public class ServiceOrchestrator
     /// Checks if a service with the provided service Id is currently running
     /// </summary>
     /// <param name="serviceId">the service id of the service which gets checked</param>
-    public bool IsRunning(int serviceId)
+    public virtual bool IsRunning(int serviceId)
     {
         var service = _services?.FirstOrDefault(s => s.Id.Equals(serviceId.ToString()));
         return service?.IsRunning ?? false;

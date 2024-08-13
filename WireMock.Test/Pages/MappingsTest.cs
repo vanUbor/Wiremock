@@ -21,7 +21,6 @@ public class MappingsTest
     [TestInitialize]
     public void Setup()
     {
-        
         handlerMock = new Mock<HttpMessageHandler>();
         var response = new HttpResponseMessage
         {
@@ -55,7 +54,10 @@ public class MappingsTest
                 Port = 8081
             });
         var list = new Mock<WireMockServiceList>();
-        orchestrator = new Mock<ServiceOrchestrator>(list.Object, repository).Object;
+        var orchestratorMock = new Mock<ServiceOrchestrator>(list.Object, repository);
+        orchestratorMock.Setup(o => o.IsRunning(42))
+            .Returns(true);
+        orchestrator = orchestratorMock.Object;
     }
 
 
@@ -74,7 +76,7 @@ public class MappingsTest
         configSectionMock.SetupGet(m => m.Value).Returns("42");
         configMock.Setup(m => m.GetSection("PageSize"))
             .Returns(configSectionMock.Object);
-        
+
         var mappings = new Mappings(clientFactory, orchestrator, repository, configMock.Object);
 
         var serviceId = 42;
@@ -87,6 +89,32 @@ public class MappingsTest
         Assert.IsNotNull(actionResult);
     }
 
+    [TestMethod]
+    public async Task OnGet_WithNoServiceRunningTest()
+    {
+        // Arrange
+        var sortOrder = "date";
+        var configMock = new Mock<IConfiguration>();
+        var configSectionMock = new Mock<IConfigurationSection>();
+        configSectionMock.SetupGet(m => m.Value).Returns("42");
+        configMock.Setup(m => m.GetSection("PageSize"))
+            .Returns(configSectionMock.Object);
+
+        var mappings = new Mappings(clientFactory, orchestrator, repository, configMock.Object);
+
+        var serviceId = 69;
+        var pageIndex = 1;
+
+        // Act
+        var actionResult = await mappings.OnGet(serviceId, sortOrder, pageIndex);
+
+        // Assert
+        Assert.IsNotNull(actionResult);
+        Assert.IsInstanceOfType(actionResult, typeof(RedirectToPageResult));
+        var redirectResult = actionResult as RedirectToPageResult;
+        Assert.AreEqual("../Error", redirectResult?.PageName);
+    }
+    
     [TestMethod]
     public async Task OnPostSaveAndUpdateTest()
     {
