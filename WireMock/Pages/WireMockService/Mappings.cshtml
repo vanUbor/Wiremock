@@ -8,26 +8,25 @@
 <table class="table">
     <thead>
     <tr>
-        <th>
+        <th id="guid">
             <a asp-route-id="@Model.ServiceId" asp-route-sortOrder="@Model.GuidSort">
-                @Html.DisplayNameFor(model => model.Maps[0].Guid)
+                @Html.DisplayNameFor(model => model!.Maps![0].Guid)
             </a>
         </th>
-        <th>
+        <th id="title">
             <a asp-route-id="@Model.ServiceId" asp-route-sortOrder="@Model.TitleSort">
-                @Html.DisplayNameFor(model => model.Maps[0].Title)
+                @Html.DisplayNameFor(model => model!.Maps![0].Title)
             </a>
         </th>
-        <th>
+        <th id="date">
             <a asp-route-id="@Model.ServiceId" asp-route-sortOrder="@Model.DateSort">
-                @Html.DisplayNameFor(model => model.Maps[0].UpdatedAt)
+                @Html.DisplayNameFor(model => model!.Maps![0].UpdatedAt)
             </a>
         </th>
-        <th></th>
     </tr>
     </thead>
     <tbody>
-    @foreach (var map in Model.Maps)
+    @foreach (var map in Model!.Maps!)
     {
         <tr>
             <th scope="row">@map.Guid</th>
