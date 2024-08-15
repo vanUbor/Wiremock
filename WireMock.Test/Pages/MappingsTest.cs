@@ -13,15 +13,15 @@ namespace WireMock.Test.Pages;
 [TestClass]
 public class MappingsTest
 {
-    private IHttpClientFactory clientFactory;
-    private IWireMockRepository repository;
-    private Mock<HttpMessageHandler> handlerMock;
-    private ServiceOrchestrator orchestrator;
+    private IHttpClientFactory? _clientFactory;
+    private IWireMockRepository? _repository;
+    private Mock<HttpMessageHandler>? _handlerMock;
+    private ServiceOrchestrator? _orchestrator;
 
     [TestInitialize]
     public void Setup()
     {
-        handlerMock = new Mock<HttpMessageHandler>();
+        _handlerMock = new Mock<HttpMessageHandler>();
         var response = new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.OK,
@@ -31,7 +31,7 @@ public class MappingsTest
                                         "\"Request\" : null}]"),
         };
 
-        handlerMock.Protected()
+        _handlerMock.Protected()
             .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
                 ItExpr.IsAny<HttpRequestMessage>(),
@@ -40,24 +40,24 @@ public class MappingsTest
             .ReturnsAsync(response)
             .Verifiable();
 
-        var httpClient = new HttpClient(handlerMock.Object);
+        var httpClient = new HttpClient(_handlerMock.Object);
         var httpClientFactoryMock = new Mock<IHttpClientFactory>();
         httpClientFactoryMock.Setup(_ => _.CreateClient(It.IsAny<string>()))
             .Returns(httpClient);
-        clientFactory = httpClientFactoryMock.Object;
+        _clientFactory = httpClientFactoryMock.Object;
 
-        repository = Substitute.For<IWireMockRepository>();
-        repository.GetModelAsync(Arg.Any<int>()).ReturnsForAnyArgs(
+        _repository = Substitute.For<IWireMockRepository>();
+        _repository.GetModelAsync(Arg.Any<int>()).ReturnsForAnyArgs(
             new WireMockServiceModel()
             {
                 Name = "UnitTestServiceModel",
                 Port = 8081
             });
         var list = new Mock<WireMockServiceList>();
-        var orchestratorMock = new Mock<ServiceOrchestrator>(list.Object, repository);
+        var orchestratorMock = new Mock<ServiceOrchestrator>(list.Object, _repository);
         orchestratorMock.Setup(o => o.IsRunning(42))
             .Returns(true);
-        orchestrator = orchestratorMock.Object;
+        _orchestrator = orchestratorMock.Object;
     }
 
 
@@ -77,7 +77,7 @@ public class MappingsTest
         configMock.Setup(m => m.GetSection("PageSize"))
             .Returns(configSectionMock.Object);
 
-        var mappings = new Mappings(clientFactory, orchestrator, repository, configMock.Object);
+        var mappings = new Mappings(_clientFactory, _orchestrator, _repository, configMock.Object);
 
         var serviceId = 42;
         var pageIndex = 1;
@@ -100,7 +100,7 @@ public class MappingsTest
         configMock.Setup(m => m.GetSection("PageSize"))
             .Returns(configSectionMock.Object);
 
-        var mappings = new Mappings(clientFactory, orchestrator, repository, configMock.Object);
+        var mappings = new Mappings(_clientFactory, _orchestrator, _repository, configMock.Object);
 
         const int serviceId = 69;
         const int pageIndex = 1;
@@ -135,7 +135,7 @@ public class MappingsTest
         repositoryMock.Setup(x => x.UpdateMappingAsync(It.IsAny<Guid>(), It.IsAny<string>()))
             .Returns(Task.CompletedTask);
 
-        var mappings = new Mappings(clientFactory, orchestrator, repositoryMock.Object, configMock.Object);
+        var mappings = new Mappings(_clientFactory, _orchestrator, repositoryMock.Object, configMock.Object);
 
         string serviceId = "42";
         string guid = Guid.NewGuid().ToString();
@@ -169,10 +169,10 @@ public class MappingsTest
                 Port = 8081
             });
 
-        var mappings = new Mappings(clientFactory, orchestrator, repositoryMock.Object, configMock.Object);
+        var mappings = new Mappings(_clientFactory, _orchestrator, repositoryMock.Object, configMock.Object);
 
         var serviceId = "42";
-        var guid = new Guid().ToString();
+        var guid = Guid.NewGuid().ToString();
 
         // Act
         var actionResult = await mappings.OnPostResetMapping(serviceId, guid);
@@ -199,7 +199,7 @@ public class MappingsTest
                 Port = 8081
             });
 
-        var mappings = new Mappings(clientFactory, orchestrator, repositoryMock.Object, configMock.Object);
+        var mappings = new Mappings(_clientFactory, _orchestrator, repositoryMock.Object, configMock.Object);
         var serviceId = "42";
 
         // Act

@@ -14,15 +14,15 @@ public class Mappings(IHttpClientFactory clientFactory,
     : PageModel
 {
     public int ServiceId { get; set; }
-    public string GuidSort { get; set; }
-    public string TitleSort { get; set; }
-    public string DateSort { get; set; }
+    public string? GuidSort { get; set; }
+    public string? TitleSort { get; set; }
+    public string? DateSort { get; set; }
 
-    public PaginatedList<WireMockMappingModel> Maps { get; set; }
+    public PaginatedList<WireMockMappingModel>? Maps { get; set; }
 
     [BindProperty] public string MapJsonContent { get; set; } = string.Empty;
 
-    private HttpClient _client = clientFactory.CreateClient();
+    private readonly HttpClient _client = clientFactory.CreateClient();
     public async Task<IActionResult> OnGet(int id, string sortOrder, int? pageIndex)
     {
         if (!serviceOrchestrator.IsRunning(id))

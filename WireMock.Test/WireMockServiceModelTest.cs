@@ -9,7 +9,6 @@ public class WireMockServiceModelTest
     public void ToSettingsTest()
     {
         // Arrange
-        var name = "TestModel";
         var url = "ProxyUrl";
         var saveMappingsForStatusCodePattern = "xxx";
         var saveMappingToFile = true;
