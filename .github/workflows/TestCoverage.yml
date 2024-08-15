@@ -35,9 +35,6 @@ jobs:
         /p:Exclude="[*]WireMock.Migrations.*" \
         /p:CoverletOutputFormat=opencover
 
-    - name: Generate Test Report
-      run: reportgenerator "-reports:**/coverage.opencover.xml" "-targetdir:coverage" -reporttypes:"Cobertura"
-
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4.0.1
       with:
