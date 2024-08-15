@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{CBB5
 		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
 		codecov.yml = codecov.yml
 		README.md = README.md
+		.github\workflows\qodana_code_quality.yml = .github\workflows\qodana_code_quality.yml
 	EndProjectSection
 EndProject
 Global
