@@ -3,7 +3,7 @@ name: SonarCloud
 on: [push]
 
 jobs:
-  build:
+  sonar:
 
     runs-on: ubuntu-latest
 

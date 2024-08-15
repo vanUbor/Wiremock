@@ -6,7 +6,7 @@ name: Test Coverage
 on: [push]
 
 jobs:
-  build:
+  codecov:
 
     runs-on: ubuntu-latest
 

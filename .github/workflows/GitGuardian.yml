@@ -6,7 +6,7 @@ name: GitGuard
 on: [push]
 
 jobs:
-  build:
+  gitguard:
 
     runs-on: ubuntu-latest
 
