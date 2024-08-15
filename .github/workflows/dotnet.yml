@@ -15,6 +15,12 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
+
+    - name: Install Sonar tools
+      run: |
+        dotnet tool install --global dotnet-sonarscanner
+        dotnet tool install --global dotnet-reportgenerator-globaltool
+        echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
     
     - name: GitGuardian scan
       uses: GitGuardian/ggshield/actions/secret@767bd328b41e03450690072adca495c5b78f2c9c
@@ -43,11 +49,20 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     
+    - name: Sonar prepare
+      run: dotnet sonarscanner begin /k:"vanUbor_Wiremock" /o:"vanUbor" /d:sonar.login="${secrets.SONAR_TOKEN}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
+    
     - name: Build
       run: dotnet build --no-restore
     
     - name: Test
-      run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:Exclude="[*]WireMock.Migrations.*" /p:CoverletOutputFormat=cobertura
+      run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:Exclude="[*]WireMock.Migrations.*" /p:CoverletOutputFormat=opencover
+
+    - name: Generate Test Report
+      run: reportgenerator "-reports:**/coverage.opencover.xml" "-targetdir:coverage" -reporttypes:"Cobertura"
+  
+    - name: Sonar end
+      run: dotnet sonarscanner end /d:sonar.login="${SONAR_TOKEN}"
 
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4.0.1
