@@ -30,9 +30,9 @@ jobs:
     
     - name: Test
       run: |
-        dotnet test --no-build --verbosity normal 
-        /p:CollectCoverage=true 
-        /p:Exclude="[*]WireMock.Migrations.*" 
+        dotnet test --no-build --verbosity normal \
+        /p:CollectCoverage=true \
+        /p:Exclude="[*]WireMock.Migrations.*" \
         /p:CoverletOutputFormat=opencover
 
     - name: Generate Test Report
