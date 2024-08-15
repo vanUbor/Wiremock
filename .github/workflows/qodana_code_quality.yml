@@ -16,7 +16,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: 'Qodana Scan'
-        uses: JetBrains/qodana-action@v2024.1
+        uses: JetBrains/qodana-action@999cd8704bc23bf11c8c894b573f6e92e949b860
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
         with:
