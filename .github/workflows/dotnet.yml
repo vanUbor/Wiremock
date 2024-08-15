@@ -50,19 +50,29 @@ jobs:
       run: dotnet restore
     
     - name: Sonar prepare
-      run: dotnet sonarscanner begin /k:"vanUbor_Wiremock" /o:"vanubor" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
+      run: |
+        dotnet sonarscanner begin /k:"vanUbor_Wiremock" /o:"vanubor" 
+        /d:sonar.token="${{ secrets.SONAR_TOKEN }}" 
+        /d:sonar.host.url="https://sonarcloud.io" 
+        /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
+        /d:sonar.scanner.scanAll=false
+      
     
     - name: Build
       run: dotnet build --no-restore
     
     - name: Test
-      run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:Exclude="[*]WireMock.Migrations.*" /p:CoverletOutputFormat=opencover
+      run: |
+        dotnet test --no-build --verbosity normal 
+        /p:CollectCoverage=true 
+        /p:Exclude="[*]WireMock.Migrations.*" 
+        /p:CoverletOutputFormat=opencover
 
     - name: Generate Test Report
       run: reportgenerator "-reports:**/coverage.opencover.xml" "-targetdir:coverage" -reporttypes:"Cobertura"
   
     - name: Sonar end
-      run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+      run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4.0.1
