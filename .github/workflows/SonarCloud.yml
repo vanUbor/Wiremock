@@ -47,9 +47,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
+        with:        
           args: >
-            /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
-            /d:sonar.organization="vanUbor"
-            /d:sonar.projectKey="vanUbor_Wiremock"
-            /d:sonar.projectName="Wiremock"
+            -Dsonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
+            -Dsonar.organization="vanUbor"
+            -Dsonar.projectKey="vanUbor_Wiremock"
