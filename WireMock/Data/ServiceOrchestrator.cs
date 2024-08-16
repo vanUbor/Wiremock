@@ -6,7 +6,16 @@ using WireMock.Server.Interfaces;
 
 namespace WireMock.Data;
 
-public class ServiceOrchestrator
+public interface IOrchestrator
+{
+    void RemoveService(int id);
+    void Stop(int id);
+    Task CreateServiceAsync(int id);
+    Task<IList<WireMockService>> GetOrCreateServicesAsync();
+    Task StartServiceAsync(int id);
+    bool IsRunning(int serviceId);
+}
+public class ServiceOrchestrator : IOrchestrator
 {
     private readonly IWireMockRepository _repo;
     private readonly WireMockServiceList _services;

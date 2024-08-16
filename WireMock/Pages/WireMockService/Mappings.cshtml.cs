@@ -8,7 +8,7 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 namespace WireMock.Pages.WireMockService;
 
 public class Mappings(IHttpClientFactory clientFactory,
-    ServiceOrchestrator serviceOrchestrator,
+    IOrchestrator serviceOrchestrator,
     IWireMockRepository Repository, 
     IConfiguration Config) 
     : PageModel

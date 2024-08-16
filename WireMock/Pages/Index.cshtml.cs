@@ -5,7 +5,7 @@ using WireMock.Server.Interfaces;
 
 namespace WireMock.Pages;
 
-public class Index(IWireMockRepository Repository, ServiceOrchestrator ServiceOrchestrator)
+public class Index(IWireMockRepository Repository, IOrchestrator ServiceOrchestrator)
     : PageModel
 {
     [BindProperty] public IList<WireMock.Server.WireMockService> Servers { get; set; } = default!;

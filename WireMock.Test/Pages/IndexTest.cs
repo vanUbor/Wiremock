@@ -14,8 +14,7 @@ public class IndexTest
     {
         // Arrange
         var repo = Substitute.For<IWireMockRepository>();
-        var serviceList = Substitute.For<WireMockServiceList>();
-        var orchestrator = Substitute.For<ServiceOrchestrator>(serviceList, repo);
+        var orchestrator = Substitute.For<IOrchestrator>();
         var page = new Index(repo, orchestrator);
         
         // Act
@@ -30,8 +29,7 @@ public class IndexTest
     {
         // Arrange
         var repo = Substitute.For<IWireMockRepository>();
-        var serviceList = new WireMockServiceList();
-        var orchestrator = Substitute.For<ServiceOrchestrator>(serviceList, repo);
+        var orchestrator = Substitute.For<IOrchestrator>();
         var page = new Index(repo, orchestrator);
 
         int? serviceIdToStart = 123; // Use suitable ID value
@@ -49,8 +47,7 @@ public class IndexTest
     {
         // Arrange
         var repo = Substitute.For<IWireMockRepository>();
-        var serviceList = new WireMockServiceList();
-        var orchestrator = Substitute.For<ServiceOrchestrator>(serviceList, repo);
+        var orchestrator = Substitute.For<IOrchestrator>();
         var page = new Index(repo, orchestrator);
         int? serviceIdToStop = 123; // Use suitable ID value
     
@@ -67,8 +64,7 @@ public class IndexTest
     {
         // Arrange
         var repo = Substitute.For<IWireMockRepository>();
-        var serviceList = new WireMockServiceList();
-        var orchestrator = Substitute.For<ServiceOrchestrator>(serviceList, repo);
+        var orchestrator = Substitute.For<IOrchestrator>();
         var page = new Index(repo, orchestrator);
         const int serviceIdToDelete = 123; // Use suitable ID value
 

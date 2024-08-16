@@ -17,7 +17,7 @@ public class MappingsTest
     private IHttpClientFactory? _clientFactory;
     private IWireMockRepository? _repository;
     private Mock<HttpMessageHandler>? _handlerMock;
-    private ServiceOrchestrator? _orchestrator;
+    private IOrchestrator? _orchestrator;
 
     [TestInitialize]
     public void Setup()
@@ -54,8 +54,7 @@ public class MappingsTest
                 Name = "UnitTestServiceModel",
                 Port = 8081
             });
-        var list = new Mock<WireMockServiceList>();
-        var orchestratorMock = new Mock<ServiceOrchestrator>(list.Object, _repository);
+        var orchestratorMock = new Mock<IOrchestrator>();
         orchestratorMock.Setup(o => o.IsRunning(42))
             .Returns(true);
         _orchestrator = orchestratorMock.Object;

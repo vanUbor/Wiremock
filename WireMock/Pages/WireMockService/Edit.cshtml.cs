@@ -6,7 +6,7 @@ using WireMock.Server.Interfaces;
 
 namespace WireMock.Pages.WireMockService
 {
-    public class EditModel(IWireMockRepository Repository, ServiceOrchestrator ServiceOrchestrator)
+    public class EditModel(IWireMockRepository Repository, IOrchestrator ServiceOrchestrator)
         : PageModel
     {
         [BindProperty] public WireMockServiceModel WireMockServiceModel { get; set; } = default!;
