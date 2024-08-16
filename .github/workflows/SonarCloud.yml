@@ -24,9 +24,6 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Test
-        run: dotnet test --no-restore --verbosity normal
-
-      - name: Test
         run: |
           dotnet tool install --global coverlet.console
           dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./coverage/
@@ -50,5 +47,5 @@ jobs:
         with:        
           args: >
             -Dsonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
-            -Dsonar.organization=vanUbor
+            -Dsonar.organization=vanubor
             -Dsonar.projectKey=vanUbor_Wiremock
