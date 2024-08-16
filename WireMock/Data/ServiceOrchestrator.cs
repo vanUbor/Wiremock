@@ -120,13 +120,13 @@ public class ServiceOrchestrator : IOrchestrator
     /// </summary>
     /// <param name="e">The event arguments containing the service ID and mapping GUIDs.</param>
     [ExcludeFromCodeCoverage]
-    private async Task SaveMappingToContextAsync(ChangedMappingsArgs e)
+    private async Task SaveMappingToContextAsync(ChangedMappingsEventArgs e)
     => await _repo.AddMappingsAsync(int.Parse(e.ServiceId), e.MappingModels.Select(mm
             => new Tuple<Guid, string>(mm.Guid!.Value, mm.ToJson())));
     
 
     [ExcludeFromCodeCoverage]
-    private void RemoveMappingFromContext(object? sender, ChangedMappingsArgs e)
+    private void RemoveMappingFromContext(object? sender, ChangedMappingsEventArgs e)
       => _repo.RemoveMappingsAsync(e.MappingModels.Select(mm => mm.Guid!.Value));
     
 

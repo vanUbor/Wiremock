@@ -9,12 +9,24 @@ namespace WireMock.Server;
 
 public class WireMockService(WireMockServiceModel model)
 {
+    private static readonly object _lock = new Object();
     public string Id => model.Id.ToString();
     public string Name => model.Name;
     public virtual bool IsRunning => _server?.IsStarted ?? false;
 
-    public EventHandler<ChangedMappingsArgs>? MappingsAdded;
-    public EventHandler<ChangedMappingsArgs>? MappingsRemoved;
+    private EventHandler<ChangedMappingsEventArgs>? _mappingsAdded;
+    public EventHandler<ChangedMappingsEventArgs>? MappingsAdded
+    {
+        get => _mappingsAdded;
+        set => _mappingsAdded = value;
+    }
+
+    private EventHandler<ChangedMappingsEventArgs>? _mappingsRemoved;
+    public EventHandler<ChangedMappingsEventArgs>? MappingsRemoved
+    {
+        get => _mappingsRemoved;
+        set => _mappingsRemoved = value;
+    }
 
     private WireMockServer? _server;
     private readonly WireMockServerSettings _settings = model.ToSettings();
@@ -26,13 +38,12 @@ public class WireMockService(WireMockServiceModel model)
     {
         _server = WireMockServer.Start(_settings);
         if (mappings != null)
-            foreach (var m in mappings
-                         .Where(m => !string.IsNullOrWhiteSpace(m.Raw)))
+            foreach (var raw in mappings.Select(m => m.Raw))
             {
-                if (m.Raw == null)
+                if (raw == null)
                     continue;
 
-                var mapping = JsonConvert.DeserializeObject<MappingModel>(m.Raw);
+                var mapping = JsonConvert.DeserializeObject<MappingModel>(raw);
 
                 if (mapping != null)
                     _server.WithMapping(mapping);
@@ -72,7 +83,7 @@ public class WireMockService(WireMockServiceModel model)
     {
         // lock makes debugging simpler as we could change the lists of known mappings in a breakpoint
         // its probably not needed in RL as the handling is quick enough (hopefully :P)
-        lock (this)
+        lock (_lock)
         {
             if (_server == null)
                 return;
@@ -98,17 +109,17 @@ public class WireMockService(WireMockServiceModel model)
         }
     }
 
-    private void RaiseMappingRemoved(List<MappingModel> removedMappings)
+    internal void RaiseMappingRemoved(List<MappingModel> removedMappings)
     {
-        MappingsRemoved?.Invoke(this, new ChangedMappingsArgs(removedMappings)
+        MappingsRemoved?.Invoke(this, new ChangedMappingsEventArgs(removedMappings)
         {
             ServiceId = Id,
         });
     }
 
-    private void RaiseNewMappings(List<MappingModel> deltaMappings)
+    internal void RaiseNewMappings(List<MappingModel> deltaMappings)
     {
-        MappingsAdded?.Invoke(this, new ChangedMappingsArgs(deltaMappings)
+        MappingsAdded?.Invoke(this, new ChangedMappingsEventArgs(deltaMappings)
         {
             ServiceId = Id,
         });
@@ -117,7 +128,7 @@ public class WireMockService(WireMockServiceModel model)
  
 }
 
-public class ChangedMappingsArgs(IList<MappingModel> mappingModels) : EventArgs
+public class ChangedMappingsEventArgs(IList<MappingModel> mappingModels) : EventArgs
 {
     public required string ServiceId { get; init; }
     public IList<MappingModel> MappingModels { get; } = mappingModels;

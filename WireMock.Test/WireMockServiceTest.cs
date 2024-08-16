@@ -33,32 +33,30 @@ public class WireMockServiceTest
         var service = new WireMockService(model);
         var mappings = new List<WireMockServerMapping>
         {
-            new ()
+            new()
             {
                 Id = 1,
                 Raw = JsonConvert.SerializeObject(new MappingModel
                 {
                     Request = new RequestModel(),
                     Response = new ResponseModel()
-                }), 
+                }),
             },
-            new ()
+            new()
             {
                 Id = 2,
                 Raw = JsonConvert.SerializeObject(new MappingModel
                 {
-                    
                     Request = new RequestModel(),
                     Response = new ResponseModel()
                 }),
-                
             }
         };
 
         // Act
         service.CreateAndStart(mappings);
     }
-    
+
     [TestMethod]
     public void CreateAndStart_WithNullRawMappingsTest()
     {
@@ -70,21 +68,20 @@ public class WireMockServiceTest
         var service = new WireMockService(model);
         var mappings = new List<WireMockServerMapping>
         {
-            new ()
+            new()
             {
                 Id = 1
             },
-            new ()
+            new()
             {
                 Id = 2
-                
             }
         };
 
         // Act
         service.CreateAndStart(mappings);
     }
-    
+
     [TestMethod]
     public async Task CheckMappings_WithoutRaisingEventsTest()
     {
@@ -96,30 +93,74 @@ public class WireMockServiceTest
         var service = new WireMockService(model);
         var mappings = new List<WireMockServerMapping>
         {
-            new ()
+            new()
             {
                 Id = 1,
                 Raw = JsonConvert.SerializeObject(new MappingModel
                 {
                     Request = new RequestModel(),
                     Response = new ResponseModel()
-                }), 
+                }),
             },
-            new ()
+            new()
             {
                 Id = 2,
                 Raw = JsonConvert.SerializeObject(new MappingModel
                 {
-                    
                     Request = new RequestModel(),
                     Response = new ResponseModel()
                 }),
-                
             }
         };
 
         // Act
         service.CreateAndStart(mappings);
         await Task.Delay(3000); // wait to let the CheckMappings-Timer trigger
+    }
+
+    [TestMethod]
+    public void RaiseNewMappingTest()
+    {
+        // Arrange
+        var model = new WireMockServiceModel() { Name = "UnitTest Model", Id = 42 };
+        var service = new WireMockService(model);
+        var mappingsAdded = false;
+        var serviceId = string.Empty;
+        service.MappingsAdded += (_, args) =>
+        {
+            mappingsAdded = true;
+            serviceId = args.ServiceId;
+        };  
+        
+        // Act
+        service.RaiseNewMappings([new(){}]);
+
+        // Assert
+        Assert.IsTrue(mappingsAdded);
+        Assert.IsNotNull(service.MappingsAdded);
+        Assert.AreEqual(42.ToString(), serviceId);
+    }
+    
+    [TestMethod]
+    public void RaiseMappingRemoved()
+    {
+        // Arrange
+        var model = new WireMockServiceModel() { Name = "UnitTest Model", Id = 42 };
+        var service = new WireMockService(model);
+        var mappingsAdded = false;
+        var serviceId = string.Empty;
+        service.MappingsRemoved += (_, args) =>
+        {
+            mappingsAdded = true;
+            serviceId = args.ServiceId;
+        };  
+        
+        // Act
+        service.RaiseMappingRemoved([new(){}]);
+
+        // Assert
+        Assert.IsTrue(mappingsAdded);
+        Assert.IsNotNull(service.MappingsRemoved);
+        Assert.AreEqual(42.ToString(), serviceId);
     }
 }

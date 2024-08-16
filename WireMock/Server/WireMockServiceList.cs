@@ -34,12 +34,12 @@ public class WireMockServiceList : IList<WireMockService>
     /// <summary>
     /// Represents an event that is raised when a mapping is added to a WireMock service.
     /// </summary>
-    public EventHandler<ChangedMappingsArgs>? MappingAdded;
+    public EventHandler<ChangedMappingsEventArgs>? MappingAdded;
 
     /// <summary>
     /// Represents an event that is raised when a mapping is removed from a WireMock service.
     /// </summary>
-    public EventHandler<ChangedMappingsArgs>? MappingRemoved;
+    public EventHandler<ChangedMappingsEventArgs>? MappingRemoved;
 
     /// <summary>
     /// Adds a WireMockService to the WireMockServiceList.
