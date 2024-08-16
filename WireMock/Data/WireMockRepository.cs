@@ -1,6 +1,5 @@
 using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
-using WireMock.Server;
 using WireMock.Server.Interfaces;
 
 namespace WireMock.Data;

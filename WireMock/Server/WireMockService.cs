@@ -1,6 +1,5 @@
 using System.Timers;
 using Newtonsoft.Json;
-using NuGet.Packaging;
 using WireMock.Admin.Mappings;
 using WireMock.Data;
 using WireMock.Settings;

@@ -2,7 +2,6 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WireMock.Data;
-using WireMock.Server;
 using WireMock.Server.Interfaces;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 

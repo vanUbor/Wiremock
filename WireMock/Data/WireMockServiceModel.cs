@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using WireMock.Server;
 using WireMock.Settings;
 
 namespace WireMock.Data;

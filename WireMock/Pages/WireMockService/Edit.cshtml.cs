@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using WireMock.Data;
-using WireMock.Server;
 using WireMock.Server.Interfaces;
 
 namespace WireMock.Pages.WireMockService

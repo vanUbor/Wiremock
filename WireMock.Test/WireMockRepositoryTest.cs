@@ -1,7 +1,6 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using WireMock.Data;
-using WireMock.Server.Interfaces;
 
 namespace WireMock.Test;
 

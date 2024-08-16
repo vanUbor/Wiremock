@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using WireMock.Server;
 
 namespace WireMock.Data
 {
