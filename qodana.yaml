@@ -8,6 +8,14 @@ ide: QDNET
 #Specify inspection profile for code analysis
 profile:
   name: qodana.starter
+
+exclude:
+  - path: "/WireMock/wwwroot/lib"
+    reason: "external source"
+    origin: "ME"
+  - path: "/WireMock/wwwroot/js"
+    reason: "external source"
+
 include:
   - name: ConvertIfStatementToReturnStatement
   - name: ArrangeThisQualifier
@@ -36,3 +44,7 @@ include:
   - name: ConvertToPrimaryConstructor
   - name: ClassWithVirtualMembersNeverInherited.Global
   - name: AutoPropertyCanBeMadeGetOnly.Local
+  - name: CssOverwrittenProperties
+  - name: CssRedundantUnit
+  - name: CssUnresolvedCustomProperty
+  - name: UseCollectionExpression
