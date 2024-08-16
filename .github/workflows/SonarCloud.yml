@@ -39,17 +39,6 @@ jobs:
           dotnet tool install --global coverlet.console
           dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./coverage/
 
-      - name: Install ReportGenerator
-        run: dotnet tool install dotnet-reportgenerator-globaltool --tool-path . --version '4.8.12'
-
-      - name: Create Report
-        run: ./reportgenerator "-reports:**/coverage.opencover.xml" "-targetdir:coverage/reports" -reporttypes:"Cobertura"
-
-      - uses: actions/upload-artifact@v1
-        with:
-          name: Coverage Reports
-          path: coverage/reports
-
       - name: Sonar End
         run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
         
