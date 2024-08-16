@@ -20,7 +20,7 @@ public class WireMockService(WireMockServiceModel model)
     private WireMockServer? _server;
     private readonly WireMockServerSettings _settings = model.ToSettings();
 
-    private readonly IList<MappingModel> _lastKnownMappings = new List<MappingModel>();
+    private readonly List<MappingModel> _lastKnownMappings = new ();
     private readonly Timer _checkMappingsTimer = new(2000);
 
     public void CreateAndStart(IEnumerable<WireMockServerMapping>? mappings = default)

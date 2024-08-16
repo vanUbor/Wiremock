@@ -2,6 +2,7 @@
 using NSubstitute;
 using WireMock.Data;
 using WireMock.Server;
+using WireMock.Server.Interfaces;
 
 namespace WireMock.Test;
 
@@ -17,7 +18,7 @@ public class ServerOrchestratorTest
     {
         _repo = Substitute.For<IWireMockRepository>();
         _repo.GetModelsAsync().ReturnsForAnyArgs(
-            new List<WireMockServiceModel>()
+            new List<WireMockServiceModel>
             {
                 new ()
                 {
@@ -45,7 +46,7 @@ public class ServerOrchestratorTest
     public async Task GetOrCreateServices_GetExistingAndSkipServices_Test()
     {
         // Arrange
-        _serviceList!.Add(new WireMockService(new WireMockServiceModel()
+        _serviceList!.Add(new WireMockService(new WireMockServiceModel
         {
             Id = 1,
             Name = "UnitTestService"
@@ -69,7 +70,7 @@ public class ServerOrchestratorTest
     public async Task GetOrCreateServices_GetExistingAndNewServices_Test()
     {
         // Arrange
-        _serviceList!.Add(new WireMockService(new WireMockServiceModel()
+        _serviceList!.Add(new WireMockService(new WireMockServiceModel
         {
             Id = 3,
             Name = "UnitTestService"

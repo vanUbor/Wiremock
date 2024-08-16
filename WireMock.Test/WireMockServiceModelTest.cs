@@ -9,13 +9,13 @@ public class WireMockServiceModelTest
     public void ToSettingsTest()
     {
         // Arrange
-        var url = "ProxyUrl";
-        var saveMappingsForStatusCodePattern = "xxx";
-        var saveMappingToFile = true;
-        var saveMapping = true;
-        var port = 1234;
+        const string url = "ProxyUrl";
+        const string saveMappingsForStatusCodePattern = "xxx";
+        const bool saveMappingToFile = true;
+        const bool saveMapping = true;
+        const int port = 1234;
         
-        var model = new WireMockServiceModel()
+        var model = new WireMockServiceModel
         {
             Name = "TestModel",
             ProxyUrl = url,

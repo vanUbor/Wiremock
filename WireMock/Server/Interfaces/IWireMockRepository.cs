@@ -1,6 +1,6 @@
 using WireMock.Data;
 
-namespace WireMock.Server;
+namespace WireMock.Server.Interfaces;
 
 public interface IWireMockRepository
 {

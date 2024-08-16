@@ -1,6 +1,7 @@
 ﻿using NSubstitute;
 using WireMock.Data;
 using WireMock.Server;
+using WireMock.Server.Interfaces;
 using Index = WireMock.Pages.Index;
 
 namespace WireMock.Test.Pages;
@@ -69,7 +70,7 @@ public class IndexTest
         var serviceList = new WireMockServiceList();
         var orchestrator = Substitute.For<ServiceOrchestrator>(serviceList, repo);
         var page = new Index(repo, orchestrator);
-        int serviceIdToDelete = 123; // Use suitable ID value
+        const int serviceIdToDelete = 123; // Use suitable ID value
 
         // Act
         var result = await page.OnPostDeleteAsync(serviceIdToDelete);

@@ -2,6 +2,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using WireMock.Data;
 using WireMock.Server;
+using WireMock.Server.Interfaces;
 
 namespace WireMock.Test;
 
@@ -9,7 +10,7 @@ namespace WireMock.Test;
 public class WireMockRepositoryTest
 {
     private IDbContextFactory<WireMockServerContext>? _contextFactory;
-    private WireMockRepository? _repo;
+    private IWireMockRepository? _repo;
 
     [TestInitialize]
     public void Setup()
@@ -20,7 +21,7 @@ public class WireMockRepositoryTest
         _repo = new WireMockRepository(_contextFactory);
     }
 
-    private IDbContextFactory<WireMockServerContext> CreateInMemoryContext()
+    private static IDbContextFactory<WireMockServerContext> CreateInMemoryContext()
     {
         var connection = new SqliteConnection("Data Source=InMemorySample;Mode=Memory;");
         connection.Open();
@@ -37,8 +38,8 @@ public class WireMockRepositoryTest
         var context = _contextFactory!.CreateDbContext();
         context.Database.EnsureCreated();
 
-        context.WireMockServerModel.Add(new WireMockServiceModel() { Id = 42, Name = "InitModel"});
-        context.WireMockServerMapping.Add(new WireMockServerMapping()
+        context.WireMockServerModel.Add(new WireMockServiceModel { Id = 42, Name = "InitModel"});
+        context.WireMockServerMapping.Add(new WireMockServerMapping
         {
             WireMockServerModelId = 42,
             Guid = new Guid([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]),
@@ -51,7 +52,7 @@ public class WireMockRepositoryTest
     public async Task AddModelAsync()
     {
         //Arrange
-        var model = new WireMockServiceModel() { Name = "AddModelAsyncModel_Test", Id = 43 };
+        var model = new WireMockServiceModel { Name = "AddModelAsyncModel_Test", Id = 43 };
 
         //Act
         await _repo!.AddModelAsync(model);
@@ -86,7 +87,7 @@ public class WireMockRepositoryTest
     public async Task UpdateModelAsync()
     {
         //Arrange
-        var model = new WireMockServiceModel() { Name = "InitName", Id = 42 };
+        var model = new WireMockServiceModel { Name = "InitName", Id = 42 };
         var context = await _contextFactory!.CreateDbContextAsync();
         context.WireMockServerModel.Add(model);
 
@@ -129,9 +130,9 @@ public class WireMockRepositoryTest
     public async Task AddExistingMappingsTest()
     {
         // Arrange
-        var id = 42;
+        const int id = 42;
         var guid = new Guid([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
-        var raw = "FakeJsonMapping";
+        const string raw = "FakeJsonMapping";
 
         // Act
         await _repo!.AddMappingsAsync(id, new[] { new Tuple<Guid, string>(guid, raw) });
@@ -147,9 +148,9 @@ public class WireMockRepositoryTest
     public async Task AddNewMappingsTest()
     {
         // Arrange
-        var id = 42;
+        const int id = 42;
         var guid = new Guid([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17]);
-        var raw = "FakeJsonMapping";
+        const string raw = "FakeJsonMapping";
 
         // Act
         await _repo!.AddMappingsAsync(id, new[] { new Tuple<Guid, string>(guid, raw) });
@@ -183,7 +184,7 @@ public class WireMockRepositoryTest
     {
         // Arrange
         var guid = new Guid([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
-        var raw = "UpdatedFakeMapping";
+        const string raw = "UpdatedFakeMapping";
 
         // Act
         await _repo!.UpdateMappingsAsync(new[] { new Tuple<Guid, string>(guid, raw) });
@@ -198,7 +199,7 @@ public class WireMockRepositoryTest
     {
         // Arrange
         var guid = new Guid([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17]);
-        var raw = "UpdatedFakeMapping";
+        const string raw = "UpdatedFakeMapping";
 
         // Act
         await _repo!.UpdateMappingsAsync(new[] { new Tuple<Guid, string>(guid, raw) });

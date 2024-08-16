@@ -3,25 +3,18 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using WireMock.Data;
 using WireMock.Server;
+using WireMock.Server.Interfaces;
 
 namespace WireMock.Pages.WireMockService
 {
-    public class EditModel : PageModel
+    public class EditModel(IWireMockRepository Repository, ServiceOrchestrator ServiceOrchestrator)
+        : PageModel
     {
-        private readonly ServiceOrchestrator _serviceOrchestrator;
-        private IWireMockRepository _repository;
-
-        public EditModel(IWireMockRepository repository, ServiceOrchestrator serviceOrchestrator)
-        {
-            _serviceOrchestrator = serviceOrchestrator;
-            _repository = repository;
-        }
-
         [BindProperty] public WireMockServiceModel WireMockServiceModel { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            WireMockServiceModel = await _repository.GetModelAsync(id);
+            WireMockServiceModel = await Repository.GetModelAsync(id);
             return Page();
         }
 
@@ -36,10 +29,10 @@ namespace WireMock.Pages.WireMockService
 
             try
             {
-                await _repository.UpdateModelAsync(WireMockServiceModel);
-                _serviceOrchestrator.Stop(WireMockServiceModel.Id);
-                _serviceOrchestrator.RemoveService(WireMockServiceModel.Id);
-                await _serviceOrchestrator.CreateServiceAsync(WireMockServiceModel.Id);
+                await Repository.UpdateModelAsync(WireMockServiceModel);
+                ServiceOrchestrator.Stop(WireMockServiceModel.Id);
+                ServiceOrchestrator.RemoveService(WireMockServiceModel.Id);
+                await ServiceOrchestrator.CreateServiceAsync(WireMockServiceModel.Id);
             }
             catch (DbUpdateConcurrencyException)
             {

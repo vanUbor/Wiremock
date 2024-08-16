@@ -31,12 +31,12 @@ public class WireMockServiceTest
             Name = "UnitTestModel"
         };
         var service = new WireMockService(model);
-        var mappings = new List<WireMockServerMapping>()
+        var mappings = new List<WireMockServerMapping>
         {
             new ()
             {
                 Id = 1,
-                Raw = JsonConvert.SerializeObject(new MappingModel()
+                Raw = JsonConvert.SerializeObject(new MappingModel
                 {
                     Request = new RequestModel(),
                     Response = new ResponseModel()
@@ -45,7 +45,7 @@ public class WireMockServiceTest
             new ()
             {
                 Id = 2,
-                Raw = JsonConvert.SerializeObject(new MappingModel()
+                Raw = JsonConvert.SerializeObject(new MappingModel
                 {
                     
                     Request = new RequestModel(),
@@ -68,7 +68,7 @@ public class WireMockServiceTest
             Name = "UnitTestModel"
         };
         var service = new WireMockService(model);
-        var mappings = new List<WireMockServerMapping>()
+        var mappings = new List<WireMockServerMapping>
         {
             new ()
             {
@@ -94,12 +94,12 @@ public class WireMockServiceTest
             Name = "UnitTestModel"
         };
         var service = new WireMockService(model);
-        var mappings = new List<WireMockServerMapping>()
+        var mappings = new List<WireMockServerMapping>
         {
             new ()
             {
                 Id = 1,
-                Raw = JsonConvert.SerializeObject(new MappingModel()
+                Raw = JsonConvert.SerializeObject(new MappingModel
                 {
                     Request = new RequestModel(),
                     Response = new ResponseModel()
@@ -108,7 +108,7 @@ public class WireMockServiceTest
             new ()
             {
                 Id = 2,
-                Raw = JsonConvert.SerializeObject(new MappingModel()
+                Raw = JsonConvert.SerializeObject(new MappingModel
                 {
                     
                     Request = new RequestModel(),

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using WireMock.Data;
 using WireMock.Server;
+using WireMock.Server.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();

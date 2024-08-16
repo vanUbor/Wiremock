@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using NuGet.Packaging;
 using NuGet.Protocol;
 using WireMock.Server;
+using WireMock.Server.Interfaces;
 
 namespace WireMock.Data;
 
@@ -130,8 +131,8 @@ public class ServiceOrchestrator
     /// Creates a new WireMockService based on the provided WireMockServiceModel
     /// </summary>
     /// <param name="model">The WireMockServiceModel used to create the service.</param>
-    private WireMockService CreateService(WireMockServiceModel model)
-        => new WireMockService(model);
+    private static WireMockService CreateService(WireMockServiceModel model)
+        => new (model);
 
     /// <summary>
     /// Checks if a service with the provided service Id is currently running
@@ -139,7 +140,8 @@ public class ServiceOrchestrator
     /// <param name="serviceId">the service id of the service which gets checked</param>
     public virtual bool IsRunning(int serviceId)
     {
-        var service = _services?.FirstOrDefault(s => s.Id.Equals(serviceId.ToString()));
+        var service = _services.FirstOrDefault(s 
+            => s.Id.Equals(serviceId.ToString()));
         return service?.IsRunning ?? false;
     }
 }
