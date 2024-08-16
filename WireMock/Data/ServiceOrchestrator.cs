@@ -24,10 +24,10 @@ public class ServiceOrchestrator : IOrchestrator
         IWireMockRepository repository)
     {
         _services = serviceList;
-        _services.MappingAdded += (sender, changedMappingsArgs)
+        _services.PublicMappingAdded += (sender, changedMappingsArgs)
             => _ = SaveMappingToContextAsync(changedMappingsArgs);
 
-        _services.MappingRemoved += RemoveMappingFromContext;
+        _services.PublicMappingRemoved += RemoveMappingFromContext;
         _repo = repository;
     }
 

@@ -9,24 +9,14 @@ namespace WireMock.Server;
 
 public class WireMockService(WireMockServiceModel model)
 {
-    private static readonly object _lock = new Object();
+    private static readonly object Lock = new Object();
     public string Id => model.Id.ToString();
     public string Name => model.Name;
     public virtual bool IsRunning => _server?.IsStarted ?? false;
 
-    private EventHandler<ChangedMappingsEventArgs>? _mappingsAdded;
-    public EventHandler<ChangedMappingsEventArgs>? MappingsAdded
-    {
-        get => _mappingsAdded;
-        set => _mappingsAdded = value;
-    }
+    public EventHandler<ChangedMappingsEventArgs>? MappingsAdded { get; set; }
 
-    private EventHandler<ChangedMappingsEventArgs>? _mappingsRemoved;
-    public EventHandler<ChangedMappingsEventArgs>? MappingsRemoved
-    {
-        get => _mappingsRemoved;
-        set => _mappingsRemoved = value;
-    }
+    public EventHandler<ChangedMappingsEventArgs>? MappingsRemoved { get; set; }
 
     private WireMockServer? _server;
     private readonly WireMockServerSettings _settings = model.ToSettings();
@@ -79,11 +69,11 @@ public class WireMockService(WireMockServiceModel model)
     /// </remarks>
     /// <param name="sender">The object that raised the event.</param>
     /// <param name="e">The event arguments for the Elapsed event.</param>
-    private void CheckMappings(object? sender = null, ElapsedEventArgs? e = null)
+    internal void CheckMappings(object? sender = null, ElapsedEventArgs? e = null)
     {
         // lock makes debugging simpler as we could change the lists of known mappings in a breakpoint
         // its probably not needed in RL as the handling is quick enough (hopefully :P)
-        lock (_lock)
+        lock (Lock)
         {
             if (_server == null)
                 return;

@@ -31,15 +31,26 @@ public class WireMockServiceList : IList<WireMockService>
     /// </value>
     public bool IsReadOnly => _list.IsReadOnly;
 
+
+    private event EventHandler<ChangedMappingsEventArgs>? MappingAdded;
     /// <summary>
     /// Represents an event that is raised when a mapping is added to a WireMock service.
     /// </summary>
-    public EventHandler<ChangedMappingsEventArgs>? MappingAdded;
+    public event EventHandler<ChangedMappingsEventArgs>? PublicMappingAdded
+    {
+        add => MappingAdded += value;
+        remove => MappingAdded -= value;
+    }
 
+    private event EventHandler<ChangedMappingsEventArgs>? MappingRemoved;
     /// <summary>
     /// Represents an event that is raised when a mapping is removed from a WireMock service.
     /// </summary>
-    public EventHandler<ChangedMappingsEventArgs>? MappingRemoved;
+    public event EventHandler<ChangedMappingsEventArgs>? PublicMappingRemoved
+    {
+        add => MappingRemoved += value;
+        remove => MappingRemoved -= value;
+    }
 
     /// <summary>
     /// Adds a WireMockService to the WireMockServiceList.
@@ -47,8 +58,8 @@ public class WireMockServiceList : IList<WireMockService>
     /// <param name="item">The WireMockService to add.</param>
     public void Add(WireMockService item)
     {
-        item.MappingsAdded += MappingAdded;
-        item.MappingsRemoved += MappingRemoved;
+        item.MappingsAdded += RaiseMappingAdded;
+        item.MappingsRemoved += RaiseMappingRemoved;
         _list.Add(item);
     }
 
@@ -78,6 +89,12 @@ public class WireMockServiceList : IList<WireMockService>
         _list.Clear();
     }
 
+    private void RaiseMappingAdded(object? sender, ChangedMappingsEventArgs args) 
+        => MappingAdded?.Invoke(sender, args);
+    
+    private void RaiseMappingRemoved(object? sender, ChangedMappingsEventArgs args) 
+        => MappingRemoved?.Invoke(sender, args);
+    
     public bool Contains(WireMockService item)
         => _list.Contains(item);
 

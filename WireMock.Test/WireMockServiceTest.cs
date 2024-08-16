@@ -122,7 +122,7 @@ public class WireMockServiceTest
     public void RaiseNewMappingTest()
     {
         // Arrange
-        var model = new WireMockServiceModel() { Name = "UnitTest Model", Id = 42 };
+        var model = new WireMockServiceModel { Name = "UnitTest Model", Id = 42 };
         var service = new WireMockService(model);
         var mappingsAdded = false;
         var serviceId = string.Empty;
@@ -133,7 +133,7 @@ public class WireMockServiceTest
         };  
         
         // Act
-        service.RaiseNewMappings([new(){}]);
+        service.RaiseNewMappings([new()]);
 
         // Assert
         Assert.IsTrue(mappingsAdded);
@@ -156,7 +156,7 @@ public class WireMockServiceTest
         };  
         
         // Act
-        service.RaiseMappingRemoved([new(){}]);
+        service.RaiseMappingRemoved([new()]);
 
         // Assert
         Assert.IsTrue(mappingsAdded);

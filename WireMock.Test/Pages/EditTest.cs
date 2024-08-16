@@ -15,7 +15,7 @@ public class EditTest
         var repoMock = new Mock<IWireMockRepository>();
         var orchestratorMock = new Mock<IOrchestrator>();
         var page = new EditModel(repoMock.Object, orchestratorMock.Object);
-        var id = 42;
+        const int id = 42;
         
         // Act
         var result = await page.OnGetAsync(id);
