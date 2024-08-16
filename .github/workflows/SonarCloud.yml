@@ -50,5 +50,5 @@ jobs:
         with:        
           args: >
             -Dsonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
-            -Dsonar.organization="vanUbor"
-            -Dsonar.projectKey="vanUbor_Wiremock"
+            -Dsonar.organization=vanUbor
+            -Dsonar.projectKey=vanUbor_Wiremock
