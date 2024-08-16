@@ -81,11 +81,11 @@ public class WireMockService(WireMockServiceModel model)
             var currentMappings = _server.MappingModels.Select(m => m).ToList();
 
             var newMappings = currentMappings
-                .Where(m => _lastKnownMappings.All(lm => lm.Guid != m.Guid))
+                .Where(m => _lastKnownMappings.TrueForAll(lm => lm.Guid != m.Guid))
                 .ToList();
 
             var removedMapping = _lastKnownMappings
-                .Where(lkm => currentMappings.All(cm => cm.Guid != lkm.Guid))
+                .Where(lkm => currentMappings.TrueForAll(cm => cm.Guid != lkm.Guid))
                 .ToList();
 
             // Raise events for new and removed mappings

@@ -1,7 +1,6 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using WireMock.Data;
-using WireMock.Server;
 using WireMock.Server.Interfaces;
 
 namespace WireMock.Test;
@@ -9,8 +8,8 @@ namespace WireMock.Test;
 [TestClass]
 public class WireMockRepositoryTest
 {
-    private IDbContextFactory<WireMockServerContext>? _contextFactory;
-    private IWireMockRepository? _repo;
+    private DbContextFactory? _contextFactory;
+    private WireMockRepository? _repo;
 
     [TestInitialize]
     public void Setup()
@@ -80,7 +79,7 @@ public class WireMockRepositoryTest
 
         //Assert
         Assert.AreEqual(1, models.Count);
-        Assert.AreEqual(42, models.First().Id);
+        Assert.AreEqual(42, models[0].Id);
     }
 
     [TestMethod]
