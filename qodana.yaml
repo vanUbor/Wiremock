@@ -8,16 +8,13 @@ ide: QDNET
 #Specify inspection profile for code analysis
 profile:
   name: qodana.starter
-
 exclude:
-  - name: "ALL"
-  - name: "Exclude external libs"
-    paths: 
-      - "WireMock/wwwroot/lib"
-  - name: "Exclude external javascript"
-    paths: 
-      - "WireMock/wwwroot/js"
-
+  - name: Exclude external libs
+    paths:
+      - WireMock/wwwroot/lib
+  - name: Exclude external javascript
+    paths:
+      - WireMock/wwwroot/js
 include:
   - name: ConvertIfStatementToReturnStatement
   - name: ArrangeThisQualifier
