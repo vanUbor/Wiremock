@@ -12,10 +12,10 @@ profile:
 exclude:
   - name: "Exclude external libs"
     paths: 
-      - "/WireMock/wwwroot/lib"
+      - "WireMock/wwwroot/lib"
   - name: "Exclude external javascript"
     paths: 
-      - "/WireMock/wwwroot/js"
+      - "WireMock/wwwroot/js"
 
 include:
   - name: ConvertIfStatementToReturnStatement
