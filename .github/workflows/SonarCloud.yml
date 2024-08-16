@@ -26,6 +26,11 @@ jobs:
       - name: Test
         run: dotnet test --no-restore --verbosity normal
 
+      - name: Test
+        run: |
+          dotnet tool install --global coverlet.console
+          dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./coverage/
+
       - name: Install ReportGenerator
         run: dotnet tool install dotnet-reportgenerator-globaltool --tool-path . --version '4.8.12'
 
