@@ -10,11 +10,12 @@ profile:
   name: qodana.starter
 
 exclude:
-  - path: "/WireMock/wwwroot/lib"
-    reason: "external source"
-    origin: "ME"
-  - path: "/WireMock/wwwroot/js"
-    reason: "external source"
+  - name: "Exclude external libs"
+    paths: 
+      - "/WireMock/wwwroot/lib"
+  - name: "Exclude external javascript"
+    paths: 
+      - "/WireMock/wwwroot/js"
 
 include:
   - name: ConvertIfStatementToReturnStatement
