@@ -21,7 +21,7 @@ public class WireMockRepositoryTest
         _repo = new WireMockRepository(_contextFactory);
     }
 
-    private static IDbContextFactory<WireMockServerContext> CreateInMemoryContext()
+    private static DbContextFactory CreateInMemoryContext()
     {
         var connection = new SqliteConnection("Data Source=InMemorySample;Mode=Memory;");
         connection.Open();

@@ -55,9 +55,10 @@ public class Mappings(IHttpClientFactory clientFactory,
 
         var mappingString = await response.Content.ReadAsStringAsync();
         var maps = JsonSerializer.Deserialize<WireMockMappingModel[]>(mappingString) ?? [];
+        var options = new JsonSerializerOptions { WriteIndented = true };
         foreach (var map in maps)
         {
-            map.Raw = JsonSerializer.Serialize(map, new JsonSerializerOptions { WriteIndented = true });
+            map.Raw = JsonSerializer.Serialize(map, options);
         }
 
         return maps;

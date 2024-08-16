@@ -10,6 +10,7 @@ profile:
   name: qodana.starter
 
 exclude:
+  - name: "ALL"
   - name: "Exclude external libs"
     paths: 
       - "WireMock/wwwroot/lib"
