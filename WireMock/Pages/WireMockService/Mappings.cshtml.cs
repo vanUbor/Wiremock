@@ -2,13 +2,13 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WireMock.Data;
-using WireMock.Server;
+using WireMock.Server.Interfaces;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace WireMock.Pages.WireMockService;
 
 public class Mappings(IHttpClientFactory clientFactory,
-    ServiceOrchestrator serviceOrchestrator,
+    IOrchestrator serviceOrchestrator,
     IWireMockRepository Repository, 
     IConfiguration Config) 
     : PageModel
@@ -54,31 +54,26 @@ public class Mappings(IHttpClientFactory clientFactory,
 
         var mappingString = await response.Content.ReadAsStringAsync();
         var maps = JsonSerializer.Deserialize<WireMockMappingModel[]>(mappingString) ?? [];
+        var options = new JsonSerializerOptions { WriteIndented = true };
         foreach (var map in maps)
         {
-            map.Raw = JsonSerializer.Serialize(map, new JsonSerializerOptions() { WriteIndented = true });
+            map.Raw = JsonSerializer.Serialize(map, options);
         }
 
         return maps;
     }
 
-    private IEnumerable<WireMockMappingModel> SetMapsOrdered(IList<WireMockMappingModel> mappings, string sortOrder)
+    private static IEnumerable<WireMockMappingModel> SetMapsOrdered(IList<WireMockMappingModel> mappings, string sortOrder)
     {
-        switch (sortOrder)
+        return sortOrder switch
         {
-            case "date":
-                return mappings.OrderBy(m => m.UpdatedAt);
-            case "date_desc":
-                return mappings.OrderByDescending(m => m.UpdatedAt);
-            case "title":
-                return mappings.OrderBy(m => m.Title);
-            case "title_desc":
-                return mappings.OrderByDescending(m => m.Title);
-            case "guid_desc":
-                return mappings.OrderByDescending(m => m.Guid);
-            default:
-                return mappings.OrderBy(m => m.Guid);
-        }
+            "date" => mappings.OrderBy(m => m.UpdatedAt),
+            "date_desc" => mappings.OrderByDescending(m => m.UpdatedAt),
+            "title" => mappings.OrderBy(m => m.Title),
+            "title_desc" => mappings.OrderByDescending(m => m.Title),
+            "guid_desc" => mappings.OrderByDescending(m => m.Guid),
+            _ => mappings.OrderBy(m => m.Guid)
+        };
     }
 
     public async Task<IActionResult> OnPostSaveAndUpdate(string id, string guid, string raw)
@@ -86,7 +81,7 @@ public class Mappings(IHttpClientFactory clientFactory,
         var model = JsonSerializer.Deserialize<WireMockMappingModel>(raw);
         var wireMockServerModel = await Repository.GetModelAsync(int.Parse(id));
         var content = JsonContent.Create(model);
-        var request = new HttpRequestMessage()
+        var request = new HttpRequestMessage
         {
             Method = HttpMethod.Put,
             RequestUri = new Uri($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/{guid}"),
@@ -108,15 +103,16 @@ public class Mappings(IHttpClientFactory clientFactory,
     public async Task<IActionResult> OnPostResetMapping(string id, string guid)
     {
         var wireMockServerModel = await Repository.GetModelAsync(int.Parse(id));
-        var request = new HttpRequestMessage()
+        var request = new HttpRequestMessage
         {
             Method = HttpMethod.Delete,
             RequestUri = new Uri($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/{guid}"),
         };
         var response = await _client.SendAsync(request);
-        if (response.IsSuccessStatusCode)
-            return RedirectToPage(new { id });
-        return RedirectToPage("../Error");
+        
+        return response.IsSuccessStatusCode 
+            ? RedirectToPage(new { id }) 
+            : RedirectToPage("../Error");
     }
 
     public async Task<IActionResult> OnPostResetAllMappings(string id)

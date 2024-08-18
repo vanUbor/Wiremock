@@ -6,9 +6,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WireMock.Test", "WireMock.T
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{CBB53A81-229F-447D-ADB6-8B467EB33657}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+		.github\workflows\SonarCloud.yml = .github\workflows\SonarCloud.yml
+		.github\workflows\Build.yml = .github\workflows\Build.yml
+		.github\workflows\GitGuardian.yml = .github\workflows\GitGuardian.yml
+		.github\workflows\Codecov.yml = .github\workflows\Codecov.yml
+		.github\workflows\qodana.yml = .github\workflows\qodana.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "configs", "configs", "{A8C5A14A-AFBD-4074-94C3-8DF777F87082}"
+	ProjectSection(SolutionItems) = preProject
+		.coderabbit.yaml = .coderabbit.yaml
 		codecov.yml = codecov.yml
-		README.md = README.md
+		qodana.yaml = qodana.yaml
 	EndProjectSection
 EndProject
 Global
@@ -25,5 +34,8 @@ Global
 		{D4167444-A8C1-4A77-BB58-2583B985DA4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4167444-A8C1-4A77-BB58-2583B985DA4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4167444-A8C1-4A77-BB58-2583B985DA4A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A8C5A14A-AFBD-4074-94C3-8DF777F87082} = {CBB53A81-229F-447D-ADB6-8B467EB33657}
 	EndGlobalSection
 EndGlobal

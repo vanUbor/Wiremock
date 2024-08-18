@@ -1,6 +1,5 @@
 using System.Timers;
 using Newtonsoft.Json;
-using NuGet.Packaging;
 using WireMock.Admin.Mappings;
 using WireMock.Data;
 using WireMock.Settings;
@@ -10,30 +9,31 @@ namespace WireMock.Server;
 
 public class WireMockService(WireMockServiceModel model)
 {
+    private static readonly object Lock = new Object();
     public string Id => model.Id.ToString();
     public string Name => model.Name;
     public virtual bool IsRunning => _server?.IsStarted ?? false;
 
-    public EventHandler<ChangedMappingsArgs>? MappingsAdded;
-    public EventHandler<ChangedMappingsArgs>? MappingsRemoved;
+    public EventHandler<ChangedMappingsEventArgs>? MappingsAdded { get; set; }
+
+    public EventHandler<ChangedMappingsEventArgs>? MappingsRemoved { get; set; }
 
     private WireMockServer? _server;
     private readonly WireMockServerSettings _settings = model.ToSettings();
 
-    private readonly IList<MappingModel> _lastKnownMappings = new List<MappingModel>();
+    private readonly List<MappingModel> _lastKnownMappings = new ();
     private readonly Timer _checkMappingsTimer = new(2000);
 
     public void CreateAndStart(IEnumerable<WireMockServerMapping>? mappings = default)
     {
         _server = WireMockServer.Start(_settings);
         if (mappings != null)
-            foreach (var m in mappings
-                         .Where(m => !string.IsNullOrWhiteSpace(m.Raw)))
+            foreach (var raw in mappings.Select(m => m.Raw))
             {
-                if (m.Raw == null)
+                if (raw == null)
                     continue;
 
-                var mapping = JsonConvert.DeserializeObject<MappingModel>(m.Raw);
+                var mapping = JsonConvert.DeserializeObject<MappingModel>(raw);
 
                 if (mapping != null)
                     _server.WithMapping(mapping);
@@ -69,11 +69,11 @@ public class WireMockService(WireMockServiceModel model)
     /// </remarks>
     /// <param name="sender">The object that raised the event.</param>
     /// <param name="e">The event arguments for the Elapsed event.</param>
-    private void CheckMappings(object? sender = null, ElapsedEventArgs? e = null)
+    internal void CheckMappings(object? sender = null, ElapsedEventArgs? e = null)
     {
         // lock makes debugging simpler as we could change the lists of known mappings in a breakpoint
         // its probably not needed in RL as the handling is quick enough (hopefully :P)
-        lock (this)
+        lock (Lock)
         {
             if (_server == null)
                 return;
@@ -81,11 +81,11 @@ public class WireMockService(WireMockServiceModel model)
             var currentMappings = _server.MappingModels.Select(m => m).ToList();
 
             var newMappings = currentMappings
-                .Where(m => _lastKnownMappings.All(lm => lm.Guid != m.Guid))
+                .Where(m => _lastKnownMappings.TrueForAll(lm => lm.Guid != m.Guid))
                 .ToList();
 
             var removedMapping = _lastKnownMappings
-                .Where(lkm => currentMappings.All(cm => cm.Guid != lkm.Guid))
+                .Where(lkm => currentMappings.TrueForAll(cm => cm.Guid != lkm.Guid))
                 .ToList();
 
             // Raise events for new and removed mappings
@@ -99,27 +99,21 @@ public class WireMockService(WireMockServiceModel model)
         }
     }
 
-    private void RaiseMappingRemoved(List<MappingModel> removedMappings)
+    internal void RaiseMappingRemoved(List<MappingModel> removedMappings)
     {
-        MappingsRemoved?.Invoke(this, new ChangedMappingsArgs(removedMappings)
+        MappingsRemoved?.Invoke(this, new ChangedMappingsEventArgs(removedMappings)
         {
             ServiceId = Id,
         });
     }
 
-    private void RaiseNewMappings(List<MappingModel> deltaMappings)
+    internal void RaiseNewMappings(List<MappingModel> deltaMappings)
     {
-        MappingsAdded?.Invoke(this, new ChangedMappingsArgs(deltaMappings)
+        MappingsAdded?.Invoke(this, new ChangedMappingsEventArgs(deltaMappings)
         {
             ServiceId = Id,
         });
     }
 
  
-}
-
-public class ChangedMappingsArgs(IList<MappingModel> mappingModels) : EventArgs
-{
-    public required string ServiceId { get; init; }
-    public IList<MappingModel> MappingModels { get; } = mappingModels;
 }

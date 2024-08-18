@@ -7,6 +7,7 @@ using NSubstitute;
 using WireMock.Data;
 using WireMock.Pages.WireMockService;
 using WireMock.Server;
+using WireMock.Server.Interfaces;
 
 namespace WireMock.Test.Pages;
 
@@ -16,7 +17,7 @@ public class MappingsTest
     private IHttpClientFactory? _clientFactory;
     private IWireMockRepository? _repository;
     private Mock<HttpMessageHandler>? _handlerMock;
-    private ServiceOrchestrator? _orchestrator;
+    private IOrchestrator? _orchestrator;
 
     [TestInitialize]
     public void Setup()
@@ -48,13 +49,12 @@ public class MappingsTest
 
         _repository = Substitute.For<IWireMockRepository>();
         _repository.GetModelAsync(Arg.Any<int>()).ReturnsForAnyArgs(
-            new WireMockServiceModel()
+            new WireMockServiceModel
             {
                 Name = "UnitTestServiceModel",
                 Port = 8081
             });
-        var list = new Mock<WireMockServiceList>();
-        var orchestratorMock = new Mock<ServiceOrchestrator>(list.Object, _repository);
+        var orchestratorMock = new Mock<IOrchestrator>();
         orchestratorMock.Setup(o => o.IsRunning(42))
             .Returns(true);
         _orchestrator = orchestratorMock.Object;
@@ -79,8 +79,8 @@ public class MappingsTest
 
         var mappings = new Mappings(_clientFactory!, _orchestrator!, _repository!, configMock.Object);
 
-        var serviceId = 42;
-        var pageIndex = 1;
+        const int serviceId = 42;
+        const int pageIndex = 1;
 
         // Act
         var actionResult = await mappings.OnGet(serviceId, sortOrder, pageIndex);
@@ -137,12 +137,12 @@ public class MappingsTest
 
         var mappings = new Mappings(_clientFactory!, _orchestrator!, repositoryMock.Object, configMock.Object);
 
-        string serviceId = "42";
+        const string serviceId = "42";
         string guid = Guid.NewGuid().ToString();
-        string raw = "{" +
-                     "\"Title\" : \"UnitTestTitle\"," +
-                     "\"Response\" : null," +
-                     "\"Request\" : null}";
+        const string raw = "{" +
+                           "\"Title\" : \"UnitTestTitle\"," +
+                           "\"Response\" : null," +
+                           "\"Request\" : null}";
 
         // Act
         var actionResult = await mappings.OnPostSaveAndUpdate(serviceId, guid, raw);
@@ -171,7 +171,7 @@ public class MappingsTest
 
         var mappings = new Mappings(_clientFactory!, _orchestrator!, repositoryMock.Object, configMock.Object);
 
-        var serviceId = "42";
+        const string serviceId = "42";
         var guid = Guid.NewGuid().ToString();
 
         // Act
@@ -200,7 +200,7 @@ public class MappingsTest
             });
 
         var mappings = new Mappings(_clientFactory!, _orchestrator!, repositoryMock.Object, configMock.Object);
-        var serviceId = "42";
+        const string serviceId = "42";
 
         // Act
         var actionResult = await mappings.OnPostResetAllMappings(serviceId);

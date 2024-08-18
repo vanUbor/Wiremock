@@ -1,6 +1,7 @@
 ﻿using NSubstitute;
 using WireMock.Data;
 using WireMock.Server;
+using WireMock.Server.Interfaces;
 using Index = WireMock.Pages.Index;
 
 namespace WireMock.Test.Pages;
@@ -13,8 +14,7 @@ public class IndexTest
     {
         // Arrange
         var repo = Substitute.For<IWireMockRepository>();
-        var serviceList = Substitute.For<WireMockServiceList>();
-        var orchestrator = Substitute.For<ServiceOrchestrator>(serviceList, repo);
+        var orchestrator = Substitute.For<IOrchestrator>();
         var page = new Index(repo, orchestrator);
         
         // Act
@@ -29,8 +29,7 @@ public class IndexTest
     {
         // Arrange
         var repo = Substitute.For<IWireMockRepository>();
-        var serviceList = new WireMockServiceList();
-        var orchestrator = Substitute.For<ServiceOrchestrator>(serviceList, repo);
+        var orchestrator = Substitute.For<IOrchestrator>();
         var page = new Index(repo, orchestrator);
 
         int? serviceIdToStart = 123; // Use suitable ID value
@@ -48,8 +47,7 @@ public class IndexTest
     {
         // Arrange
         var repo = Substitute.For<IWireMockRepository>();
-        var serviceList = new WireMockServiceList();
-        var orchestrator = Substitute.For<ServiceOrchestrator>(serviceList, repo);
+        var orchestrator = Substitute.For<IOrchestrator>();
         var page = new Index(repo, orchestrator);
         int? serviceIdToStop = 123; // Use suitable ID value
     
@@ -66,10 +64,9 @@ public class IndexTest
     {
         // Arrange
         var repo = Substitute.For<IWireMockRepository>();
-        var serviceList = new WireMockServiceList();
-        var orchestrator = Substitute.For<ServiceOrchestrator>(serviceList, repo);
+        var orchestrator = Substitute.For<IOrchestrator>();
         var page = new Index(repo, orchestrator);
-        int serviceIdToDelete = 123; // Use suitable ID value
+        const int serviceIdToDelete = 123; // Use suitable ID value
 
         // Act
         var result = await page.OnPostDeleteAsync(serviceIdToDelete);

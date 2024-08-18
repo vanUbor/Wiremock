@@ -1,19 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WireMock.Data;
-using WireMock.Server;
+using WireMock.Server.Interfaces;
 
 namespace WireMock.Pages.WireMockService
 {
-    public class CreateModel : PageModel
+    public class CreateModel(IWireMockRepository Repository) : PageModel
     {
-        private readonly IWireMockRepository _repository;
-        
-        public CreateModel(IWireMockRepository repository)
-        {
-            _repository = repository;
-        }
-
         public IActionResult OnGet()
         {
             return Page();
@@ -30,7 +23,7 @@ namespace WireMock.Pages.WireMockService
                 return RedirectToPage("../Error");
             }
 
-            await _repository.AddModelAsync(WireMockServiceModel);
+            await Repository.AddModelAsync(WireMockServiceModel);
 
             return RedirectToPage("../Index");
         }

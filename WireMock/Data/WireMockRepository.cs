@@ -1,6 +1,6 @@
 using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
-using WireMock.Server;
+using WireMock.Server.Interfaces;
 
 namespace WireMock.Data;
 
@@ -71,15 +71,15 @@ public class WireMockRepository(
     public async Task AddMappingsAsync(int serviceId, IEnumerable<Tuple<Guid, string>> newMappings)
     {
         await using var context = await ContextFactory.CreateDbContextAsync();
-        var service = context.WireMockServerModel
+        var service = await context.WireMockServerModel
             .Include(wireMockServiceModel => wireMockServiceModel.Mappings)
-            .Single(m
+            .SingleAsync(m
                 => m.Id == serviceId);
 
         var existingMappings = service.Mappings.ToList();
         var mappingsToAdd =
             (from newMapping in newMappings
-                where !existingMappings.Any(existingMapping
+                where !existingMappings.Exists(existingMapping
                     => existingMapping.Guid.Equals(newMapping.Item1))
                 select new WireMockServerMapping
                 {
@@ -90,7 +90,9 @@ public class WireMockRepository(
             .ToList();
 
         if (mappingsToAdd.Count != 0)
+        {
             await context.BulkInsertAsync(mappingsToAdd);
+        }
 
         await context.SaveChangesAsync();
     }
@@ -125,12 +127,14 @@ public class WireMockRepository(
     public async Task UpdateMappingsAsync(IEnumerable<Tuple<Guid, string>> mappings)
     {
         await using var context = await ContextFactory.CreateDbContextAsync();
-        var existingMappings = context.WireMockServerMapping.ToList();
+        var existingMappings = await context.WireMockServerMapping.ToListAsync();
 
         foreach (var updatedMapping in mappings)
         {
-            if (!existingMappings.Any(existingMapping => existingMapping.Guid.Equals(updatedMapping.Item1)))
+            if (!existingMappings.Exists(existingMapping => existingMapping.Guid.Equals(updatedMapping.Item1)))
+            {
                 continue;
+            }
 
             existingMappings.First(existingMapping => existingMapping.Guid.Equals(updatedMapping.Item1))
                 .Raw = updatedMapping.Item2;
@@ -142,12 +146,11 @@ public class WireMockRepository(
     public async Task RemoveMappingsAsync(IEnumerable<Guid> guids)
     {
         await using var context = await ContextFactory.CreateDbContextAsync();
-        var mappingsToRemove = context.WireMockServerMapping
-            .ToList()
+        var mappingsToRemove = (await context.WireMockServerMapping
+            .ToListAsync())
             .Where(m => guids.Any(guid => guid.Equals(m.Guid)));
 
         await context.BulkDeleteAsync(mappingsToRemove);
-        // context.WireMockServerMapping.RemoveRange(mappingsToRemove);
 
         await context.SaveChangesAsync();
     }

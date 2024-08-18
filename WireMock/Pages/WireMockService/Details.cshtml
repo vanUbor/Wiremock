@@ -1,4 +1,6 @@
 @page
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using WireMock.Data
 @model DetailsModel
 
 @{
@@ -35,10 +37,10 @@
             @Html.DisplayFor(model => model.WireMockServiceModel.Contact)
         </dd>
         <dt class="col-sm-4">
-            @Html.DisplayNameFor(model => model.WireMockServiceModel.StartAdminInterface)
+            @Html.DisplayNameFor(model => WireMockServiceModel.StartAdminInterface)
         </dt>
         <dd class="col-sm-8">
-            @Html.DisplayFor(model => model.WireMockServiceModel.StartAdminInterface)
+            @Html.DisplayFor(model => WireMockServiceModel.StartAdminInterface)
         </dd>
         <dt class="col-sm-4">
             @Html.DisplayNameFor(model => model.WireMockServiceModel.ProxyUrl)

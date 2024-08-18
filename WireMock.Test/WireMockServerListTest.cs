@@ -13,12 +13,11 @@ public class WireMockServerListTest
     [TestInitialize]
     public void Setup()
     {
-        _service = new WireMockService(new WireMockServiceModel()
+        _service = new WireMockService(new WireMockServiceModel
         {
             Name = "FirstService"
         });
-        _list = new WireMockServiceList();
-        _list.Add(_service);
+        _list = new WireMockServiceList { _service };
     }
     
     
@@ -47,7 +46,7 @@ public class WireMockServerListTest
     public void AddTest()
     {
         //Arrange
-        var service = new WireMockService(new WireMockServiceModel()
+        var service = new WireMockService(new WireMockServiceModel
         {
             Name = "SecondService"
         });

@@ -1,17 +1,12 @@
 using Microsoft.EntityFrameworkCore;
-using WireMock.Server;
 
 namespace WireMock.Data
 {
-    public class WireMockServerContext : DbContext
+    public class WireMockServerContext(DbContextOptions<WireMockServerContext> options) 
+        : DbContext(options)
     {
-        public WireMockServerContext (DbContextOptions<WireMockServerContext> options)
-            : base(options)
-        {
-        }
-
-        public DbSet<WireMockServiceModel> WireMockServerModel { get; set; } = default!;
-        public DbSet<WireMockServerMapping> WireMockServerMapping { get; set; } = default!;
+        public DbSet<WireMockServiceModel> WireMockServerModel { get; init; } = default!;
+        public DbSet<WireMockServerMapping> WireMockServerMapping { get; init; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

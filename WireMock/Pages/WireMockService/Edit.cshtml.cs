@@ -2,51 +2,69 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using WireMock.Data;
-using WireMock.Server;
+using WireMock.Server.Interfaces;
 
-namespace WireMock.Pages.WireMockService
+namespace WireMock.Pages.WireMockService;
+
+public class EditModel(IWireMockRepository Repository, IOrchestrator ServiceOrchestrator)
+    : PageModel
 {
-    public class EditModel : PageModel
+    [BindProperty] public WireMockServiceModel WireMockServiceModel { get; set; } = default!;
+
+    private const string _errorPagePath = "../Error";
+    public async Task<IActionResult> OnGetAsync(int id)
     {
-        private readonly ServiceOrchestrator _serviceOrchestrator;
-        private IWireMockRepository _repository;
-
-        public EditModel(IWireMockRepository repository, ServiceOrchestrator serviceOrchestrator)
+        try
         {
-            _serviceOrchestrator = serviceOrchestrator;
-            _repository = repository;
+            WireMockServiceModel = await Repository.GetModelAsync(id);
+            return Page();
         }
-
-        [BindProperty] public WireMockServiceModel WireMockServiceModel { get; set; } = default!;
-
-        public async Task<IActionResult> OnGetAsync(int id)
+        catch (InvalidOperationException ex)
         {
-            WireMockServiceModel = await _repository.GetModelAsync(id);
+            Console.WriteLine($"Invalid operation: {ex.Message}");
+            return RedirectToPage(_errorPagePath);
+        }
+        catch (DbUpdateException ex)
+        {
+            // Log the exception
+            Console.WriteLine($"Database update error: {ex.Message}");
+            return RedirectToPage(_errorPagePath);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unhandled exception: {ex.Message}");
+            return RedirectToPage(_errorPagePath);
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more details, see https://aka.ms/RazorPagesCRUD.
+    public async Task<IActionResult> OnPostAsync()
+    {
+        if (!ModelState.IsValid)
+        {
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        try
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-
-            try
-            {
-                await _repository.UpdateModelAsync(WireMockServiceModel);
-                _serviceOrchestrator.Stop(WireMockServiceModel.Id);
-                _serviceOrchestrator.RemoveService(WireMockServiceModel.Id);
-                await _serviceOrchestrator.CreateServiceAsync(WireMockServiceModel.Id);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                return NotFound();
-            }
-
-            return RedirectToPage("../Index");
+            await Repository.UpdateModelAsync(WireMockServiceModel);
+            ServiceOrchestrator.Stop(WireMockServiceModel.Id);
+            ServiceOrchestrator.RemoveService(WireMockServiceModel.Id);
+            await ServiceOrchestrator.CreateServiceAsync(WireMockServiceModel.Id);
         }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            // Log the exception
+            Console.WriteLine($"Concurrency error: {ex.Message}");
+            return RedirectToPage(_errorPagePath);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unhandled Exception: {ex.Message}");
+            return RedirectToPage(_errorPagePath);
+        }
+
+        return RedirectToPage("../Index");
     }
 }

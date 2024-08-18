@@ -1,18 +1,14 @@
 using Microsoft.EntityFrameworkCore;
-using WireMock.Data;
 
-namespace WireMock.Server;
+namespace WireMock.Data;
 
-public class DbContextFactory : IDbContextFactory<WireMockServerContext>
+public class DbContextFactory(DbContextOptions<WireMockServerContext> options)
+    : IDbContextFactory<WireMockServerContext>
 {
-    private readonly DbContextOptions<WireMockServerContext> _options;
-    public DbContextFactory(DbContextOptions<WireMockServerContext> options)
-    {
-        _options = options;
-    }
-
     public WireMockServerContext CreateDbContext()
-    {
-        return new WireMockServerContext(_options);
-    }
+        => new WireMockServerContext(options);
+
+
+    public async Task<WireMockServerContext> CreateDbContextAsync()
+        => await Task.FromResult(CreateDbContext());
 }

@@ -2,8 +2,8 @@
 {
     public class PaginatedList<T> : List<T>
     {
-        public int Page { get; private set; }
-        public int TotalPages { get; private set; }
+        public int Page { get; }
+        public int TotalPages { get; }
 
         public bool HasPreviousPage => Page > 1;
 
@@ -21,7 +21,7 @@
         public static PaginatedList<T> CreatePage(
             IList<T> source, int page, int pageSize)
         {
-            var count = source.Count();
+            var count = source.Count;
             var items = source.Skip(
                     (page - 1) * pageSize)
                 .Take(pageSize).ToList();

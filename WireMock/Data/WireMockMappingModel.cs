@@ -8,13 +8,13 @@ namespace WireMock.Data;
 [ExcludeFromCodeCoverage]
 public class WireMockMappingModel
 {
-    public string? Guid { get; set; }
-    public DateTime UpdatedAt { get; set; }
-    public required string Title { get; set; }
-    public string? Description { get; set; }
-    public int Priority { get; set; }
-    public required Request Request { get; set; }
-    public required Response Response { get; set; }
+    public string? Guid { get; init; }
+    public DateTime UpdatedAt { get; init; }
+    public required string Title { get; init; }
+    public string? Description { get; init; }
+    public int Priority { get; init; }
+    public required Request Request { get; init; }
+    public required Response Response { get; init; }
 
     [JsonIgnore] public string? Raw { get; set; }
 }

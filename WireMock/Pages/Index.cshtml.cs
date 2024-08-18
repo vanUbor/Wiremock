@@ -1,34 +1,26 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WireMock.Data;
-using WireMock.Server;
+using WireMock.Server.Interfaces;
 
 namespace WireMock.Pages;
 
-public class Index : PageModel
+public class Index(IWireMockRepository Repository, IOrchestrator ServiceOrchestrator)
+    : PageModel
 {
     [BindProperty] public IList<WireMock.Server.WireMockService> Servers { get; set; } = default!;
 
-    private readonly IWireMockRepository _repository;
-    private readonly ServiceOrchestrator _serviceOrchestrator;
-
-    public Index(IWireMockRepository repository, ServiceOrchestrator serviceOrchestrator)
-    {
-        _repository = repository;
-        _serviceOrchestrator = serviceOrchestrator;
-    }
-
     public async Task<IActionResult> OnGet()
     {
-        Servers = await _serviceOrchestrator.GetOrCreateServicesAsync();
+        Servers = await ServiceOrchestrator.GetOrCreateServicesAsync();
         return Page();
     }
 
     public async Task<IActionResult> OnPostDeleteAsync(int id)
     {
-        await _repository.RemoveModelAsync(id);
-        _serviceOrchestrator.Stop(id);
-        _serviceOrchestrator.RemoveService(id);
+        await Repository.RemoveModelAsync(id);
+        ServiceOrchestrator.Stop(id);
+        ServiceOrchestrator.RemoveService(id);
         
         return RedirectToPage();
     }
@@ -36,9 +28,11 @@ public class Index : PageModel
     public async Task<IActionResult> OnPostStartAsync(int? id)
     {
         if (id == null)
+        {
             return NotFound($"No service with id {id} found");
+        }
 
-        await _serviceOrchestrator.StartServiceAsync(id.Value);
+        await ServiceOrchestrator.StartServiceAsync(id.Value);
 
         return RedirectToPage();
     }
@@ -48,7 +42,7 @@ public class Index : PageModel
         if (id == null)
             return NotFound($"No service with id {id} found");
 
-        await Task.Run(() => _serviceOrchestrator.Stop(id.Value));
+        await Task.Run(() => ServiceOrchestrator.Stop(id.Value));
 
         return RedirectToPage();
     }

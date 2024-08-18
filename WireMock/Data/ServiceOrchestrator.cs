@@ -2,10 +2,20 @@ using System.Diagnostics.CodeAnalysis;
 using NuGet.Packaging;
 using NuGet.Protocol;
 using WireMock.Server;
+using WireMock.Server.Interfaces;
 
 namespace WireMock.Data;
 
-public class ServiceOrchestrator
+public interface IOrchestrator
+{
+    void RemoveService(int id);
+    void Stop(int id);
+    Task CreateServiceAsync(int id);
+    Task<IList<WireMockService>> GetOrCreateServicesAsync();
+    Task StartServiceAsync(int id);
+    bool IsRunning(int serviceId);
+}
+public class ServiceOrchestrator : IOrchestrator
 {
     private readonly IWireMockRepository _repo;
     private readonly WireMockServiceList _services;
@@ -14,8 +24,8 @@ public class ServiceOrchestrator
         IWireMockRepository repository)
     {
         _services = serviceList;
-        _services.MappingAdded += (sender, changedMappingsArgs)
-            => _ = SaveMappingToContextAsync(changedMappingsArgs);
+        _services.MappingAdded += async (_ , changedMappingsArgs) 
+            => await SaveMappingToContextAsync(changedMappingsArgs);
 
         _services.MappingRemoved += RemoveMappingFromContext;
         _repo = repository;
@@ -41,7 +51,10 @@ public class ServiceOrchestrator
             {
                 if (_services.Any(s => s.Id.Equals(model.Id.ToString(),
                         StringComparison.CurrentCultureIgnoreCase)))
+                {
                     continue;
+                }
+                
                 _services.Add(CreateService(model));
             }
 
@@ -110,13 +123,13 @@ public class ServiceOrchestrator
     /// </summary>
     /// <param name="e">The event arguments containing the service ID and mapping GUIDs.</param>
     [ExcludeFromCodeCoverage]
-    private async Task SaveMappingToContextAsync(ChangedMappingsArgs e)
+    private async Task SaveMappingToContextAsync(ChangedMappingsEventArgs e)
     => await _repo.AddMappingsAsync(int.Parse(e.ServiceId), e.MappingModels.Select(mm
             => new Tuple<Guid, string>(mm.Guid!.Value, mm.ToJson())));
     
 
     [ExcludeFromCodeCoverage]
-    private void RemoveMappingFromContext(object? sender, ChangedMappingsArgs e)
+    private void RemoveMappingFromContext(object? sender, ChangedMappingsEventArgs e)
       => _repo.RemoveMappingsAsync(e.MappingModels.Select(mm => mm.Guid!.Value));
     
 
@@ -130,8 +143,8 @@ public class ServiceOrchestrator
     /// Creates a new WireMockService based on the provided WireMockServiceModel
     /// </summary>
     /// <param name="model">The WireMockServiceModel used to create the service.</param>
-    private WireMockService CreateService(WireMockServiceModel model)
-        => new WireMockService(model);
+    private static WireMockService CreateService(WireMockServiceModel model)
+        => new (model);
 
     /// <summary>
     /// Checks if a service with the provided service Id is currently running
@@ -139,7 +152,8 @@ public class ServiceOrchestrator
     /// <param name="serviceId">the service id of the service which gets checked</param>
     public virtual bool IsRunning(int serviceId)
     {
-        var service = _services?.FirstOrDefault(s => s.Id.Equals(serviceId.ToString()));
+        var service = _services.FirstOrDefault(s 
+            => s.Id.Equals(serviceId.ToString()));
         return service?.IsRunning ?? false;
     }
 }

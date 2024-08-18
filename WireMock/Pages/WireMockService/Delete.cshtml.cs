@@ -1,32 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WireMock.Data;
-using WireMock.Server;
+using WireMock.Server.Interfaces;
 
-namespace WireMock.Pages.WireMockService
+namespace WireMock.Pages.WireMockService;
+
+public class DeleteModel(IWireMockRepository Repository) : PageModel
 {
-    public class DeleteModel : PageModel
+    [BindProperty]
+    public WireMockServiceModel WireMockServiceModel { get; set; } = default!;
+
+    public async Task<IActionResult> OnGetAsync(int id)
     {
-        private readonly IWireMockRepository _repository;
-        
-        public DeleteModel(IWireMockRepository repository)
-        {
-            _repository = repository;
-        }
+        WireMockServiceModel = await Repository.GetModelAsync(id);
+        return Page();
+    }
 
-        [BindProperty]
-        public WireMockServiceModel WireMockServiceModel { get; set; } = default!;
-
-        public async Task<IActionResult> OnGetAsync(int id)
-        {
-            WireMockServiceModel = await _repository.GetModelAsync(id);
-            return Page();
-        }
-
-        public async Task<IActionResult> OnPostAsync(int id)
-        {
-            await _repository.RemoveModelAsync(id);
-            return RedirectToPage("./Index");
-        }
+    public async Task<IActionResult> OnPostAsync(int id)
+    {
+        await Repository.RemoveModelAsync(id);
+        return RedirectToPage("./Index");
     }
 }
