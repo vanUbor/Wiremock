@@ -38,7 +38,7 @@ public class WireMockServerListTest
         var isReadonly = _list!.IsReadOnly;
         
         //Assert
-        Assert.AreEqual(false, isReadonly);
+        Assert.IsFalse(isReadonly);
     }
 
    
