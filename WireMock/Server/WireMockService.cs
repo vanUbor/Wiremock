@@ -114,6 +114,4 @@ public class WireMockService(WireMockServiceModel model)
             ServiceId = Id
         });
     }
-
- 
 }

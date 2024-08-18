@@ -13,7 +13,6 @@ public class WireMockRepositoryTest
     [TestInitialize]
     public void Setup()
     {
-       
         _contextFactory = CreateInMemoryContext();
         InitializeContextWithTestData();
         _repo = new WireMockRepository(_contextFactory);
@@ -95,7 +94,7 @@ public class WireMockRepositoryTest
 
         //Assert
         var updatedContext = await _contextFactory.CreateDbContextAsync();
-        var updatedModel = updatedContext.WireMockServerModel.Single(m => m.Id == 42);
+        var updatedModel = await updatedContext.WireMockServerModel.SingleAsync(m => m.Id == 42);
         Assert.AreEqual("newName", updatedModel.Name, "Name not as expected");
     }
 
@@ -121,7 +120,7 @@ public class WireMockRepositoryTest
 
         // Assert
         var updatedContext = await _contextFactory!.CreateDbContextAsync();
-        Assert.AreEqual("UpdatedRaw", updatedContext.WireMockServerMapping.First().Raw);
+        Assert.AreEqual("UpdatedRaw", (await updatedContext.WireMockServerMapping.FirstAsync()).Raw);
     }
 
     [TestMethod]
@@ -137,8 +136,8 @@ public class WireMockRepositoryTest
 
         // Assert
         var updatedContext = await _contextFactory!.CreateDbContextAsync();
-        var service = updatedContext.WireMockServerModel.Include(wireMockServiceModel => wireMockServiceModel.Mappings)
-            .Single(m => m.Id == id);
+        var service = await updatedContext.WireMockServerModel.Include(wireMockServiceModel => wireMockServiceModel.Mappings)
+            .SingleAsync(m => m.Id == id);
         Assert.AreEqual(1, service.Mappings.Count);
     }
 
@@ -155,12 +154,12 @@ public class WireMockRepositoryTest
 
         // Assert
         var updatedContext = await _contextFactory!.CreateDbContextAsync();
-        var service = updatedContext.WireMockServerModel.Include(wireMockServiceModel
+        var service = await updatedContext.WireMockServerModel.Include(wireMockServiceModel
                 => wireMockServiceModel.Mappings)
-            .Single(m => m.Id == id);
+            .SingleAsync(m => m.Id == id);
         Assert.AreEqual(2, service.Mappings.Count);
-        Assert.AreEqual(guid, service.Mappings.Last().Guid);
-        Assert.AreEqual(raw, service.Mappings.Last().Raw);
+        Assert.AreEqual(guid, service.Mappings[-1].Guid);
+        Assert.AreEqual(raw, service.Mappings[-1].Raw);
     }
 
     [TestMethod]
@@ -174,7 +173,7 @@ public class WireMockRepositoryTest
 
         //Assert
         var updatedContext = await _contextFactory!.CreateDbContextAsync();
-        Assert.IsFalse(updatedContext.WireMockServerMapping.Any(m => m.Guid == guid));
+        Assert.IsFalse(await updatedContext.WireMockServerMapping.AnyAsync(m => m.Guid == guid));
     }
 
     [TestMethod]
@@ -189,7 +188,7 @@ public class WireMockRepositoryTest
 
         // Assert
         var context = await _contextFactory!.CreateDbContextAsync();
-        Assert.AreEqual(raw, context.WireMockServerMapping.Single(mapping => mapping.Guid == guid).Raw);
+        Assert.AreEqual(raw, (await context.WireMockServerMapping.SingleAsync(mapping => mapping.Guid == guid)).Raw);
     }
 
     [TestMethod]
@@ -204,7 +203,7 @@ public class WireMockRepositoryTest
 
         // Assert
         var context = await _contextFactory!.CreateDbContextAsync();
-        Assert.AreEqual(1, context.WireMockServerMapping.Count());
-        Assert.AreEqual("InitMapping", context.WireMockServerMapping.First().Raw);
+        Assert.AreEqual(1, await context.WireMockServerMapping.CountAsync());
+        Assert.AreEqual("InitMapping", (await context.WireMockServerMapping.FirstAsync()).Raw);
     }
 }
