@@ -9,7 +9,7 @@ namespace WireMock.Server;
 
 public class WireMockService(WireMockServiceModel model)
 {
-    private static readonly object Lock = new ();
+    private static readonly object Lock = new();
     public string Id => model.Id.ToString();
     public string Name => model.Name;
     public virtual bool IsRunning => _server?.IsStarted ?? false;
@@ -24,7 +24,11 @@ public class WireMockService(WireMockServiceModel model)
     private readonly List<MappingModel> _lastKnownMappings = [];
     private readonly Timer _checkMappingsTimer = new(2000);
 
-    public void CreateAndStart(IEnumerable<WireMockServerMapping>? mappings = default)
+    public void CreateAndStart()
+        => CreateAndStart(null);
+
+
+    public void CreateAndStart(IEnumerable<WireMockServerMapping>? mappings)
     {
         _server = WireMockServer.Start(_settings);
         if (mappings != null)
@@ -42,13 +46,13 @@ public class WireMockService(WireMockServiceModel model)
         // create the timer to check for new mappings
         CreateAndStartTimer();
     }
-    
+
     public void Stop()
     {
         _server?.Stop();
         _checkMappingsTimer.Stop();
     }
-    
+
     /// <summary>
     /// Creates and starts the timer to periodically check for new mappings.
     /// </summary>
@@ -69,7 +73,7 @@ public class WireMockService(WireMockServiceModel model)
     /// </remarks>
     /// <param name="sender">The object that raised the event.</param>
     /// <param name="e">The event arguments for the Elapsed event.</param>
-    internal void CheckMappings(object? sender = null, ElapsedEventArgs? e = null)
+    private void CheckMappings(object? sender = null, ElapsedEventArgs? e = null)
     {
         // lock makes debugging simpler as we could change the lists of known mappings in a breakpoint
         // its probably not needed in RL as the handling is quick enough (hopefully :P)

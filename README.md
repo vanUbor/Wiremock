@@ -31,7 +31,7 @@ coming soon
 
 ## Codecov
 
-[![codecov](https://codecov.io/gh/vanUbor/Wiremock/graph/badge.svg?token=ESJLR9JY72)](https://codecov.io/gh/vanUbor/Wiremock)
+[![codecov](https://codecov.io/gh/vanUbor/Wiremock/branch/main/graph/badge.svg?token=ESJLR9JY72)](https://codecov.io/gh/vanUbor/Wiremock)
 
 ## GitGuardian
 

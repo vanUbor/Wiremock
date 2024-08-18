@@ -37,7 +37,11 @@ jobs:
       - name: Test and Cover
         run: |
           dotnet tool install --global coverlet.console
-          dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./coverage/
+          dotnet test \
+          /p:CollectCoverage=true \
+          /p:Exclude="[*]WireMock.Migrations.*" \
+          /p:CoverletOutputFormat=opencover \
+          /p:CoverletOutput=./coverage/
 
       - name: Sonar End
         run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"

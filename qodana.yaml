@@ -51,3 +51,8 @@ include:
   - name: CssRedundantUnit
   - name: CssUnresolvedCustomProperty
   - name: UseCollectionExpression
+  - name: MemberCanBePrivate.Global
+  - name: RegExpRedundantEscape
+  - name: HtmlUnknownAttribute
+  - name: ArrangeObjectCreationWhenTypeNotEvident
+  - name: YAMLSchemaValidation

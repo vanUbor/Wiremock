@@ -158,8 +158,8 @@ public class WireMockRepositoryTest
                 => wireMockServiceModel.Mappings)
             .SingleAsync(m => m.Id == id);
         Assert.AreEqual(2, service.Mappings.Count);
-        Assert.AreEqual(guid, service.Mappings[-1].Guid);
-        Assert.AreEqual(raw, service.Mappings[-1].Raw);
+        Assert.AreEqual(guid, service.Mappings[^1].Guid);
+        Assert.AreEqual(raw, service.Mappings[^1].Raw);
     }
 
     [TestMethod]
