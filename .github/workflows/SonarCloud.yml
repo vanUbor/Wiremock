@@ -44,4 +44,7 @@ jobs:
           /p:CoverletOutput=./coverage/
 
       - name: Sonar End
-        run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+        run: |
+          dotnet sonarscanner end \
+          /d:sonar.exclusions=**/wwwroot/**/* \
+          /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
