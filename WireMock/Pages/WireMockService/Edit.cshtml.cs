@@ -13,8 +13,15 @@ public class EditModel(IWireMockRepository Repository, IOrchestrator ServiceOrch
 
     public async Task<IActionResult> OnGetAsync(int id)
     {
-        WireMockServiceModel = await Repository.GetModelAsync(id);
-        return Page();
+        try
+        {
+            WireMockServiceModel = await Repository.GetModelAsync(id);
+            return Page();
+        }
+        catch (Exception e)
+        {
+            return RedirectToPage("../Error");
+        }
     }
 
     // To protect from overposting attacks, enable the specific properties you want to bind to.

@@ -40,10 +40,10 @@ public class WireMockServiceModel
             ProxyAndRecordSettings = new ProxyAndRecordSettings
             {
                 Url = ProxyUrl,
-                SaveMappingForStatusCodePattern = this.SaveMappingForStatusCodePattern,
-                SaveMappingToFile = this.SaveMappingToFile,
-                SaveMapping = this.SaveMapping,
-                PrefixForSavedMappingFile = this.Name
+                SaveMappingForStatusCodePattern = SaveMappingForStatusCodePattern,
+                SaveMappingToFile = SaveMappingToFile,
+                SaveMapping = SaveMapping,
+                PrefixForSavedMappingFile = Name
             },
             StartAdminInterface = StartAdminInterface,
             Port = Port,

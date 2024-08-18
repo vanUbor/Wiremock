@@ -1,13 +1,15 @@
 # TL;DR
 _SSWMUI_ (Super Simple WireMock User Interface) is an ASP.NET Razor Page
-making user of WireMock.NET (https://github.com/WireMock-Net/WireMock.Net), providing the possiblity to create, start, 
+making use of WireMock.NET (https://github.com/WireMock-Net/WireMock.Net),
+providing the possiblity to create, start,
 stop and configure web api proxy instances.
 In its current state it is super limited in its functionality but will grow continuously.
 
 # How does it work
-TBD
+coming soon
 
 # Code quality
+
 ## SonarCloud:
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=vanUbor_Wiremock&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=vanUbor_Wiremock)
 
@@ -35,7 +37,7 @@ N/A
 N/A
 
 ## Codefactor
-
+[![CodeFactor](https://www.codefactor.io/repository/github/vanubor/wiremock/badge)](https://www.codefactor.io/repository/github/vanubor/wiremock)
 
 # How to use containers
 docker build -t wiremock-debug .
