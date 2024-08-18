@@ -32,8 +32,6 @@ public class WireMockServiceList : IList<WireMockService>
     public bool IsReadOnly => _list.IsReadOnly;
 
 
-    public event EventHandler<ChangedMappingsEventArgs>? MappingAdded;
-    
     public event EventHandler<ChangedMappingsEventArgs>? MappingRemoved;
 
 
@@ -43,8 +41,8 @@ public class WireMockServiceList : IList<WireMockService>
     /// <param name="item">The WireMockService to add.</param>
     public void Add(WireMockService item)
     {
-        item.MappingsAdded += RaiseMappingAdded;
-        item.MappingsRemoved += RaiseMappingRemoved;
+        item.MappingsAdded += OnMappingAdded;
+        item.MappingsRemoved += OnMappingRemoved;
         _list.Add(item);
     }
 
@@ -55,8 +53,8 @@ public class WireMockServiceList : IList<WireMockService>
     /// <returns>Returns a boolean value indicating whether the WireMockService was successfully removed or not.</returns>
     public bool Remove(WireMockService item)
     {
-        item.MappingsAdded -= MappingAdded;
-        item.MappingsRemoved -= MappingRemoved;
+        item.MappingsAdded -= OnMappingAdded;
+        item.MappingsRemoved -= OnMappingRemoved;
         return _list.Remove(item);
     }
 
@@ -66,20 +64,20 @@ public class WireMockServiceList : IList<WireMockService>
     public void Clear()
     {
         foreach (var service in _list)
-        {
-            service.MappingsAdded -= MappingAdded;
-            service.MappingsRemoved -= MappingRemoved;
-        }
+            Remove(service);
 
         _list.Clear();
     }
 
-    private void RaiseMappingAdded(object? sender, ChangedMappingsEventArgs args) 
-        => MappingAdded?.Invoke(sender, args);
-    
-    private void RaiseMappingRemoved(object? sender, ChangedMappingsEventArgs args) 
-        => MappingRemoved?.Invoke(sender, args);
-    
+
+    public event EventHandler<ChangedMappingsEventArgs>? MappingAdded;
+
+    private void OnMappingAdded(object? sender, ChangedMappingsEventArgs args)
+        => MappingAdded?.Invoke(sender ?? this, args);
+
+    private void OnMappingRemoved(object? sender, ChangedMappingsEventArgs args)
+        => MappingRemoved?.Invoke(sender ?? this, args);
+
     public bool Contains(WireMockService item)
         => _list.Contains(item);
 

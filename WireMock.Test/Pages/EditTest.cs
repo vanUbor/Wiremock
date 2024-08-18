@@ -31,9 +31,12 @@ public class EditTest
         var repoMock = new Mock<IWireMockRepository>();
         var orchestrator = new Mock<IOrchestrator>();
         
-        var page = new EditModel(repoMock.Object, orchestrator.Object);
-        page.WireMockServiceModel = new () {Name = "UnitTest Service Model", Id = 42};
-        
+        var page = new EditModel(repoMock.Object, orchestrator.Object)
+        {
+            WireMockServiceModel = new () 
+                {Name = "UnitTest Service Model", Id = 42}
+        };
+
         // Act
         var returnPage = await page.OnPostAsync();
         

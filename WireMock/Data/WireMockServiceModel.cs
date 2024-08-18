@@ -22,7 +22,7 @@ public class WireMockServiceModel
     [MaxLength(255)]public string Description { get; init; } = string.Empty;
     
     public int Port { get; init; }
-    public bool StartAdminInterface => true;
+    public static bool StartAdminInterface => true;
     [MaxLength(100)] public string ProxyUrl { get; init; } = string.Empty;
     public bool SaveMapping { get; init; }
     public bool SaveMappingToFile { get; init; }
@@ -45,7 +45,7 @@ public class WireMockServiceModel
                 SaveMapping = this.SaveMapping,
                 PrefixForSavedMappingFile = this.Name
             },
-            StartAdminInterface = this.StartAdminInterface,
+            StartAdminInterface = StartAdminInterface,
             Port = Port,
         };
     }
