@@ -18,7 +18,7 @@ public class EditModel(IWireMockRepository Repository, IOrchestrator ServiceOrch
             WireMockServiceModel = await Repository.GetModelAsync(id);
             return Page();
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return RedirectToPage("../Error");
         }
