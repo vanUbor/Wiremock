@@ -19,7 +19,15 @@ public class WireMockServiceTest
         var service = new WireMockService(model);
 
         // Act
-        service.CreateAndStart();
+        try
+        {
+            service.CreateAndStart();
+        }
+        catch (Exception e)
+        {
+            // Assert
+            Assert.Fail(e.ToString());
+        }
     }
 
     [TestMethod]
@@ -54,7 +62,15 @@ public class WireMockServiceTest
         };
 
         // Act
-        service.CreateAndStart(mappings);
+        try
+        {
+            service.CreateAndStart(mappings);
+        }
+        catch (Exception e)
+        {
+            // Assert
+            Assert.Fail(e.ToString());
+        }
     }
 
     [TestMethod]
@@ -79,7 +95,15 @@ public class WireMockServiceTest
         };
 
         // Act
-        service.CreateAndStart(mappings);
+        try
+        {
+            service.CreateAndStart(mappings);
+        }
+        catch (Exception e)
+        {
+            // Assert
+            Assert.Fail(e.ToString());
+        }
     }
 
     [TestMethod]
@@ -114,8 +138,16 @@ public class WireMockServiceTest
         };
 
         // Act
-        service.CreateAndStart(mappings);
-        await Task.Delay(3000); // wait to let the CheckMappings-Timer trigger
+        try
+        {
+            service.CreateAndStart(mappings);
+            await Task.Delay(3000); // wait to let the CheckMappings-Timer trigger
+        }
+        catch (Exception e)
+        {
+            // Assert
+            Assert.Fail(e.ToString());
+        }
     }
 
     [TestMethod]
@@ -130,8 +162,8 @@ public class WireMockServiceTest
         {
             mappingsAdded = true;
             serviceId = args.ServiceId;
-        };  
-        
+        };
+
         // Act
         service.RaiseNewMappings([new()]);
 
@@ -140,12 +172,12 @@ public class WireMockServiceTest
         Assert.IsNotNull(service.MappingsAdded);
         Assert.AreEqual(42.ToString(), serviceId);
     }
-    
+
     [TestMethod]
     public void RaiseMappingRemoved()
     {
         // Arrange
-        var model = new WireMockServiceModel() { Name = "UnitTest Model", Id = 42 };
+        var model = new WireMockServiceModel { Name = "UnitTest Model", Id = 42 };
         var service = new WireMockService(model);
         var mappingsAdded = false;
         var serviceId = string.Empty;
@@ -153,8 +185,8 @@ public class WireMockServiceTest
         {
             mappingsAdded = true;
             serviceId = args.ServiceId;
-        };  
-        
+        };
+
         // Act
         service.RaiseMappingRemoved([new()]);
 

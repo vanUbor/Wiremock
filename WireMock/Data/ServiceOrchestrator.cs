@@ -24,10 +24,10 @@ public class ServiceOrchestrator : IOrchestrator
         IWireMockRepository repository)
     {
         _services = serviceList;
-        _services.PublicMappingAdded += (sender, changedMappingsArgs)
-            => _ = SaveMappingToContextAsync(changedMappingsArgs);
+        _services.MappingAdded += async (_ , changedMappingsArgs) 
+            => await SaveMappingToContextAsync(changedMappingsArgs);
 
-        _services.PublicMappingRemoved += RemoveMappingFromContext;
+        _services.MappingRemoved += RemoveMappingFromContext;
         _repo = repository;
     }
 
@@ -51,7 +51,10 @@ public class ServiceOrchestrator : IOrchestrator
             {
                 if (_services.Any(s => s.Id.Equals(model.Id.ToString(),
                         StringComparison.CurrentCultureIgnoreCase)))
+                {
                     continue;
+                }
+                
                 _services.Add(CreateService(model));
             }
 

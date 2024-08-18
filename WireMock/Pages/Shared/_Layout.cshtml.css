@@ -8,7 +8,7 @@ a.navbar-brand {
 }
 
 a {
-  color: #0077cc;
+  color: #07c;
 }
 
 .btn-primary {
@@ -31,7 +31,7 @@ a {
 }
 
 .box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, 5);
 }
 
 button.accept-policy {

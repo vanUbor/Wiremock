@@ -32,25 +32,10 @@ public class WireMockServiceList : IList<WireMockService>
     public bool IsReadOnly => _list.IsReadOnly;
 
 
-    private event EventHandler<ChangedMappingsEventArgs>? MappingAdded;
-    /// <summary>
-    /// Represents an event that is raised when a mapping is added to a WireMock service.
-    /// </summary>
-    public event EventHandler<ChangedMappingsEventArgs>? PublicMappingAdded
-    {
-        add => MappingAdded += value;
-        remove => MappingAdded -= value;
-    }
+    public event EventHandler<ChangedMappingsEventArgs>? MappingAdded;
+    
+    public event EventHandler<ChangedMappingsEventArgs>? MappingRemoved;
 
-    private event EventHandler<ChangedMappingsEventArgs>? MappingRemoved;
-    /// <summary>
-    /// Represents an event that is raised when a mapping is removed from a WireMock service.
-    /// </summary>
-    public event EventHandler<ChangedMappingsEventArgs>? PublicMappingRemoved
-    {
-        add => MappingRemoved += value;
-        remove => MappingRemoved -= value;
-    }
 
     /// <summary>
     /// Adds a WireMockService to the WireMockServiceList.

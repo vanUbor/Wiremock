@@ -28,7 +28,9 @@ public class Index(IWireMockRepository Repository, IOrchestrator ServiceOrchestr
     public async Task<IActionResult> OnPostStartAsync(int? id)
     {
         if (id == null)
+        {
             return NotFound($"No service with id {id} found");
+        }
 
         await ServiceOrchestrator.StartServiceAsync(id.Value);
 
