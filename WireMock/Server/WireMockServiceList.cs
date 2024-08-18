@@ -63,7 +63,7 @@ public class WireMockServiceList : IList<WireMockService>
     /// </summary>
     public void Clear()
     {
-        foreach (var service in _list)
+        foreach (var service in _list.ToList())
             Remove(service);
 
         _list.Clear();
