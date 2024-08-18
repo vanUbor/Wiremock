@@ -6,7 +6,6 @@ using Moq.Protected;
 using NSubstitute;
 using WireMock.Data;
 using WireMock.Pages.WireMockService;
-using WireMock.Server;
 using WireMock.Server.Interfaces;
 
 namespace WireMock.Test.Pages;
@@ -29,7 +28,7 @@ public class MappingsTest
             Content = new StringContent("[{" +
                                         "\"Title\" : \"UnitTestTitle\"," +
                                         "\"Response\" : null," +
-                                        "\"Request\" : null}]"),
+                                        "\"Request\" : null}]")
         };
 
         _handlerMock.Protected()
@@ -138,7 +137,7 @@ public class MappingsTest
         var mappings = new Mappings(_clientFactory!, _orchestrator!, repositoryMock.Object, configMock.Object);
 
         const string serviceId = "42";
-        string guid = Guid.NewGuid().ToString();
+        var guid = Guid.NewGuid().ToString();
         const string raw = "{" +
                            "\"Title\" : \"UnitTestTitle\"," +
                            "\"Response\" : null," +

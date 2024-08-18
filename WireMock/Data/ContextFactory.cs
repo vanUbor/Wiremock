@@ -6,7 +6,7 @@ public class DbContextFactory(DbContextOptions<WireMockServerContext> options)
     : IDbContextFactory<WireMockServerContext>
 {
     public WireMockServerContext CreateDbContext()
-        => new WireMockServerContext(options);
+        => new (options);
 
 
     public async Task<WireMockServerContext> CreateDbContextAsync()

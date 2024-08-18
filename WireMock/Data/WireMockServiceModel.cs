@@ -46,7 +46,7 @@ public class WireMockServiceModel
                 PrefixForSavedMappingFile = Name
             },
             StartAdminInterface = StartAdminInterface,
-            Port = Port,
+            Port = Port
         };
     }
 }

@@ -15,6 +15,10 @@ exclude:
   - name: Exclude external javascript
     paths:
       - WireMock/wwwroot/js
+  - name: All
+    paths:
+      - WireMock\wwwroot
+      - WireMock\wwwroot\lib
 include:
   - name: ConvertIfStatementToReturnStatement
   - name: ArrangeThisQualifier

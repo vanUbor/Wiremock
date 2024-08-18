@@ -9,7 +9,7 @@ namespace WireMock.Server;
 
 public class WireMockService(WireMockServiceModel model)
 {
-    private static readonly object Lock = new Object();
+    private static readonly object Lock = new ();
     public string Id => model.Id.ToString();
     public string Name => model.Name;
     public virtual bool IsRunning => _server?.IsStarted ?? false;
@@ -21,7 +21,7 @@ public class WireMockService(WireMockServiceModel model)
     private WireMockServer? _server;
     private readonly WireMockServerSettings _settings = model.ToSettings();
 
-    private readonly List<MappingModel> _lastKnownMappings = new ();
+    private readonly List<MappingModel> _lastKnownMappings = [];
     private readonly Timer _checkMappingsTimer = new(2000);
 
     public void CreateAndStart(IEnumerable<WireMockServerMapping>? mappings = default)
@@ -103,7 +103,7 @@ public class WireMockService(WireMockServiceModel model)
     {
         MappingsRemoved?.Invoke(this, new ChangedMappingsEventArgs(removedMappings)
         {
-            ServiceId = Id,
+            ServiceId = Id
         });
     }
 
@@ -111,7 +111,7 @@ public class WireMockService(WireMockServiceModel model)
     {
         MappingsAdded?.Invoke(this, new ChangedMappingsEventArgs(deltaMappings)
         {
-            ServiceId = Id,
+            ServiceId = Id
         });
     }
 

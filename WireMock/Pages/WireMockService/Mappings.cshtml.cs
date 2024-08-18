@@ -31,7 +31,7 @@ public class Mappings(IHttpClientFactory clientFactory,
         }
         
         ServiceId = id;
-        GuidSort = String.IsNullOrEmpty(sortOrder) ? "guid_desc" : "";
+        GuidSort = string.IsNullOrEmpty(sortOrder) ? "guid_desc" : "";
         TitleSort = sortOrder == "title" ? "title_desc" : "title";
         DateSort = sortOrder == "date" ? "date_desc" : "date";
 
@@ -106,7 +106,7 @@ public class Mappings(IHttpClientFactory clientFactory,
         var request = new HttpRequestMessage
         {
             Method = HttpMethod.Delete,
-            RequestUri = new Uri($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/{guid}"),
+            RequestUri = new Uri($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/{guid}")
         };
         var response = await _client.SendAsync(request);
         

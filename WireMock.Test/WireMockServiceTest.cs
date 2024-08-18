@@ -48,7 +48,7 @@ public class WireMockServiceTest
                 {
                     Request = new RequestModel(),
                     Response = new ResponseModel()
-                }),
+                })
             },
             new()
             {
@@ -57,7 +57,7 @@ public class WireMockServiceTest
                 {
                     Request = new RequestModel(),
                     Response = new ResponseModel()
-                }),
+                })
             }
         };
 
@@ -124,7 +124,7 @@ public class WireMockServiceTest
                 {
                     Request = new RequestModel(),
                     Response = new ResponseModel()
-                }),
+                })
             },
             new()
             {
@@ -133,7 +133,7 @@ public class WireMockServiceTest
                 {
                     Request = new RequestModel(),
                     Response = new ResponseModel()
-                }),
+                })
             }
         };
 

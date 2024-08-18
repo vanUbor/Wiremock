@@ -1,6 +1,5 @@
 ﻿using NSubstitute;
 using WireMock.Data;
-using WireMock.Server;
 using WireMock.Server.Interfaces;
 using Index = WireMock.Pages.Index;
 

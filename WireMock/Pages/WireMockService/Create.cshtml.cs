@@ -3,29 +3,28 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using WireMock.Data;
 using WireMock.Server.Interfaces;
 
-namespace WireMock.Pages.WireMockService
+namespace WireMock.Pages.WireMockService;
+
+public class CreateModel(IWireMockRepository Repository) : PageModel
 {
-    public class CreateModel(IWireMockRepository Repository) : PageModel
+    public IActionResult OnGet()
     {
-        public IActionResult OnGet()
+        return Page();
+    }
+
+    [BindProperty]
+    public WireMockServiceModel WireMockServiceModel { get; set; } = default!;
+
+    // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+    public async Task<IActionResult> OnPostAsync()
+    {
+        if (!ModelState.IsValid)
         {
-            return Page();
+            return RedirectToPage("../Error");
         }
 
-        [BindProperty]
-        public WireMockServiceModel WireMockServiceModel { get; set; } = default!;
+        await Repository.AddModelAsync(WireMockServiceModel);
 
-        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
-        public async Task<IActionResult> OnPostAsync()
-        {
-            if (!ModelState.IsValid)
-            {
-                return RedirectToPage("../Error");
-            }
-
-            await Repository.AddModelAsync(WireMockServiceModel);
-
-            return RedirectToPage("../Index");
-        }
+        return RedirectToPage("../Index");
     }
 }
