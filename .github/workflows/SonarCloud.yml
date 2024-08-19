@@ -33,13 +33,15 @@ jobs:
 
       - name: Sonar Begin
         run: |
-          dotnet sonarscanner begin /k:"vanUbor_Wiremock" /o:"vanubor" \
+          dotnet sonarscanner begin \
+          /k:"vanUbor_Wiremock" \
+          /o:"vanubor" \
+          /v:"${{ env.fullSemVer }}" \
           /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
           /d:sonar.host.url="https://sonarcloud.io" \
           /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" \
           /d:sonar.scanner.scanAll=false \
-          /d:sonar.exclusions="**/wwwroot/**/*, **/Migrations/**/*" \
-          /d:sonar.projectVersion="${{ env.fullSemVer }}"
+          /d:sonar.exclusions="**/wwwroot/**/*, **/Migrations/**/*"
         
       - name: Build
         run: dotnet build --no-restore
