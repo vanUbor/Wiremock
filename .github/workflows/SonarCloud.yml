@@ -12,6 +12,14 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@a94a3b62ee018ef5346cb08fd0d63d93811fe691
+        with:
+          versionSpec: '6.x'
+
+      - name: Determine Version
+        uses: gittools/actions/gitversion/execute@a94a3b62ee018ef5346cb08fd0d63d93811fe691
+        
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
@@ -30,7 +38,8 @@ jobs:
           /d:sonar.host.url="https://sonarcloud.io" \
           /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" \
           /d:sonar.scanner.scanAll=false \
-          /d:sonar.exclusions="**/wwwroot/**/*, **/Migrations/**/*"
+          /d:sonar.exclusions="**/wwwroot/**/*, **/Migrations/**/*" \
+          /d:sonar.projectVersion="${{ env.fullSemVer }}"
         
       - name: Build
         run: dotnet build --no-restore
