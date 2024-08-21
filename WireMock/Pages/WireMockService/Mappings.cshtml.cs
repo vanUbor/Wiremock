@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WireMock.Data;
@@ -7,10 +6,11 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace WireMock.Pages.WireMockService;
 
-public class Mappings(IHttpClientFactory clientFactory,
+public class Mappings(
+    IHttpClientFactory clientFactory,
     IOrchestrator serviceOrchestrator,
-    IWireMockRepository Repository, 
-    IConfiguration Config) 
+    IWireMockRepository Repository,
+    IConfiguration Config)
     : PageModel
 {
     public int ServiceId { get; set; }
@@ -18,52 +18,37 @@ public class Mappings(IHttpClientFactory clientFactory,
     public string? TitleSort { get; set; }
     public string? DateSort { get; set; }
 
-    public PaginatedList<WireMockMappingModel>? Maps { get; set; }
+    public PaginatedList<WireMockServerMapping>? Maps { get; set; }
 
     [BindProperty] public string MapJsonContent { get; set; } = string.Empty;
 
     private readonly HttpClient _client = clientFactory.CreateClient();
+
     public async Task<IActionResult> OnGet(int id, string sortOrder, int? pageIndex)
     {
         if (!serviceOrchestrator.IsRunning(id))
         {
             return RedirectToPage("../Error");
         }
-        
+
         ServiceId = id;
         GuidSort = string.IsNullOrEmpty(sortOrder) ? "guid_desc" : "";
         TitleSort = sortOrder == "title" ? "title_desc" : "title";
         DateSort = sortOrder == "date" ? "date_desc" : "date";
 
         var serviceModel = await Repository.GetModelAsync(id);
-        var mappings = await GetMappings(serviceModel);
+        var mappings = await Repository.GetMappingsAsync(serviceModel.Id);
 
         var maps = SetMapsOrdered(mappings, sortOrder).ToList();
         var pageSize = Config.GetValue("PageSize", 4);
-        Maps = PaginatedList<WireMockMappingModel>.CreatePage(maps, pageIndex ?? 1, pageSize);
+        Maps = PaginatedList<WireMockServerMapping>.CreatePage(maps, pageIndex ?? 1, pageSize);
 
         return Page();
     }
 
-    private async Task<IList<WireMockMappingModel>> GetMappings(WireMockServiceModel model)
-    {
-        var response = await _client.GetAsync($"http://localhost:{model.Port}/__admin/mappings");
-        if (!response.IsSuccessStatusCode)
-            return Array.Empty<WireMockMappingModel>();
 
-
-        var mappingString = await response.Content.ReadAsStringAsync();
-        var maps = JsonSerializer.Deserialize<WireMockMappingModel[]>(mappingString) ?? [];
-        var options = new JsonSerializerOptions { WriteIndented = true };
-        foreach (var map in maps)
-        {
-            map.Raw = JsonSerializer.Serialize(map, options);
-        }
-
-        return maps;
-    }
-
-    private static IEnumerable<WireMockMappingModel> SetMapsOrdered(IList<WireMockMappingModel> mappings, string sortOrder)
+    private static IEnumerable<WireMockServerMapping> SetMapsOrdered(IEnumerable<WireMockServerMapping> mappings,
+        string sortOrder)
     {
         return sortOrder switch
         {
@@ -78,6 +63,7 @@ public class Mappings(IHttpClientFactory clientFactory,
 
     public async Task<IActionResult> OnPostSaveAndUpdate(string id, string guid, string raw)
     {
+        // send mapping to service
         var model = JsonSerializer.Deserialize<WireMockMappingModel>(raw);
         var wireMockServerModel = await Repository.GetModelAsync(int.Parse(id));
         var content = JsonContent.Create(model);
@@ -94,7 +80,12 @@ public class Mappings(IHttpClientFactory clientFactory,
         // if successful set, save to DB
         if (Guid.TryParse(guid, out var guidObj))
         {
-            await Repository.UpdateMappingAsync(guidObj, raw);
+            var updatedMapping = new WireMockServerMapping()
+            {
+                Guid = guidObj,
+                Raw = raw
+            };
+            await Repository.UpdateMappingAsync(updatedMapping);
         }
 
         return RedirectToPage(new { id });
@@ -109,9 +100,9 @@ public class Mappings(IHttpClientFactory clientFactory,
             RequestUri = new Uri($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/{guid}")
         };
         var response = await _client.SendAsync(request);
-        
-        return response.IsSuccessStatusCode 
-            ? RedirectToPage(new { id }) 
+
+        return response.IsSuccessStatusCode
+            ? RedirectToPage(new { id })
             : RedirectToPage("../Error");
     }
 

@@ -2,16 +2,22 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WireMock.Data;
 
+/// <summary>
+/// The Mapping Model as it is used in the local Database
+/// </summary>
 public class WireMockServerMapping
 {
     public int Id { get; init; }
 
+    [MaxLength(255)]
+    public string Title { get; set; }
     /// <summary>
     /// Represents a globally unique identifier.
     /// </summary>
     public Guid Guid { get; init; }
 
-
+    public DateTime UpdatedAt { get; set; }
+    
     /// <summary>
     /// Raw JSON of the Mapping
     /// </summary>

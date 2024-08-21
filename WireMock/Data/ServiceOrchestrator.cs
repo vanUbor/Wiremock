@@ -49,11 +49,9 @@ public class ServiceOrchestrator : IOrchestrator
             // create new services for each model found in configuration that is not already in the service list
             foreach (var model in models)
             {
-                if (_services.Any(s => s.Id.Equals(model.Id.ToString(),
-                        StringComparison.CurrentCultureIgnoreCase)))
-                {
+                if (_services.Any(s => s.Id == model.Id))
                     continue;
-                }
+                
                 
                 _services.Add(CreateService(model));
             }
@@ -85,8 +83,7 @@ public class ServiceOrchestrator : IOrchestrator
     /// <param name="id">The ID of the service to remove.</param>
     public virtual void RemoveService(int id)
     {
-        var service = _services.Single(i => i.Id.Equals(id.ToString()
-            , StringComparison.InvariantCultureIgnoreCase));
+        var service = _services.Single(i => i.Id == id);
         _services.Remove(service);
     }
 
@@ -96,9 +93,7 @@ public class ServiceOrchestrator : IOrchestrator
     /// <param name="id">The ID of the service.</param>
     public virtual void Stop(int id)
     {
-        var service = _services.Single(i => i.Id.Equals(id.ToString()
-            , StringComparison.InvariantCultureIgnoreCase));
-
+        var service = _services.Single(i => i.Id == id);
         service.Stop();
     }
 
@@ -109,11 +104,9 @@ public class ServiceOrchestrator : IOrchestrator
     /// <returns>Task</returns>
     public virtual async Task StartServiceAsync(int id)
     {
-        var service = _services.Single(i => i.Id.Equals(id.ToString()
-            , StringComparison.InvariantCultureIgnoreCase));
-
         var models = await _repo.GetModelsAsync();
-
+        var service = _services.Single(i => i.Id == id);
+        
         var m = models.Single(model => model.Id == id);
         service.CreateAndStart(m.Mappings);
     }
@@ -124,8 +117,14 @@ public class ServiceOrchestrator : IOrchestrator
     /// <param name="e">The event arguments containing the service ID and mapping GUIDs.</param>
     [ExcludeFromCodeCoverage]
     private async Task SaveMappingToContextAsync(ChangedMappingsEventArgs e)
-    => await _repo.AddMappingsAsync(int.Parse(e.ServiceId), e.MappingModels.Select(mm
-            => new Tuple<Guid, string>(mm.Guid!.Value, mm.ToJson())));
+    => await _repo.AddMappingsAsync(e.MappingModels.Select(mm
+            => new WireMockServerMapping
+            {
+                Guid = mm.Guid!.Value, 
+                Raw = mm.ToJson(), 
+                Title = mm.Title ?? "No Title", 
+                WireMockServerModelId = e.ServiceId
+            }));
     
 
     [ExcludeFromCodeCoverage]
@@ -153,7 +152,7 @@ public class ServiceOrchestrator : IOrchestrator
     public virtual bool IsRunning(int serviceId)
     {
         var service = _services.FirstOrDefault(s 
-            => s.Id.Equals(serviceId.ToString()));
+            => s.Id == serviceId);
         return service?.IsRunning ?? false;
     }
 }

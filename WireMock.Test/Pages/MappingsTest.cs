@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Moq;
+using Moq.Language.Flow;
 using Moq.Protected;
 using NSubstitute;
 using WireMock.Data;
@@ -131,8 +132,9 @@ public class MappingsTest
                 Port = 8081
             });
 
-        repositoryMock.Setup(x => x.UpdateMappingAsync(It.IsAny<Guid>(), It.IsAny<string>()))
-            .Returns(Task.CompletedTask);
+        repositoryMock.Setup(x 
+                => x.UpdateMappingAsync(It.IsAny<WireMockServerMapping>()))
+            .Returns(Task.FromResult(default(WireMockServerMapping))!);
 
         var mappings = new Mappings(_clientFactory!, _orchestrator!, repositoryMock.Object, configMock.Object);
 

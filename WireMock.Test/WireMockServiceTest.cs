@@ -157,7 +157,7 @@ public class WireMockServiceTest
         var model = new WireMockServiceModel { Name = "UnitTest Model", Id = 42 };
         var service = new WireMockService(model);
         var mappingsAdded = false;
-        var serviceId = string.Empty;
+        var serviceId = 0;
         service.MappingsAdded += (_, args) =>
         {
             mappingsAdded = true;
@@ -170,7 +170,7 @@ public class WireMockServiceTest
         // Assert
         Assert.IsTrue(mappingsAdded);
         Assert.IsNotNull(service.MappingsAdded);
-        Assert.AreEqual(42.ToString(), serviceId);
+        Assert.AreEqual(42, serviceId);
     }
 
     [TestMethod]
@@ -180,7 +180,7 @@ public class WireMockServiceTest
         var model = new WireMockServiceModel { Name = "UnitTest Model", Id = 42 };
         var service = new WireMockService(model);
         var mappingsAdded = false;
-        var serviceId = string.Empty;
+        var serviceId = 0;
         service.MappingsRemoved += (_, args) =>
         {
             mappingsAdded = true;
@@ -193,6 +193,6 @@ public class WireMockServiceTest
         // Assert
         Assert.IsTrue(mappingsAdded);
         Assert.IsNotNull(service.MappingsRemoved);
-        Assert.AreEqual(42.ToString(), serviceId);
+        Assert.AreEqual(42, serviceId);
     }
 }

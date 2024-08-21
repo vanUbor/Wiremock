@@ -4,6 +4,9 @@ using System.Text.Json.Serialization;
 namespace WireMock.Data;
 
 
+/// <summary>
+/// The Mapping Model as used from WireMock.NET
+/// </summary>
 [ExcludeFromCodeCoverage]
 public class WireMockMappingModel
 {

@@ -9,9 +9,12 @@ public interface IWireMockRepository
     Task<IList<WireMockServiceModel>> GetModelsAsync();
     Task UpdateModelAsync(WireMockServiceModel model);
     Task RemoveModelAsync(int id);
-    Task UpdateMappingAsync(Guid guid, string raw);
+    
+    // Mappings
+    Task<IEnumerable<WireMockServerMapping>> GetMappingsAsync(int id);
+    Task<WireMockServerMapping> UpdateMappingAsync(WireMockServerMapping updatedMapping);
     Task<bool> CheckModelExistsAsync(int id);
-    Task AddMappingsAsync(int serviceId, IEnumerable<Tuple<Guid, string>> newMappings);
+    Task AddMappingsAsync(IEnumerable<WireMockServerMapping> newMappings);
     Task UpdateMappingsAsync(IEnumerable<Tuple<Guid, string>> mappings);
     Task RemoveMappingsAsync(IEnumerable<Guid> guids);
 }

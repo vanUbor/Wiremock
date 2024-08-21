@@ -40,7 +40,8 @@ public class WireMockRepositoryTest
         {
             WireMockServerModelId = 42,
             Guid = new Guid([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]),
-            Raw = "InitMapping"
+            Raw = "InitMapping",
+            Title = "Init Unit Test Title"
         });
         context.SaveChanges();
     }
@@ -115,8 +116,13 @@ public class WireMockRepositoryTest
     public async Task UpdateMappingAsync()
     {
         // Act
-        await _repo!.UpdateMappingAsync(new Guid([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]),
-            "UpdatedRaw");
+        var updatedMapping = new WireMockServerMapping()
+        {
+            Guid = new Guid([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]),
+            Raw = "UpdatedRaw",
+            Title = "Unit Test Title"
+        };
+        await _repo!.UpdateMappingAsync(updatedMapping);
 
         // Assert
         var updatedContext = await _contextFactory!.CreateDbContextAsync();
@@ -132,11 +138,19 @@ public class WireMockRepositoryTest
         const string raw = "FakeJsonMapping";
 
         // Act
-        await _repo!.AddMappingsAsync(id, new[] { new Tuple<Guid, string>(guid, raw) });
+        await _repo!.AddMappingsAsync(new List<WireMockServerMapping>()
+        {
+            new()
+            {
+                Guid = guid,
+                Raw = raw
+            }
+        });
 
         // Assert
         var updatedContext = await _contextFactory!.CreateDbContextAsync();
-        var service = await updatedContext.WireMockServerModel.Include(wireMockServiceModel => wireMockServiceModel.Mappings)
+        var service = await updatedContext.WireMockServerModel
+            .Include(wireMockServiceModel => wireMockServiceModel.Mappings)
             .SingleAsync(m => m.Id == id);
         Assert.AreEqual(1, service.Mappings.Count);
     }
@@ -150,7 +164,16 @@ public class WireMockRepositoryTest
         const string raw = "FakeJsonMapping";
 
         // Act
-        await _repo!.AddMappingsAsync(id, new[] { new Tuple<Guid, string>(guid, raw) });
+        await _repo!.AddMappingsAsync(new[]
+        {
+            new WireMockServerMapping()
+            {
+                Guid = guid,
+                Raw = raw,
+                Title = "Unit Test Title",
+                WireMockServerModelId = id
+            }
+        });
 
         // Assert
         var updatedContext = await _contextFactory!.CreateDbContextAsync();
