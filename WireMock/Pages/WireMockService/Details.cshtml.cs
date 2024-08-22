@@ -9,9 +9,9 @@ public class DetailsModel(IWireMockRepository Repository) : PageModel
 {
     public WireMockServiceModel WireMockServiceModel { get; set; } = default!;
 
-    public async Task<IActionResult> OnGetAsync(int id)
+    public async Task<IActionResult> OnGetAsync(int serviceId)
     {
-        WireMockServiceModel = await Repository.GetModelAsync(id);
+        WireMockServiceModel = await Repository.GetModelAsync(serviceId);
         return Page();
     }
 }

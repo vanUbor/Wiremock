@@ -10,7 +10,7 @@ namespace WireMock.Server;
 public class WireMockService(WireMockServiceModel model)
 {
     private static readonly object Lock = new();
-    public string Id => model.Id.ToString();
+    public int Id => model.Id;
     public string Name => model.Name;
     public virtual bool IsRunning => _server?.IsStarted ?? false;
 
