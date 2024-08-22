@@ -1,0 +1,6 @@
+reviews:
+  review_instructions:
+    - match: "**/*"
+      instructions:
+        - ignore:
+            - "code_coverage"
