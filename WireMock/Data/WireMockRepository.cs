@@ -98,7 +98,7 @@ public class WireMockRepository(
                     Guid = newMapping.Guid,
                     Raw = newMapping.Raw,
                     Title = newMapping.Title,
-                    UpdatedAt = DateTime.Now,
+                    LastChange = DateTime.Now,
                     WireMockServerModelId = newMapping.WireMockServerModelId
                 })
             .ToList();
@@ -126,7 +126,7 @@ public class WireMockRepository(
             throw new InvalidOperationException("Could not find an mapping to update");
 
         existingMapping.Raw = updatedMapping.Raw;
-        existingMapping.UpdatedAt = DateTime.Now;
+        existingMapping.LastChange = DateTime.Now;
         existingMapping.Title = updatedMapping.Title ?? existingMapping.Title;
         var entry = context.WireMockServerMapping.Update(existingMapping);
         await context.SaveChangesAsync();

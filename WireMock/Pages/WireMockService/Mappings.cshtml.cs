@@ -46,8 +46,8 @@ public class Mappings(
     {
         return sortOrder switch
         {
-            "date" => mappings.OrderBy(m => m.UpdatedAt),
-            "date_desc" => mappings.OrderByDescending(m => m.UpdatedAt),
+            "date" => mappings.OrderBy(m => m.LastChange),
+            "date_desc" => mappings.OrderByDescending(m => m.LastChange),
             "title" => mappings.OrderBy(m => m.Title),
             "title_desc" => mappings.OrderByDescending(m => m.Title),
             "guid_desc" => mappings.OrderByDescending(m => m.Guid),

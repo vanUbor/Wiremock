@@ -10,8 +10,9 @@ public class WireMockServerMapping
 {
     public int Id { get; init; }
 
-    [MaxLength(255)] private string? _title;
+    private string? _title;
 
+    [MaxLength(255)]
     public string? Title
     {
         get
@@ -32,7 +33,10 @@ public class WireMockServerMapping
     /// </summary>
     public Guid Guid { get; init; }
 
-    public DateTime UpdatedAt { get; set; }
+    /// <summary>
+    /// When the mapping was changed, either by creating or changing
+    /// </summary>
+    public DateTime LastChange { get; set; }
     
     /// <summary>
     /// Raw JSON of the Mapping
