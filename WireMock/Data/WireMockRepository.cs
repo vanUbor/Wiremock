@@ -67,18 +67,9 @@ public class WireMockRepository(
 
     public async Task<IEnumerable<WireMockServerMapping>> GetMappingsAsync(int id)
     {
-        try
-        {
             await using var context = await ContextFactory.CreateDbContextAsync();
-            return await context.WireMockServerMapping
+            return  await context.WireMockServerMapping
                 .Where(mapping => mapping.WireMockServerModelId == id).ToListAsync();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine($"Could not get mappings for id {id} from database: {e.Message}");
-            Console.WriteLine($"{e.StackTrace}");
-            throw;
-        }
     }
 
     /// <summary>

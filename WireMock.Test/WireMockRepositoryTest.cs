@@ -128,6 +128,22 @@ public class WireMockRepositoryTest
         var updatedContext = await _contextFactory!.CreateDbContextAsync();
         Assert.AreEqual("UpdatedRaw", (await updatedContext.WireMockServerMapping.FirstAsync()).Raw);
     }
+    
+    [TestMethod]
+    public async Task UpdateMapping_FailedAsync()
+    {
+        // Arrange
+        var updatedMapping = new WireMockServerMapping()
+        {
+            Guid = new Guid([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17]),
+            Raw = "UpdatedRaw",
+            Title = "Unit Test Title"
+        };
+        
+        // Act & Assert
+        await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () 
+            => await _repo!.UpdateMappingAsync(updatedMapping));
+    }
 
     [TestMethod]
     public async Task AddExistingMappingsTest()
@@ -200,7 +216,7 @@ public class WireMockRepositoryTest
     }
 
     [TestMethod]
-    public async Task UpdateMappingTest()
+    public async Task UpdateMappingsTest()
     {
         // Arrange
         var guid = new Guid([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
@@ -215,7 +231,7 @@ public class WireMockRepositoryTest
     }
 
     [TestMethod]
-    public async Task UpdateNotExistingMappingTest()
+    public async Task UpdateNotExistingMappingsTest()
     {
         // Arrange
         var guid = new Guid([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17]);
@@ -228,5 +244,33 @@ public class WireMockRepositoryTest
         var context = await _contextFactory!.CreateDbContextAsync();
         Assert.AreEqual(1, await context.WireMockServerMapping.CountAsync());
         Assert.AreEqual("InitMapping", (await context.WireMockServerMapping.FirstAsync()).Raw);
+    }
+
+    [TestMethod]
+    public async Task GetMappingsTest()
+    {
+        //Arrange
+        const int serviceId = 42;
+        //Act
+        var mappings = (await _repo!.GetMappingsAsync(serviceId))
+            .ToList();
+        
+        //Arrange
+        Assert.AreEqual(1, mappings!.Count);
+        Assert.AreEqual("InitMapping", mappings[0].Raw);
+    }
+
+    [TestMethod]
+    public async Task RemoveMappingTest()
+    {
+        //Arrange
+        var guid = new Guid([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
+        
+        //Act
+        await _repo!.RemoveMappingAsync(guid);
+        
+        //Assert
+        var updatedContext = await _contextFactory!.CreateDbContextAsync();
+        Assert.IsFalse(await updatedContext.WireMockServerMapping.AnyAsync(m => m.Guid == guid));
     }
 }
