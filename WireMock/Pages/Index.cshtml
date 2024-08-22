@@ -41,12 +41,12 @@
                 }
             </td>
             <td>
-                <a class="btn btn-primary @(server.IsRunning ? "" : "disabled")" 
-                   asp-route-id="@server.Id" asp-page="./WireMockService/Mappings">Mappings</a>
                 <a class="btn btn-primary" 
-                   asp-route-id="@server.Id" asp-page="./WireMockService/Edit">Settings</a>
+                   asp-route-serviceId=@server.Id asp-page="./WireMockService/Mappings">Mappings</a>
                 <a class="btn btn-primary" 
-                   asp-route-id="@server.Id" asp-page="./WireMockService/Details">Details</a>
+                   asp-route-serviceId="@server.Id" asp-page="./WireMockService/Edit">Settings</a>
+                <a class="btn btn-primary" 
+                   asp-route-serviceId="@server.Id" asp-page="./WireMockService/Details">Details</a>
             </td>
             @* Start / Stop Button *@
             <td>

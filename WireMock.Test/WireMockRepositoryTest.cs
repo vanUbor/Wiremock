@@ -40,7 +40,8 @@ public class WireMockRepositoryTest
         {
             WireMockServerModelId = 42,
             Guid = new Guid([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]),
-            Raw = "InitMapping"
+            Raw = "InitMapping",
+            Title = "Init Unit Test Title"
         });
         context.SaveChanges();
     }
@@ -115,12 +116,33 @@ public class WireMockRepositoryTest
     public async Task UpdateMappingAsync()
     {
         // Act
-        await _repo!.UpdateMappingAsync(new Guid([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]),
-            "UpdatedRaw");
+        var updatedMapping = new WireMockServerMapping
+        {
+            Guid = new Guid([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]),
+            Raw = "UpdatedRaw",
+            Title = "Unit Test Title"
+        };
+        await _repo!.UpdateMappingAsync(updatedMapping);
 
         // Assert
         var updatedContext = await _contextFactory!.CreateDbContextAsync();
         Assert.AreEqual("UpdatedRaw", (await updatedContext.WireMockServerMapping.FirstAsync()).Raw);
+    }
+    
+    [TestMethod]
+    public async Task UpdateMapping_FailedAsync()
+    {
+        // Arrange
+        var updatedMapping = new WireMockServerMapping
+        {
+            Guid = new Guid([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17]),
+            Raw = "UpdatedRaw",
+            Title = "Unit Test Title"
+        };
+        
+        // Act & Assert
+        await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () 
+            => await _repo!.UpdateMappingAsync(updatedMapping));
     }
 
     [TestMethod]
@@ -132,11 +154,19 @@ public class WireMockRepositoryTest
         const string raw = "FakeJsonMapping";
 
         // Act
-        await _repo!.AddMappingsAsync(id, new[] { new Tuple<Guid, string>(guid, raw) });
+        await _repo!.AddMappingsAsync(new List<WireMockServerMapping>
+        {
+            new()
+            {
+                Guid = guid,
+                Raw = raw
+            }
+        });
 
         // Assert
         var updatedContext = await _contextFactory!.CreateDbContextAsync();
-        var service = await updatedContext.WireMockServerModel.Include(wireMockServiceModel => wireMockServiceModel.Mappings)
+        var service = await updatedContext.WireMockServerModel
+            .Include(wireMockServiceModel => wireMockServiceModel.Mappings)
             .SingleAsync(m => m.Id == id);
         Assert.AreEqual(1, service.Mappings.Count);
     }
@@ -150,7 +180,16 @@ public class WireMockRepositoryTest
         const string raw = "FakeJsonMapping";
 
         // Act
-        await _repo!.AddMappingsAsync(id, new[] { new Tuple<Guid, string>(guid, raw) });
+        await _repo!.AddMappingsAsync(new[]
+        {
+            new WireMockServerMapping
+            {
+                Guid = guid,
+                Raw = raw,
+                Title = "Unit Test Title",
+                WireMockServerModelId = id
+            }
+        });
 
         // Assert
         var updatedContext = await _contextFactory!.CreateDbContextAsync();
@@ -177,7 +216,7 @@ public class WireMockRepositoryTest
     }
 
     [TestMethod]
-    public async Task UpdateMappingTest()
+    public async Task UpdateMappingsTest()
     {
         // Arrange
         var guid = new Guid([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
@@ -192,7 +231,7 @@ public class WireMockRepositoryTest
     }
 
     [TestMethod]
-    public async Task UpdateNotExistingMappingTest()
+    public async Task UpdateNotExistingMappingsTest()
     {
         // Arrange
         var guid = new Guid([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17]);
@@ -205,5 +244,33 @@ public class WireMockRepositoryTest
         var context = await _contextFactory!.CreateDbContextAsync();
         Assert.AreEqual(1, await context.WireMockServerMapping.CountAsync());
         Assert.AreEqual("InitMapping", (await context.WireMockServerMapping.FirstAsync()).Raw);
+    }
+
+    [TestMethod]
+    public async Task GetMappingsTest()
+    {
+        //Arrange
+        const int serviceId = 42;
+        //Act
+        var mappings = (await _repo!.GetMappingsAsync(serviceId))
+            .ToList();
+        
+        //Arrange
+        Assert.AreEqual(1, mappings.Count);
+        Assert.AreEqual("InitMapping", mappings[0].Raw);
+    }
+
+    [TestMethod]
+    public async Task RemoveMappingTest()
+    {
+        //Arrange
+        var guid = new Guid([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
+        
+        //Act
+        await _repo!.RemoveMappingAsync(guid);
+        
+        //Assert
+        var updatedContext = await _contextFactory!.CreateDbContextAsync();
+        Assert.IsFalse(await updatedContext.WireMockServerMapping.AnyAsync(m => m.Guid == guid));
     }
 }

@@ -11,29 +11,29 @@ public class EditModel(IWireMockRepository Repository, IOrchestrator ServiceOrch
 {
     [BindProperty] public WireMockServiceModel WireMockServiceModel { get; set; } = default!;
 
-    private const string _errorPagePath = "../Error";
-    public async Task<IActionResult> OnGetAsync(int id)
+    private const string ErrorPagePath = "../Error";
+    public async Task<IActionResult> OnGetAsync(int serviceId)
     {
         try
         {
-            WireMockServiceModel = await Repository.GetModelAsync(id);
+            WireMockServiceModel = await Repository.GetModelAsync(serviceId);
             return Page();
         }
         catch (InvalidOperationException ex)
         {
             Console.WriteLine($"Invalid operation: {ex.Message}");
-            return RedirectToPage(_errorPagePath);
+            return RedirectToPage(ErrorPagePath);
         }
         catch (DbUpdateException ex)
         {
             // Log the exception
             Console.WriteLine($"Database update error: {ex.Message}");
-            return RedirectToPage(_errorPagePath);
+            return RedirectToPage(ErrorPagePath);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Unhandled exception: {ex.Message}");
-            return RedirectToPage(_errorPagePath);
+            return RedirectToPage(ErrorPagePath);
         }
     }
 
@@ -57,12 +57,12 @@ public class EditModel(IWireMockRepository Repository, IOrchestrator ServiceOrch
         {
             // Log the exception
             Console.WriteLine($"Concurrency error: {ex.Message}");
-            return RedirectToPage(_errorPagePath);
+            return RedirectToPage(ErrorPagePath);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Unhandled Exception: {ex.Message}");
-            return RedirectToPage(_errorPagePath);
+            return RedirectToPage(ErrorPagePath);
         }
 
         return RedirectToPage("../Index");
