@@ -62,7 +62,6 @@ public class Mappings(
     /// </summary>
     public async Task<IActionResult> OnPostSaveAndUpdate(int serviceId, string guid, string raw)
     {
-        
         if (serviceOrchestrator.IsRunning(serviceId) && !await SaveAndUpdateToService(serviceId, guid, raw))
             return RedirectToPage("../Error");
 
