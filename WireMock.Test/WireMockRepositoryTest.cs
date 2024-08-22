@@ -133,7 +133,7 @@ public class WireMockRepositoryTest
     public async Task UpdateMapping_FailedAsync()
     {
         // Arrange
-        var updatedMapping = new WireMockServerMapping()
+        var updatedMapping = new WireMockServerMapping
         {
             Guid = new Guid([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17]),
             Raw = "UpdatedRaw",
@@ -256,7 +256,7 @@ public class WireMockRepositoryTest
             .ToList();
         
         //Arrange
-        Assert.AreEqual(1, mappings!.Count);
+        Assert.AreEqual(1, mappings.Count);
         Assert.AreEqual("InitMapping", mappings[0].Raw);
     }
 

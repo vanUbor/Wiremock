@@ -76,7 +76,6 @@ public class WireMockRepository(
     /// Adds new mappings to a WireMock service identified by the given service ID.
     /// If the mapping already exists in the service (identified by the guid), it will be skipped.
     /// </summary>
-    /// <param name="serviceId">The ID of the WireMock service</param>
     /// <param name="newMappings">A collection of mappings that will be added</param>
     public async Task AddMappingsAsync(IEnumerable<WireMockServerMapping> newMappings)
     {

@@ -125,6 +125,21 @@ public class ServerOrchestratorTest
         Assert.AreEqual(1, _serviceList!.Count);
         Assert.IsTrue(_serviceList!.Any(s => s.Id == 2));
     }
+    
+    [TestMethod]
+    public async Task RemoveService_NotExistingServiceTest()
+    {
+        // Arrange
+        await _orchestrator!.GetOrCreateServicesAsync();
+        
+        // Act
+        _orchestrator!.RemoveService(3);
+        
+        // Assert
+        Assert.AreEqual(2, _serviceList!.Count);
+        Assert.IsTrue(_serviceList!.Any(s => s.Id == 2));
+        Assert.IsTrue(_serviceList!.Any(s => s.Id == 1));
+    }
 
     [TestMethod]
     public async Task StopServiceTest()
@@ -139,6 +154,21 @@ public class ServerOrchestratorTest
         // Assert
         var service = _serviceList!.Single(s => s.Id == 1);
         Assert.IsFalse(service.IsRunning);
+    }
+    
+    [TestMethod]
+    public async Task StopService_NotExistingTest()
+    {
+        // Arrange
+        await _orchestrator!.GetOrCreateServicesAsync();
+        await _orchestrator!.StartServiceAsync(1);
+        
+        // Act
+        _orchestrator!.Stop(3);
+        
+        // Assert
+        var service = _serviceList!.Single(s => s.Id == 1);
+        Assert.IsTrue(service.IsRunning);
     }
 
     [TestMethod]
