@@ -23,9 +23,9 @@ public class WireMockServerMappingTest
     public void Title_WithTest()
     {
         // Arrange
-        var titleSet = "UnitTestTitle";
+        const string titleSet = "UnitTestTitle";
         var mapping = new WireMockServerMapping();
-        var model = new WireMockMappingModel()
+        var model = new WireMockMappingModel
         {
             Title = titleSet,
             Request = new Request(),

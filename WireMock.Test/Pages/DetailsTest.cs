@@ -13,8 +13,8 @@ public class DetailsTest
     public async Task OnGetTest()
     {
         // Arrange
-        var serviceId = 42;
-        var model = new WireMockServiceModel() { Name = "Unit Test Model" };
+        const int serviceId = 42;
+        var model = new WireMockServiceModel { Name = "Unit Test Model" };
         var repoMock = new Mock<IWireMockRepository>();
         repoMock.Setup(r 
             => r.GetModelAsync(serviceId)).ReturnsAsync(model);

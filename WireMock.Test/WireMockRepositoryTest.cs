@@ -116,7 +116,7 @@ public class WireMockRepositoryTest
     public async Task UpdateMappingAsync()
     {
         // Act
-        var updatedMapping = new WireMockServerMapping()
+        var updatedMapping = new WireMockServerMapping
         {
             Guid = new Guid([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]),
             Raw = "UpdatedRaw",
@@ -154,7 +154,7 @@ public class WireMockRepositoryTest
         const string raw = "FakeJsonMapping";
 
         // Act
-        await _repo!.AddMappingsAsync(new List<WireMockServerMapping>()
+        await _repo!.AddMappingsAsync(new List<WireMockServerMapping>
         {
             new()
             {
@@ -182,7 +182,7 @@ public class WireMockRepositoryTest
         // Act
         await _repo!.AddMappingsAsync(new[]
         {
-            new WireMockServerMapping()
+            new WireMockServerMapping
             {
                 Guid = guid,
                 Raw = raw,

@@ -75,7 +75,7 @@ public class Mappings(
     {
         if (Guid.TryParse(guid, out var guidObj))
         {
-            var updatedMapping = new WireMockServerMapping()
+            var updatedMapping = new WireMockServerMapping
             {
                 Guid = guidObj,
                 Raw = raw
