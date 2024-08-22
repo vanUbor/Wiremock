@@ -18,26 +18,20 @@ public class Mappings(
     public string? TitleSort { get; set; }
     public string? DateSort { get; set; }
 
+
     public PaginatedList<WireMockServerMapping>? Maps { get; set; }
 
     [BindProperty] public string MapJsonContent { get; set; } = string.Empty;
 
     private readonly HttpClient _client = clientFactory.CreateClient();
 
-    public async Task<IActionResult> OnGet(int id, string sortOrder, int? pageIndex)
+    public async Task<IActionResult> OnGet(int serviceId, string sortOrder, int? pageIndex)
     {
-        if (!serviceOrchestrator.IsRunning(id))
-        {
-            return RedirectToPage("../Error");
-        }
-
-        ServiceId = id;
         GuidSort = string.IsNullOrEmpty(sortOrder) ? "guid_desc" : "";
         TitleSort = sortOrder == "title" ? "title_desc" : "title";
         DateSort = sortOrder == "date" ? "date_desc" : "date";
 
-        var serviceModel = await Repository.GetModelAsync(id);
-        var mappings = await Repository.GetMappingsAsync(serviceModel.Id);
+        var mappings = await Repository.GetMappingsAsync(serviceId);
 
         var maps = SetMapsOrdered(mappings, sortOrder).ToList();
         var pageSize = Config.GetValue("PageSize", 4);
@@ -61,23 +55,19 @@ public class Mappings(
         };
     }
 
-    public async Task<IActionResult> OnPostSaveAndUpdate(string id, string guid, string raw)
+    public async Task<IActionResult> OnPostSaveAndUpdate(int serviceId, string guid, string raw)
     {
-        // send mapping to service
-        var model = JsonSerializer.Deserialize<WireMockMappingModel>(raw);
-        var wireMockServerModel = await Repository.GetModelAsync(int.Parse(id));
-        var content = JsonContent.Create(model);
-        var request = new HttpRequestMessage
-        {
-            Method = HttpMethod.Put,
-            RequestUri = new Uri($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/{guid}"),
-            Content = content
-        };
-        var response = await _client.SendAsync(request);
-        if (!response.IsSuccessStatusCode)
-            return RedirectToPage(new { id });
+        // send mapping to service, redirect to error page if update failes
+        if (serviceOrchestrator.IsRunning(serviceId) && !await SaveAndUpdateToService(serviceId, guid, raw)) 
+            return RedirectToPage("../Error");
+        
+        await SaveAndUpdateToDatabase(guid, raw);
 
-        // if successful set, save to DB
+        return RedirectToPage(new { serviceId });
+    }
+
+    private async Task SaveAndUpdateToDatabase(string guid, string raw)
+    {
         if (Guid.TryParse(guid, out var guidObj))
         {
             var updatedMapping = new WireMockServerMapping()
@@ -87,8 +77,21 @@ public class Mappings(
             };
             await Repository.UpdateMappingAsync(updatedMapping);
         }
+    }
 
-        return RedirectToPage(new { id });
+    private async Task<bool> SaveAndUpdateToService(int id, string guid, string raw)
+    {
+        var model = JsonSerializer.Deserialize<WireMockMappingModel>(raw);
+        var wireMockServerModel = await Repository.GetModelAsync(id);
+        var content = JsonContent.Create(model);
+        var request = new HttpRequestMessage
+        {
+            Method = HttpMethod.Put,
+            RequestUri = new Uri($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/{guid}"),
+            Content = content
+        };
+        var response = await _client.SendAsync(request);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<IActionResult> OnPostResetMapping(string id, string guid)

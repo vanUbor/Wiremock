@@ -135,7 +135,7 @@ public class WireMockRepository(
 
         existingMapping.Raw = updatedMapping.Raw;
         existingMapping.UpdatedAt = DateTime.Now;
-        existingMapping.Title = updatedMapping.Title;
+        existingMapping.Title = updatedMapping.Title ?? existingMapping.Title;
         var entry = context.WireMockServerMapping.Update(existingMapping);
         await context.SaveChangesAsync();
         return entry.Entity;

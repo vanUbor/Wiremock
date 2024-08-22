@@ -12,11 +12,11 @@ public class EditModel(IWireMockRepository Repository, IOrchestrator ServiceOrch
     [BindProperty] public WireMockServiceModel WireMockServiceModel { get; set; } = default!;
 
     private const string ErrorPagePath = "../Error";
-    public async Task<IActionResult> OnGetAsync(int id)
+    public async Task<IActionResult> OnGetAsync(int serviceId)
     {
         try
         {
-            WireMockServiceModel = await Repository.GetModelAsync(id);
+            WireMockServiceModel = await Repository.GetModelAsync(serviceId);
             return Page();
         }
         catch (InvalidOperationException ex)

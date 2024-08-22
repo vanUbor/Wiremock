@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using Moq.Language.Flow;
@@ -110,9 +111,7 @@ public class MappingsTest
 
         // Assert
         Assert.IsNotNull(actionResult);
-        Assert.IsInstanceOfType(actionResult, typeof(RedirectToPageResult));
-        var redirectResult = actionResult as RedirectToPageResult;
-        Assert.AreEqual("../Error", redirectResult?.PageName);
+        Assert.IsInstanceOfType(actionResult, typeof(PageResult));
     }
     
     [TestMethod]
@@ -138,7 +137,7 @@ public class MappingsTest
 
         var mappings = new Mappings(_clientFactory!, _orchestrator!, repositoryMock.Object, configMock.Object);
 
-        const string serviceId = "42";
+        const int serviceId = 42;
         var guid = Guid.NewGuid().ToString();
         const string raw = "{" +
                            "\"Title\" : \"UnitTestTitle\"," +

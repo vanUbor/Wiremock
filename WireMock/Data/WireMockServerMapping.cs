@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 
 namespace WireMock.Data;
 
@@ -9,8 +10,23 @@ public class WireMockServerMapping
 {
     public int Id { get; init; }
 
-    [MaxLength(255)]
-    public string Title { get; set; }
+    [MaxLength(255)] private string? _title;
+
+    public string? Title
+    {
+        get
+        {
+            if (!string.IsNullOrEmpty(_title))
+                return _title;
+            if (string.IsNullOrEmpty(Raw))
+                return string.Empty;
+            
+            var map = JsonSerializer.Deserialize<WireMockMappingModel>(Raw);
+            return map?.Title ?? string.Empty;
+        }
+        set => _title = value;
+    }
+
     /// <summary>
     /// Represents a globally unique identifier.
     /// </summary>

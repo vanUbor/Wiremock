@@ -23,6 +23,9 @@
                 @Html.DisplayNameFor(model => model!.Maps![0].UpdatedAt)
             </a>
         </th>
+        <th class="align-items-end" id="manage">
+            Manage
+        </th>
     </tr>
     </thead>
     <tbody>
@@ -55,7 +58,7 @@
                     </div>
                     <p>
                     <div class="d-flex flex-row-reverse">
-                        <input type="hidden" asp-for="@Model.Request.Query["id"]" name="id"/>
+                        <input type="hidden" asp-for=@Model.Request.Query["serviceId"] name="serviceId"/>
                         <input type="hidden" asp-for="@map.Guid" name="guid"/>
                         <input type="hidden" asp-for="MapJsonContent" id="json-content"/>
                         <button id="save-button" type="submit" class="btn btn-warning">Save and Update</button>
