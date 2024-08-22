@@ -171,7 +171,7 @@ public class MappingsTest
 
         var mappings = new Mappings(_clientFactory!, _orchestrator!, repositoryMock.Object, configMock.Object);
 
-        const string serviceId = "42";
+        const int serviceId = 42;
         var guid = Guid.NewGuid().ToString();
 
         // Act
@@ -200,7 +200,7 @@ public class MappingsTest
             });
 
         var mappings = new Mappings(_clientFactory!, _orchestrator!, repositoryMock.Object, configMock.Object);
-        const string serviceId = "42";
+        const int serviceId = 42;
 
         // Act
         var actionResult = await mappings.OnPostResetAllMappings(serviceId);

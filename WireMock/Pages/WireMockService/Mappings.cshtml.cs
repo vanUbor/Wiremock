@@ -55,12 +55,17 @@ public class Mappings(
         };
     }
 
+    /// <summary>
+    /// Saves and updates a mapping to the service.
+    /// If a service is running, the mapping will only get updated on the service,
+    /// the orchestrator will recognize the updated mapping and will updated it than on the db as well.
+    /// </summary>
     public async Task<IActionResult> OnPostSaveAndUpdate(int serviceId, string guid, string raw)
     {
-        // send mapping to service, redirect to error page if update failes
-        if (serviceOrchestrator.IsRunning(serviceId) && !await SaveAndUpdateToService(serviceId, guid, raw)) 
-            return RedirectToPage("../Error");
         
+        if (serviceOrchestrator.IsRunning(serviceId) && !await SaveAndUpdateToService(serviceId, guid, raw))
+            return RedirectToPage("../Error");
+
         await SaveAndUpdateToDatabase(guid, raw);
 
         return RedirectToPage(new { serviceId });
@@ -94,28 +99,66 @@ public class Mappings(
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<IActionResult> OnPostResetMapping(string id, string guid)
+    /// <summary>
+    /// Removes the mapping with the given guid
+    /// If the service is running it will remove the mapping it from the service, the orchestrator will recognize the removed mapping
+    /// and will remove it than from the db as well.
+    /// If a service is not running the mapping will only be removed from the database
+    /// </summary>
+    public async Task<IActionResult> OnPostResetMapping(int serviceId, string guid)
     {
-        var wireMockServerModel = await Repository.GetModelAsync(int.Parse(id));
+        if (serviceOrchestrator.IsRunning(serviceId))
+        {
+            var success = await ResetMappingOnService(serviceId, guid);
+            return success
+                ? RedirectToPage(new { serviceId })
+                : RedirectToPage("../Error");
+        }
+
+        // if service is not running, it needs to get deleted manually from the db,
+        // otherwise the "mapping removed" event handler of Orchestrator will take care of it
+        await Repository.RemoveMappingAsync(Guid.Parse(guid));
+        return RedirectToPage(new { serviceId });
+    }
+
+    /// <summary>
+    /// Removes a mapping from the service
+    /// </summary>
+    private async Task<bool> ResetMappingOnService(int serviceId, string guid)
+    {
+        var wireMockServerModel = await Repository.GetModelAsync(serviceId);
         var request = new HttpRequestMessage
         {
             Method = HttpMethod.Delete,
             RequestUri = new Uri($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/{guid}")
         };
         var response = await _client.SendAsync(request);
-
-        return response.IsSuccessStatusCode
-            ? RedirectToPage(new { id })
-            : RedirectToPage("../Error");
+        return response.IsSuccessStatusCode;
     }
 
-    public async Task<IActionResult> OnPostResetAllMappings(string id)
-    {
-        var wireMockServerModel = await Repository.GetModelAsync(int.Parse(id));
-        var context = new StringContent(string.Empty);
-        await _client.PostAsync($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/reset",
-            context);
 
-        return RedirectToPage(new { id });
+    /// <summary>
+    /// Removes all mappings
+    /// If a service is running it will remove it from the service, the orchestrator will recognize removed mappings
+    /// and will remove than from the db as well.
+    /// If a service is not running the mappings will only be delete from the database
+    /// </summary>
+    /// <param name="serviceId">The id of the service from which all mappings get removed</param>
+    public async Task<IActionResult> OnPostResetAllMappings(int serviceId)
+    {
+        var wireMockServerModel = await Repository.GetModelAsync(serviceId);
+        if (serviceOrchestrator.IsRunning(serviceId))
+        {
+            var context = new StringContent(string.Empty);
+            await _client.PostAsync($"http://localhost:{wireMockServerModel.Port}/__admin/mappings/reset",
+                context);
+
+            return RedirectToPage(new { serviceId });
+        }
+
+        // if service is not running, it needs to get deleted manually from the db,
+        // otherwise the "mapping removed" event handler of Orchestrator will take care of it
+        await Repository.RemoveMappingsAsync(wireMockServerModel.Mappings.Select(m => m.Guid));
+        return RedirectToPage(new { serviceId });
     }
 }

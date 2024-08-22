@@ -20,10 +20,10 @@
         </th>
         <th id="date">
             <a asp-route-id="@Model.ServiceId" asp-route-sortOrder="@Model.DateSort">
-                @Html.DisplayNameFor(model => model!.Maps![0].UpdatedAt)
+                Last Change
             </a>
         </th>
-        <th class="align-items-end" id="manage">
+        <th class="text-end" id="manage">
             Manage
         </th>
     </tr>
@@ -43,7 +43,7 @@
                         Details and Edit
                     </button>
                     <form method="post" asp-page-handler="ResetMapping">
-                        <input type="hidden" asp-for="@Request.Query["id"]" name="id"/>
+                        <input type="hidden" asp-for="@Request.Query["serviceId"]" name="serviceId"/>
                         <input type="hidden" asp-for="@map.Guid" name="guid"/>
                         <button type="submit" class="btn btn-danger">X</button>
                     </form>
@@ -58,7 +58,7 @@
                     </div>
                     <p>
                     <div class="d-flex flex-row-reverse">
-                        <input type="hidden" asp-for=@Model.Request.Query["serviceId"] name="serviceId"/>
+                        <input type="hidden" asp-for="@Model.Request.Query["serviceId"]" name="serviceId"/>
                         <input type="hidden" asp-for="@map.Guid" name="guid"/>
                         <input type="hidden" asp-for="MapJsonContent" id="json-content"/>
                         <button id="save-button" type="submit" class="btn btn-warning">Save and Update</button>
@@ -92,7 +92,7 @@
     
     <div class="d-flex flex-row-reverse">
         <form method="post" asp-page-handler="ResetAllMappings">
-            <input type="hidden" asp-for="@Model.Request.Query["id"]" name="id"/>
+            <input type="hidden" asp-for="@Model.Request.Query["serviceId"]" name="serviceId"/>
             <button type="submit" class="btn btn-danger">Reset All Mappings</button>
         </form>
     </div>

@@ -17,4 +17,5 @@ public interface IWireMockRepository
     Task AddMappingsAsync(IEnumerable<WireMockServerMapping> newMappings);
     Task UpdateMappingsAsync(IEnumerable<Tuple<Guid, string>> mappings);
     Task RemoveMappingsAsync(IEnumerable<Guid> guids);
+    Task RemoveMappingAsync(Guid guid);
 }

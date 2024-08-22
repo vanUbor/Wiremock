@@ -8,11 +8,11 @@ namespace WireMock.Data;
 
 public interface IOrchestrator
 {
-    void RemoveService(int id);
-    void Stop(int id);
-    Task CreateServiceAsync(int id);
+    void RemoveService(int serviceId);
+    void Stop(int serviceId);
+    Task CreateServiceAsync(int serviceId);
     Task<IList<WireMockService>> GetOrCreateServicesAsync();
-    Task StartServiceAsync(int id);
+    Task StartServiceAsync(int serviceId);
     bool IsRunning(int serviceId);
 }
 public class ServiceOrchestrator : IOrchestrator
@@ -69,45 +69,51 @@ public class ServiceOrchestrator : IOrchestrator
     /// A Model with the ID must be present in the database, otherwise an exception is thrown
     /// The Service itself will only be created and NOT started
     /// </summary>
-    /// <param name="id">The ID of the service.</param>
-    public async Task CreateServiceAsync(int id)
+    /// <param name="serviceId">The ID of the service.</param>
+    public async Task CreateServiceAsync(int serviceId)
     {
         var models = await _repo.GetModelsAsync();
-        var m = models.Single(model => model.Id == id);
+        var m = models.Single(model => model.Id == serviceId);
         _services.Add(CreateService(m));
     }
 
     /// <summary>
     /// Removes a WireMockService from the list of services.    
     /// </summary>
-    /// <param name="id">The ID of the service to remove.</param>
-    public virtual void RemoveService(int id)
+    /// <param name="serviceId">The ID of the service to remove.</param>
+    public virtual void RemoveService(int serviceId)
     {
-        var service = _services.Single(i => i.Id == id);
+        if (_services.All(s => s.Id != serviceId))
+            return;
+        
+        var service = _services.Single(i => i.Id == serviceId);
         _services.Remove(service);
     }
 
     /// <summary>
     /// Stops the WireMockService with the specified ID.
     /// </summary>
-    /// <param name="id">The ID of the service.</param>
-    public virtual void Stop(int id)
+    /// <param name="serviceId">The ID of the service.</param>
+    public virtual void Stop(int serviceId)
     {
-        var service = _services.Single(i => i.Id == id);
+        if (_services.All(s => s.Id != serviceId))
+            return;
+        
+        var service = _services.Single(i => i.Id == serviceId);
         service.Stop();
     }
 
     /// <summary>
     /// Asynchronously starts a WireMockService with the specified ID.
     /// </summary>
-    /// <param name="id">The ID of the service.</param>
+    /// <param name="serviceId">The ID of the service.</param>
     /// <returns>Task</returns>
-    public virtual async Task StartServiceAsync(int id)
+    public virtual async Task StartServiceAsync(int serviceId)
     {
         var models = await _repo.GetModelsAsync();
-        var service = _services.Single(i => i.Id == id);
+        var service = _services.Single(i => i.Id == serviceId);
         
-        var m = models.Single(model => model.Id == id);
+        var m = models.Single(model => model.Id == serviceId);
         service.CreateAndStart(m.Mappings);
     }
 

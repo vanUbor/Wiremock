@@ -20,7 +20,8 @@ public class WireMockRepository(
     public async Task<WireMockServiceModel> GetModelAsync(int id)
     {
         await using var context = await ContextFactory.CreateDbContextAsync();
-        return await context.WireMockServerModel.FirstAsync(m => m.Id == id);
+        return await context.WireMockServerModel.Include(wireMockServiceModel
+            => wireMockServiceModel.Mappings).FirstAsync(m => m.Id == id);
     }
 
     public async Task<IList<WireMockServiceModel>> GetModelsAsync()
@@ -174,6 +175,17 @@ public class WireMockRepository(
             .Where(m => guids.Any(guid => guid.Equals(m.Guid)));
 
         await context.BulkDeleteAsync(mappingsToRemove);
+
+        await context.SaveChangesAsync();
+    }
+    
+    public async Task RemoveMappingAsync(Guid guid)
+    {
+        await using var context = await ContextFactory.CreateDbContextAsync();
+        var mappingToRemove = await context.WireMockServerMapping
+            .SingleAsync(m => guid.Equals(m.Guid));
+
+        context.WireMockServerMapping.Remove(mappingToRemove);
 
         await context.SaveChangesAsync();
     }
