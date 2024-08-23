@@ -21,9 +21,16 @@ public class WireMockServerMapping
                 return _title;
             if (string.IsNullOrEmpty(Raw))
                 return string.Empty;
+            try
+            {
+                var map = JsonSerializer.Deserialize<WireMockMappingModel>(Raw);
+                return map?.Title ?? string.Empty;
+            }
+            catch (JsonException)
+            {
+                return "Title not readable";
+            }
             
-            var map = JsonSerializer.Deserialize<WireMockMappingModel>(Raw);
-            return map?.Title ?? string.Empty;
         }
         set => _title = value;
     }
