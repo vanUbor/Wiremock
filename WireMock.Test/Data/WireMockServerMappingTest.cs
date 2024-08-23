@@ -40,4 +40,15 @@ public class WireMockServerMappingTest
         // Assert
         Assert.AreEqual(titleSet, title);
     }
+    
+    [TestMethod] public void Title_MalformedRawTest() { 
+        // Arrange
+        var mapping = new WireMockServerMapping(); 
+        mapping.Raw = "{ malformed json }"; 
+        
+        // Act
+        var title = mapping.Title; 
+        
+        // Assert
+        Assert.AreEqual("Title not readable", title); }
 }
