@@ -10,31 +10,11 @@ public class EditModel(IWireMockRepository Repository, IOrchestrator ServiceOrch
     : PageModel
 {
     [BindProperty] public WireMockServiceModel WireMockServiceModel { get; set; } = default!;
-
-    private const string ErrorPagePath = "../Error";
+    
     public async Task<IActionResult> OnGetAsync(int serviceId)
     {
-        try
-        {
-            WireMockServiceModel = await Repository.GetModelAsync(serviceId);
-            return Page();
-        }
-        catch (InvalidOperationException ex)
-        {
-            Console.WriteLine($"Invalid operation: {ex.Message}");
-            return RedirectToPage(ErrorPagePath);
-        }
-        catch (DbUpdateException ex)
-        {
-            // Log the exception
-            Console.WriteLine($"Database update error: {ex.Message}");
-            return RedirectToPage(ErrorPagePath);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Unhandled exception: {ex.Message}");
-            return RedirectToPage(ErrorPagePath);
-        }
+        WireMockServiceModel = await Repository.GetModelAsync(serviceId);
+        return Page();
     }
 
     // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -46,24 +26,10 @@ public class EditModel(IWireMockRepository Repository, IOrchestrator ServiceOrch
             return Page();
         }
 
-        try
-        {
-            await Repository.UpdateModelAsync(WireMockServiceModel);
-            ServiceOrchestrator.Stop(WireMockServiceModel.Id);
-            ServiceOrchestrator.RemoveService(WireMockServiceModel.Id);
-            await ServiceOrchestrator.CreateServiceAsync(WireMockServiceModel.Id);
-        }
-        catch (DbUpdateConcurrencyException ex)
-        {
-            // Log the exception
-            Console.WriteLine($"Concurrency error: {ex.Message}");
-            return RedirectToPage(ErrorPagePath);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Unhandled Exception: {ex.Message}");
-            return RedirectToPage(ErrorPagePath);
-        }
+        await Repository.UpdateModelAsync(WireMockServiceModel);
+        ServiceOrchestrator.Stop(WireMockServiceModel.Id);
+        ServiceOrchestrator.RemoveService(WireMockServiceModel.Id);
+        await ServiceOrchestrator.CreateServiceAsync(WireMockServiceModel.Id);
 
         return RedirectToPage("../Index");
     }
