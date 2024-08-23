@@ -81,18 +81,9 @@
     </dl>
 </div>
 <div>
-    <a class="btn"
-        asp-page="./Edit"
-       asp-route-serviceId="@Model.WireMockServiceModel.Id">
-        Edit
-    </a> |
-    <a class="btn"
-        asp-page="../Index">Back to service list</a> |
-
-    <a
-        class="btn"
-        asp-page="./Mappings"
-        asp-route-id="@Model.WireMockServiceModel.Id"> Mappings
+    <a asp-page="./Edit" asp-route-serviceId="@Model.WireMockServiceModel.Id">Edit</a> |
+    <a asp-page="../Index">Back to service list</a> |
+    <a asp-page="./Mappings" asp-route-serviceId="@Model.WireMockServiceModel.Id"> Mappings
     </a>
 
 </div>
