@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WireMock.Data;
 
@@ -10,9 +11,11 @@ using WireMock.Data;
 namespace WireMock.Migrations
 {
     [DbContext(typeof(WireMockServerContext))]
-    partial class WireMockServerContextModelSnapshot : ModelSnapshot
+    [Migration("20240823105014_ChangedUpdatedAtToLastChange")]
+    partial class ChangedUpdatedAtToLastChange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
