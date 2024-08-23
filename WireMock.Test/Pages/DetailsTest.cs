@@ -18,6 +18,7 @@ public class DetailsTest
         var repoMock = new Mock<IWireMockRepository>();
         repoMock.Setup(r 
             => r.GetModelAsync(serviceId)).ReturnsAsync(model);
+
         var page = new DetailsModel(repoMock.Object);
         
         // Act

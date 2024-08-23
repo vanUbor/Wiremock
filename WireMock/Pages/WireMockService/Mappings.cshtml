@@ -5,6 +5,9 @@
 @{
     ViewData["Title"] = "Mappings";
 }
+<div class="d-flex align-items-baseline">
+    <h2>Mappings</h2>
+</div>
 <table class="table">
     <thead>
     <tr>
@@ -89,7 +92,7 @@
             Next
         </a>
     </div>
-    
+
     <div class="d-flex flex-row-reverse">
         <form method="post" asp-page-handler="ResetAllMappings">
             <input type="hidden" asp-for="@Model.Request.Query["serviceId"]" name="serviceId"/>
@@ -98,8 +101,18 @@
     </div>
 </div>
 <br/>
-<div>
-    <a asp-page="../Index">Back to Service List</a>
+<div class="d-flex justify-content-start">
+    <div>
+        <a asp-page="../Index">Back to Service List</a>
+    </div>
+    <div>
+        &nbsp;
+        <a asp-page="Details"
+           asp-route-serviceId="@Model.ServiceId"
+           asp-route-pageIndex="1">
+            Service Details
+        </a>
+    </div>
 </div>
 
 <script>

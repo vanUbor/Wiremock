@@ -41,7 +41,7 @@ jobs:
           /d:sonar.host.url="https://sonarcloud.io" \
           /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" \
           /d:sonar.scanner.scanAll=false \
-          /d:sonar.exclusions="**/wwwroot/**/*, **/Migrations/**/*"
+          /d:sonar.exclusions="**/wwwroot/**/*, **/Migrations/*"
         
       - name: Build
         run: dotnet build --no-restore

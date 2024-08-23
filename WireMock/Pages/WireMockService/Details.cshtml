@@ -6,11 +6,11 @@
 @{
     ViewData["Title"] = "Details";
 }
-
-<h1 xmlns="http://www.w3.org/1999/html">Details</h1>
+<h1>@Model.WireMockServiceModel.Name</h1>
+<h2>Details</h2>
 
 <div>
-    <hr />
+    <hr/>
     <dl class="row">
         <dt class="col-sm-4">
             @Html.DisplayNameFor(model => model.WireMockServiceModel.Id)
@@ -82,5 +82,8 @@
 </div>
 <div>
     <a asp-page="./Edit" asp-route-serviceId="@Model.WireMockServiceModel.Id">Edit</a> |
-    <a asp-page="../Index">Back to List</a>
+    <a asp-page="../Index">Back to service list</a> |
+    <a asp-page="./Mappings" asp-route-serviceId="@Model.WireMockServiceModel.Id"> Mappings
+    </a>
+
 </div>
