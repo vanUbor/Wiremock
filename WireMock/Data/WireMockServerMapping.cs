@@ -30,7 +30,6 @@ public class WireMockServerMapping
             {
                 return "Title not readable";
             }
-            
         }
         set => _title = value;
     }
