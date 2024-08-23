@@ -27,6 +27,7 @@ public class Mappings(
 
     public async Task<IActionResult> OnGet(int serviceId, string sortOrder, int? pageIndex)
     {
+        ServiceId = serviceId;
         GuidSort = string.IsNullOrEmpty(sortOrder) ? "guid_desc" : "";
         TitleSort = sortOrder == "title" ? "title_desc" : "title";
         DateSort = sortOrder == "date" ? "date_desc" : "date";
