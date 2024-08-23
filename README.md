@@ -1,5 +1,5 @@
 
-# TL;DR;
+# TL;DR
 
 _SSWMUI_ (Super Simple WireMock User Interface) is an ASP.NET Razor Page
 making use of [WireMock.NET](https://github.com/WireMock-Net/WireMock.Net),

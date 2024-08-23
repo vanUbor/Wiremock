@@ -33,8 +33,7 @@ public class EditTest
         
         var page = new EditModel(repoMock.Object, orchestrator.Object)
         {
-            WireMockServiceModel = new () 
-                {Name = "UnitTest Service Model", Id = 42}
+            WireMockServiceModel = new WireMockServiceModel {Name = "UnitTest Service Model", Id = 42}
         };
 
         // Act

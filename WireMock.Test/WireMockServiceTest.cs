@@ -165,7 +165,7 @@ public class WireMockServiceTest
         };
 
         // Act
-        service.RaiseNewMappings([new()]);
+        service.RaiseNewMappings([new MappingModel()]);
 
         // Assert
         Assert.IsTrue(mappingsAdded);
@@ -188,7 +188,7 @@ public class WireMockServiceTest
         };
 
         // Act
-        service.RaiseMappingRemoved([new()]);
+        service.RaiseMappingRemoved([new MappingModel()]);
 
         // Assert
         Assert.IsTrue(mappingsAdded);
