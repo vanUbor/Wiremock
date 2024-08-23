@@ -13,8 +13,6 @@ public class Mappings(
     IConfiguration Config)
     : PageModel
 {
-    
-    public string? ServiceName { get; set; }
     public int ServiceId { get; set; }
     public string? GuidSort { get; set; }
     public string? TitleSort { get; set; }

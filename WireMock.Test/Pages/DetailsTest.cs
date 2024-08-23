@@ -19,8 +19,7 @@ public class DetailsTest
         repoMock.Setup(r 
             => r.GetModelAsync(serviceId)).ReturnsAsync(model);
 
-        var orchestrator = new Mock<IOrchestrator>();
-        var page = new DetailsModel(repoMock.Object, orchestrator.Object);
+        var page = new DetailsModel(repoMock.Object);
         
         // Act
         var result = await page.OnGetAsync(serviceId);
