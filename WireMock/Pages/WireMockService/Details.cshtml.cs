@@ -14,26 +14,4 @@ public class DetailsModel(IWireMockRepository Repository, IOrchestrator Orchestr
         WireMockServiceModel = await Repository.GetModelAsync(serviceId);
         return Page();
     }
-
-    /// <summary>
-    /// Determines if the service with the specified ID is running.
-    /// Used to set a class in the cshtml to disabled if a service is not running
-    /// </summary>
-    /// <param name="serviceId">The ID of the service.</param>
-    /// <returns>The status of the service. An empty string if running, "disabled" otherwise.</returns>
-    public string IsRunning(int serviceId)
-    {
-        try
-        {
-            return Orchestrator.IsRunning(serviceId)
-                ? ""
-                : "disabled";
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine($"Could not determine if service with id {serviceId} is running: {e.Message}");
-            Console.WriteLine(e.ToString());
-            return "disabled";
-        }
-    }
 }
