@@ -11,6 +11,10 @@ In its current state it is super limited in its functionality but will grow cont
 
 coming soon
 
+# Build
+
+[![Build and Test](https://github.com/vanUbor/Wiremock/actions/workflows/Build.yml/badge.svg)](https://github.com/vanUbor/Wiremock/actions/workflows/Build.yml)
+
 # Quality
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=vanUbor_Wiremock&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=vanUbor_Wiremock)
@@ -32,6 +36,8 @@ coming soon
 ## Security
 
 ![GitGuardian](https://img.shields.io/badge/GitGuardian-passed-brightgreen)
+
+[![CodeQL](https://github.com/vanUbor/Wiremock/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/vanUbor/Wiremock/actions/workflows/github-code-scanning/codeql)
 
 ## Bugs & Issues
 
