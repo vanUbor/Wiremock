@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using NuGet.Packaging;
 using NuGet.Protocol;
+using SharpYaml.Model;
 using WireMock.Server;
 using WireMock.Server.Interfaces;
 
@@ -11,14 +12,25 @@ public class ServiceOrchestrator : IOrchestrator
     private readonly IWireMockRepository _repo;
     private readonly WireMockServiceList _services;
 
+    public event EventHandler<ChangedMappingsEventArgs>? MappingsChanged;
+
     public ServiceOrchestrator(WireMockServiceList serviceList,
         IWireMockRepository repository)
     {
         _services = serviceList;
         _services.MappingAdded += async (_ , changedMappingsArgs) 
-            => await SaveMappingToContextAsync(changedMappingsArgs);
+            =>
+        {
+            await SaveMappingToContextAsync(changedMappingsArgs);
+            MappingsChanged?.Invoke(_, changedMappingsArgs);
+        };
 
-        _services.MappingRemoved += RemoveMappingFromContext;
+        _services.MappingRemoved += async (_, changedMappingsArgs)
+            =>
+        {
+            await RemoveMappingFromContextAsync(changedMappingsArgs);
+            MappingsChanged?.Invoke(_, changedMappingsArgs);
+        };
         _repo = repository;
     }
 
@@ -125,8 +137,8 @@ public class ServiceOrchestrator : IOrchestrator
     
 
     [ExcludeFromCodeCoverage]
-    private void RemoveMappingFromContext(object? sender, ChangedMappingsEventArgs e)
-      => _repo.RemoveMappingsAsync(e.MappingModels.Select(mm => mm.Guid!.Value));
+    private async Task RemoveMappingFromContextAsync(ChangedMappingsEventArgs e)
+      => await _repo.RemoveMappingsAsync(e.MappingModels.Select(mm => mm.Guid!.Value));
     
 
     private async Task CreateServicesAsync()

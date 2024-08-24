@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using WireMock.Data;
 using WireMock.Server;
 using WireMock.Server.Interfaces;
+using WireMock.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
@@ -11,6 +12,7 @@ builder.Logging.AddConsole();
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddHttpClient();
+builder.Services.AddSignalR();
 builder.Services.AddSingleton<IWireMockRepository, WireMockRepository>();
 builder.Services.AddSingleton<IDbContextFactory<WireMockServerContext>, DbContextFactory>();
 builder.Services.AddSingleton<IOrchestrator, ServiceOrchestrator>();
@@ -39,11 +41,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
-
 app.MapRazorPages();
+app.MapHub<MappingHub>("/mappinghub");
 
 await app.RunAsync();

@@ -12,17 +12,17 @@
     <thead>
     <tr>
         <th id="guid">
-            <a asp-route-id="@Model.ServiceId" asp-route-sortOrder="@Model.GuidSort">
+            <a asp-route-serviceId="@Model.ServiceId" asp-route-sortOrder="@Model.GuidSort">
                 @Html.DisplayNameFor(model => model!.Maps![0].Guid)
             </a>
         </th>
         <th id="title">
-            <a asp-route-id="@Model.ServiceId" asp-route-sortOrder="@Model.TitleSort">
+            <a asp-route-serviceId="@Model.ServiceId" asp-route-sortOrder="@Model.TitleSort">
                 @Html.DisplayNameFor(model => model!.Maps![0].Title)
             </a>
         </th>
         <th id="date">
-            <a asp-route-id="@Model.ServiceId" asp-route-sortOrder="@Model.DateSort">
+            <a asp-route-serviceId="@Model.ServiceId" asp-route-sortOrder="@Model.DateSort">
                 Last Change
             </a>
         </th>
@@ -79,13 +79,13 @@
 }
 <div class="d-flex justify-content-between">
     <div>
-        <a asp-route-id="@Model.ServiceId"
+        <a asp-route-serviceId="@Model.ServiceId"
            asp-route-sortOrder="@Model.DateSort"
            asp-route-pageIndex="@(Model.Maps.Page - 1)"
            class="btn btn-primary @prevDisabled">
             Previous
         </a>
-        <a asp-route-id="@Model.ServiceId"
+        <a asp-route-serviceId="@Model.ServiceId"
            asp-route-sortOrder="@Model.DateSort"
            asp-route-pageIndex="@(Model.Maps.Page + 1)"
            class="btn btn-primary @nextDisabled">
@@ -138,4 +138,16 @@
         $('#errorModal .modal-body').text(errorMessage);
         $('#errorModal').modal('show');
     }
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+
+<script>
+    let connection = new signalR.HubConnectionBuilder().withUrl("/mappingHub").build();
+    connection.on("ReceivedMappingUpdate", function(update) {
+        location.reload();
+    });
+    connection.start().catch(function (err) {
+        return console.error(err.toString());
+    });
 </script>
