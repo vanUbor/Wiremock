@@ -118,7 +118,7 @@ public class Mappings(
         {
             var success = await ResetMappingOnService(serviceId, guid);
             return success
-                ? RedirectToPage(new { serviceId })
+                ? new NoContentResult()
                 : RedirectToPage("../Error");
         }
 

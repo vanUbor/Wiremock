@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Newtonsoft.Json;
 using NuGet.Packaging;
 using NuGet.Protocol;
 using SharpYaml.Model;
@@ -130,7 +131,7 @@ public class ServiceOrchestrator : IOrchestrator
             => new WireMockServerMapping
             {
                 Guid = mm.Guid!.Value, 
-                Raw = mm.ToJson(), 
+                Raw = mm.ToJson(Formatting.Indented), 
                 Title = mm.Title ?? "No Title", 
                 WireMockServerModelId = e.ServiceId
             }));
