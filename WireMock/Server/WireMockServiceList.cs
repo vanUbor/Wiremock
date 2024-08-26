@@ -31,7 +31,7 @@ public class WireMockServiceList : IList<WireMockService>
     /// </value>
     public bool IsReadOnly => _list.IsReadOnly;
 
-
+    
     public event EventHandler<ChangedMappingsEventArgs>? MappingRemoved;
 
 
@@ -72,10 +72,10 @@ public class WireMockServiceList : IList<WireMockService>
 
     public event EventHandler<ChangedMappingsEventArgs>? MappingAdded;
 
-    private void OnMappingAdded(object? sender, ChangedMappingsEventArgs args)
+    protected void OnMappingAdded(object? sender, ChangedMappingsEventArgs args)
         => MappingAdded?.Invoke(sender ?? this, args);
 
-    private void OnMappingRemoved(object? sender, ChangedMappingsEventArgs args)
+    protected void OnMappingRemoved(object? sender, ChangedMappingsEventArgs args)
         => MappingRemoved?.Invoke(sender ?? this, args);
 
     public bool Contains(WireMockService item)

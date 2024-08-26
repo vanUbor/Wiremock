@@ -124,7 +124,6 @@ public class ServiceOrchestrator : IOrchestrator
     /// Saves the mappings to the database context.
     /// </summary>
     /// <param name="e">The event arguments containing the service ID and mapping GUIDs.</param>
-    [ExcludeFromCodeCoverage]
     private async Task SaveMappingToContextAsync(ChangedMappingsEventArgs e)
     => await _repo.AddMappingsAsync(e.MappingModels.Select(mm
             => new WireMockServerMapping
@@ -135,12 +134,9 @@ public class ServiceOrchestrator : IOrchestrator
                 WireMockServerModelId = e.ServiceId
             }));
     
-
-    [ExcludeFromCodeCoverage]
     private async Task RemoveMappingFromContextAsync(ChangedMappingsEventArgs e)
       => await _repo.RemoveMappingsAsync(e.MappingModels.Select(mm => mm.Guid!.Value));
     
-
     private async Task CreateServicesAsync()
     {
         var models = await _repo.GetModelsAsync();
