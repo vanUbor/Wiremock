@@ -1,5 +1,6 @@
 ﻿using Moq;
 using NSubstitute;
+using WireMock.Admin.Mappings;
 using WireMock.Data;
 using WireMock.Server;
 using WireMock.Server.Interfaces;
@@ -205,5 +206,58 @@ public class ServerOrchestratorTest
         
         // Assert
         Assert.AreEqual(isRunning, runns);
+    }
+
+    [TestMethod]
+    public void MappingChangedOnMappingsAddedRaisedTest()
+    {
+        // Arrange
+        var repo = Mock.Of<IWireMockRepository>();
+        var serviceList = new ServiceListMock();
+        var orchestrator = new ServiceOrchestrator(serviceList, repo);
+        var mappingsChangedRaised = false;
+        
+        orchestrator.MappingsChanged += (sender, args) =>
+        {
+            mappingsChangedRaised = true;
+        };
+        
+        // Act
+        serviceList.RaiseMappingAdded();
+
+        // Assert
+        Assert.IsTrue(mappingsChangedRaised);
+    }
+    
+    [TestMethod]
+    public void MappingChangedOnMappingsRemovedRaisedTest()
+    {
+        // Arrange
+        var repo = Mock.Of<IWireMockRepository>();
+        var serviceList = new ServiceListMock();
+        var orchestrator = new ServiceOrchestrator(serviceList, repo);
+        var mappingsChangedRaised = false;
+        
+        orchestrator.MappingsChanged += (_, _) =>
+        {
+            mappingsChangedRaised = true;
+        };
+        
+        // Act
+        serviceList.RaiseMappingRemoved();
+
+        // Assert
+        Assert.IsTrue(mappingsChangedRaised);
+    }
+    
+    private class ServiceListMock : WireMockServiceList
+    {
+        public void RaiseMappingAdded()
+            => OnMappingAdded(null, new ChangedMappingsEventArgs(
+                new List<MappingModel>()){ServiceId = 42});
+
+        public void RaiseMappingRemoved()
+            => OnMappingRemoved(null, new ChangedMappingsEventArgs(
+                new List<MappingModel>()){ServiceId = 42});
     }
 }

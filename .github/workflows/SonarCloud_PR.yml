@@ -1,0 +1,66 @@
+name: SonarCloud on PR
+
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+
+jobs:
+  sonar:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@a94a3b62ee018ef5346cb08fd0d63d93811fe691
+        with:
+          versionSpec: '6.x'
+
+      - name: Determine Version
+        uses: gittools/actions/gitversion/execute@a94a3b62ee018ef5346cb08fd0d63d93811fe691
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Install Scanner
+        run: dotnet tool install --global dotnet-sonarscanner
+
+      - name: Sonar Begin
+        run: |
+          dotnet sonarscanner begin \
+          /k:"vanUbor_Wiremock" \
+          /o:"vanubor" \
+          /v:"${{ env.fullSemVer }}" \
+          /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+          /d:sonar.host.url="https://sonarcloud.io" \
+          /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" \
+          /d:sonar.scanner.scanAll=false \
+          /d:sonar.exclusions="**/wwwroot/**/*, **/Migrations/*" \
+          /d:sonar.pullrequest.key=${{ github.event.pull_request.number }} \
+          /d:sonar.pullrequest.branch=${{ github.event.pull_request.head.ref }} \
+          /d:sonar.pullrequest.base=${{ github.event.pull_request.base.ref }}
+      
+      - name: Build
+        run: dotnet build --no-restore
+
+      - name: Test and Cover
+        run: |
+          dotnet tool install --global coverlet.console
+          dotnet test \
+          /p:CollectCoverage=true \
+          /p:Exclude="[*]WireMock.Migrations.*" \
+          /p:CoverletOutputFormat=opencover \
+          /p:CoverletOutput=./coverage/
+
+      - name: Sonar End
+        run: |
+          dotnet sonarscanner end \
+          /d:sonar.token="${{ secrets.SONAR_TOKEN }}"

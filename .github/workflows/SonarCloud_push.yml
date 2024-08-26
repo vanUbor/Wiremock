@@ -1,4 +1,4 @@
-name: SonarCloud
+name: SonarCloud on push
 
 on: [push]
 
@@ -6,7 +6,7 @@ jobs:
   sonar:
 
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v2
         with:
@@ -19,15 +19,15 @@ jobs:
 
       - name: Determine Version
         uses: gittools/actions/gitversion/execute@a94a3b62ee018ef5346cb08fd0d63d93811fe691
-        
+
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
 
       - name: Install dependencies
         run: dotnet restore
-        
+
       - name: Install Scanner
         run: dotnet tool install --global dotnet-sonarscanner
 
@@ -41,8 +41,8 @@ jobs:
           /d:sonar.host.url="https://sonarcloud.io" \
           /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" \
           /d:sonar.scanner.scanAll=false \
-          /d:sonar.exclusions="**/wwwroot/**/*, **/Migrations/*"
-        
+          /d:sonar.exclusions="**/wwwroot/**/*, **/Migrations/*" \
+      
       - name: Build
         run: dotnet build --no-restore
 

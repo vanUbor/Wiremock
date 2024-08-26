@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.SignalR;
 using WireMock.Data;
 using WireMock.Server.Interfaces;
+using WireMock.SignalR;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace WireMock.Pages.WireMockService;
@@ -10,6 +12,7 @@ public class Mappings(
     IHttpClientFactory clientFactory,
     IOrchestrator serviceOrchestrator,
     IWireMockRepository Repository,
+    IHubContext<MappingHub> HubContext,
     IConfiguration Config)
     : PageModel
 {
@@ -32,6 +35,9 @@ public class Mappings(
         TitleSort = sortOrder == "title" ? "title_desc" : "title";
         DateSort = sortOrder == "date" ? "date_desc" : "date";
 
+        serviceOrchestrator.MappingsChanged += (_, _) =>
+            HubContext.Clients.All.SendAsync("ReceivedMappingUpdate");
+        
         var mappings = await Repository.GetMappingsAsync(serviceId);
 
         var maps = SetMapsOrdered(mappings, sortOrder).ToList();
@@ -111,7 +117,7 @@ public class Mappings(
         {
             var success = await ResetMappingOnService(serviceId, guid);
             return success
-                ? RedirectToPage(new { serviceId })
+                ? new NoContentResult()
                 : RedirectToPage("../Error");
         }
 

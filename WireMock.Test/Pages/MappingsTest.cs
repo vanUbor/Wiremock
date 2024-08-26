@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using Moq.Protected;
@@ -8,6 +9,7 @@ using NSubstitute;
 using WireMock.Data;
 using WireMock.Pages.WireMockService;
 using WireMock.Server.Interfaces;
+using WireMock.SignalR;
 
 namespace WireMock.Test.Pages;
 
@@ -71,13 +73,14 @@ public class MappingsTest
     public async Task OnGetTest(string sortOrder)
     {
         // Arrange
+        var hubContext = Mock.Of<IHubContext<MappingHub>>();
         var configMock = new Mock<IConfiguration>();
         var configSectionMock = new Mock<IConfigurationSection>();
         configSectionMock.SetupGet(m => m.Value).Returns("42");
         configMock.Setup(m => m.GetSection("PageSize"))
             .Returns(configSectionMock.Object);
 
-        var mappings = new Mappings(_clientFactory!, _orchestrator!, _repository!, configMock.Object);
+        var mappings = new Mappings(_clientFactory!, _orchestrator!, _repository!, hubContext, configMock.Object);
 
         const int serviceId = 42;
         const int pageIndex = 1;
@@ -94,13 +97,14 @@ public class MappingsTest
     {
         // Arrange
         const string sortOrder = "date";
+        var hubContext = Mock.Of<IHubContext<MappingHub>>();
         var configMock = new Mock<IConfiguration>();
         var configSectionMock = new Mock<IConfigurationSection>();
         configSectionMock.SetupGet(m => m.Value).Returns("42");
         configMock.Setup(m => m.GetSection("PageSize"))
             .Returns(configSectionMock.Object);
 
-        var mappings = new Mappings(_clientFactory!, _orchestrator!, _repository!, configMock.Object);
+        var mappings = new Mappings(_clientFactory!, _orchestrator!, _repository!, hubContext, configMock.Object);
 
         const int serviceId = 69;
         const int pageIndex = 1;
@@ -112,11 +116,12 @@ public class MappingsTest
         Assert.IsNotNull(actionResult);
         Assert.IsInstanceOfType(actionResult, typeof(PageResult));
     }
-    
+
     [TestMethod]
     public async Task OnPostSaveAndUpdateTest()
     {
         // Arrange
+        var hubContext = Mock.Of<IHubContext<MappingHub>>();
         var configMock = new Mock<IConfiguration>();
         var configSectionMock = new Mock<IConfigurationSection>();
         configSectionMock.SetupGet(m => m.Value).Returns("1");
@@ -130,11 +135,12 @@ public class MappingsTest
                 Port = 8081
             });
 
-        repositoryMock.Setup(x 
+        repositoryMock.Setup(x
                 => x.UpdateMappingAsync(It.IsAny<WireMockServerMapping>()))
             .Returns(Task.FromResult(default(WireMockServerMapping))!);
 
-        var mappings = new Mappings(_clientFactory!, _orchestrator!, repositoryMock.Object, configMock.Object);
+        var mappings = new Mappings(_clientFactory!, _orchestrator!, repositoryMock.Object, hubContext,
+            configMock.Object);
 
         const int serviceId = 42;
         var guid = Guid.NewGuid().ToString();
@@ -155,6 +161,7 @@ public class MappingsTest
     public async Task OnPostResetMappingTest()
     {
         // Arrange
+        var hubContext = Mock.Of<IHubContext<MappingHub>>();
         var configMock = new Mock<IConfiguration>();
         var configSectionMock = new Mock<IConfigurationSection>();
         configSectionMock.SetupGet(m => m.Value).Returns("1");
@@ -168,7 +175,8 @@ public class MappingsTest
                 Port = 8081
             });
 
-        var mappings = new Mappings(_clientFactory!, _orchestrator!, repositoryMock.Object, configMock.Object);
+        var mappings = new Mappings(_clientFactory!, _orchestrator!, repositoryMock.Object, hubContext,
+            configMock.Object);
 
         const int serviceId = 42;
         var guid = Guid.NewGuid().ToString();
@@ -178,13 +186,14 @@ public class MappingsTest
 
         // Assert
         Assert.IsNotNull(actionResult);
-        Assert.IsInstanceOfType(actionResult, typeof(RedirectToPageResult));
+        Assert.IsInstanceOfType(actionResult, typeof(NoContentResult));
     }
 
     [TestMethod]
     public async Task OnPostResetAllMappingsTest()
     {
         // Arrange
+        var hubContext = Mock.Of<IHubContext<MappingHub>>();
         var configMock = new Mock<IConfiguration>();
         var configSectionMock = new Mock<IConfigurationSection>();
         configSectionMock.SetupGet(m => m.Value).Returns("1");
@@ -198,7 +207,8 @@ public class MappingsTest
                 Port = 8081
             });
 
-        var mappings = new Mappings(_clientFactory!, _orchestrator!, repositoryMock.Object, configMock.Object);
+        var mappings = new Mappings(_clientFactory!, _orchestrator!, repositoryMock.Object, hubContext,
+            configMock.Object);
         const int serviceId = 42;
 
         // Act

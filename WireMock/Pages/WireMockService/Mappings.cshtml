@@ -1,7 +1,7 @@
 @page
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Mappings
-
+<script src="../js/signalr.min.js"></script>
 @{
     ViewData["Title"] = "Mappings";
 }
@@ -12,17 +12,17 @@
     <thead>
     <tr>
         <th id="guid">
-            <a asp-route-id="@Model.ServiceId" asp-route-sortOrder="@Model.GuidSort">
+            <a asp-route-serviceId="@Model.ServiceId" asp-route-sortOrder="@Model.GuidSort">
                 @Html.DisplayNameFor(model => model!.Maps![0].Guid)
             </a>
         </th>
         <th id="title">
-            <a asp-route-id="@Model.ServiceId" asp-route-sortOrder="@Model.TitleSort">
+            <a asp-route-serviceId="@Model.ServiceId" asp-route-sortOrder="@Model.TitleSort">
                 @Html.DisplayNameFor(model => model!.Maps![0].Title)
             </a>
         </th>
         <th id="date">
-            <a asp-route-id="@Model.ServiceId" asp-route-sortOrder="@Model.DateSort">
+            <a asp-route-serviceId="@Model.ServiceId" asp-route-sortOrder="@Model.DateSort">
                 Last Change
             </a>
         </th>
@@ -34,7 +34,7 @@
     <tbody>
     @foreach (var map in Model!.Maps!)
     {
-        <tr>
+        <tr id="row-@map.Guid">
             <th scope="row">@map.Guid</th>
             <td> @map.Title </td>
             <td> @map.LastChange.ToString("dd.MM.yyyy HH:mm:ss") </td>
@@ -45,7 +45,7 @@
                             data-bs-target="#details-@map.Guid">
                         Details and Edit
                     </button>
-                    <form method="post" asp-page-handler="ResetMapping">
+                    <form method="post" asp-page-handler="ResetMapping" onsubmit="grayOut(event)">
                         <input type="hidden" asp-for="@Request.Query["serviceId"]" name="serviceId"/>
                         <input type="hidden" asp-for="@map.Guid" name="guid"/>
                         <button type="submit" class="btn btn-danger">X</button>
@@ -79,13 +79,13 @@
 }
 <div class="d-flex justify-content-between">
     <div>
-        <a asp-route-id="@Model.ServiceId"
+        <a asp-route-serviceId="@Model.ServiceId"
            asp-route-sortOrder="@Model.DateSort"
            asp-route-pageIndex="@(Model.Maps.Page - 1)"
            class="btn btn-primary @prevDisabled">
             Previous
         </a>
-        <a asp-route-id="@Model.ServiceId"
+        <a asp-route-serviceId="@Model.ServiceId"
            asp-route-sortOrder="@Model.DateSort"
            asp-route-pageIndex="@(Model.Maps.Page + 1)"
            class="btn btn-primary @nextDisabled">
@@ -137,5 +137,38 @@
     function showErrorModal(errorMessage) {
         $('#errorModal .modal-body').text(errorMessage);
         $('#errorModal').modal('show');
+    }
+</script>
+
+
+
+<script>
+    let connection = new signalR.HubConnectionBuilder().withUrl("/mappingHub").build();
+    connection.on("ReceivedMappingUpdate", function(update) {
+        location.reload();
+    });
+    connection.start().catch(function (err) {
+        return console.error(err.toString());
+    });
+</script>
+
+<script>
+    function grayOut(event) {
+        event.preventDefault();
+        let form = event.target;
+        // from the form get the value of the 'guid' data
+        // and form the id of the row
+        let rowId = 'row-' + form['guid'].value;
+        
+        // Disable all buttons on that row to avoid clicking on a deleted row
+        let row = document.getElementById(rowId);
+        let buttons = row.getElementsByTagName('button');
+        for (let i = 0; i < buttons.length; i++) {
+            buttons[i].disabled = true;
+        }
+        
+        // gray the row to signal this row is disabled
+        $('#' + rowId).addClass('gray-out');
+        form.submit();
     }
 </script>

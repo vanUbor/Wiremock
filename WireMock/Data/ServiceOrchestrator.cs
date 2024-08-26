@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Newtonsoft.Json;
 using NuGet.Packaging;
 using NuGet.Protocol;
 using WireMock.Server;
@@ -11,14 +12,25 @@ public class ServiceOrchestrator : IOrchestrator
     private readonly IWireMockRepository _repo;
     private readonly WireMockServiceList _services;
 
+    public event EventHandler<EventArgs>? MappingsChanged;
+
     public ServiceOrchestrator(WireMockServiceList serviceList,
         IWireMockRepository repository)
     {
         _services = serviceList;
-        _services.MappingAdded += async (_ , changedMappingsArgs) 
-            => await SaveMappingToContextAsync(changedMappingsArgs);
+        _services.MappingAdded += async (sender, changedMappingsArgs) 
+            =>
+        {
+            await SaveMappingToContextAsync(changedMappingsArgs);
+            MappingsChanged?.Invoke(sender, changedMappingsArgs);
+        };
 
-        _services.MappingRemoved += RemoveMappingFromContext;
+        _services.MappingRemoved += async (sender, changedMappingsArgs)
+            =>
+        {
+            await RemoveMappingFromContextAsync(changedMappingsArgs);
+            MappingsChanged?.Invoke(sender, changedMappingsArgs);
+        };
         _repo = repository;
     }
 
@@ -112,23 +124,19 @@ public class ServiceOrchestrator : IOrchestrator
     /// Saves the mappings to the database context.
     /// </summary>
     /// <param name="e">The event arguments containing the service ID and mapping GUIDs.</param>
-    [ExcludeFromCodeCoverage]
     private async Task SaveMappingToContextAsync(ChangedMappingsEventArgs e)
     => await _repo.AddMappingsAsync(e.MappingModels.Select(mm
             => new WireMockServerMapping
             {
                 Guid = mm.Guid!.Value, 
-                Raw = mm.ToJson(), 
+                Raw = mm.ToJson(Formatting.Indented), 
                 Title = mm.Title ?? "No Title", 
                 WireMockServerModelId = e.ServiceId
             }));
     
-
-    [ExcludeFromCodeCoverage]
-    private void RemoveMappingFromContext(object? sender, ChangedMappingsEventArgs e)
-      => _repo.RemoveMappingsAsync(e.MappingModels.Select(mm => mm.Guid!.Value));
+    private async Task RemoveMappingFromContextAsync(ChangedMappingsEventArgs e)
+      => await _repo.RemoveMappingsAsync(e.MappingModels.Select(mm => mm.Guid!.Value));
     
-
     private async Task CreateServicesAsync()
     {
         var models = await _repo.GetModelsAsync();
