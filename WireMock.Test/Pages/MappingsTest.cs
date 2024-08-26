@@ -186,7 +186,7 @@ public class MappingsTest
 
         // Assert
         Assert.IsNotNull(actionResult);
-        Assert.IsInstanceOfType(actionResult, typeof(RedirectToPageResult));
+        Assert.IsInstanceOfType(actionResult, typeof(NoContentResult));
     }
 
     [TestMethod]
