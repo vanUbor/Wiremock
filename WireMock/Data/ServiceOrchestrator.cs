@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 using NuGet.Packaging;
 using NuGet.Protocol;
-using SharpYaml.Model;
 using WireMock.Server;
 using WireMock.Server.Interfaces;
 
@@ -13,24 +12,24 @@ public class ServiceOrchestrator : IOrchestrator
     private readonly IWireMockRepository _repo;
     private readonly WireMockServiceList _services;
 
-    public event EventHandler<ChangedMappingsEventArgs>? MappingsChanged;
+    public event EventHandler<EventArgs>? MappingsChanged;
 
     public ServiceOrchestrator(WireMockServiceList serviceList,
         IWireMockRepository repository)
     {
         _services = serviceList;
-        _services.MappingAdded += async (_ , changedMappingsArgs) 
+        _services.MappingAdded += async (sender, changedMappingsArgs) 
             =>
         {
             await SaveMappingToContextAsync(changedMappingsArgs);
-            MappingsChanged?.Invoke(_, changedMappingsArgs);
+            MappingsChanged?.Invoke(sender, changedMappingsArgs);
         };
 
-        _services.MappingRemoved += async (_, changedMappingsArgs)
+        _services.MappingRemoved += async (sender, changedMappingsArgs)
             =>
         {
             await RemoveMappingFromContextAsync(changedMappingsArgs);
-            MappingsChanged?.Invoke(_, changedMappingsArgs);
+            MappingsChanged?.Invoke(sender, changedMappingsArgs);
         };
         _repo = repository;
     }

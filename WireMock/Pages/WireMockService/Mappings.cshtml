@@ -1,7 +1,7 @@
 @page
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Mappings
-
+<script src="../js/signalr.min.js"></script>
 @{
     ViewData["Title"] = "Mappings";
 }
@@ -140,7 +140,7 @@
     }
 </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+
 
 <script>
     let connection = new signalR.HubConnectionBuilder().withUrl("/mappingHub").build();

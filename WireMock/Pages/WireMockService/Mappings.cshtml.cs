@@ -35,10 +35,9 @@ public class Mappings(
         TitleSort = sortOrder == "title" ? "title_desc" : "title";
         DateSort = sortOrder == "date" ? "date_desc" : "date";
 
-        serviceOrchestrator.MappingsChanged += (sender, args) =>
-        {
-            HubContext.Clients.All.SendAsync("ReceivedMappingUpdate", args);
-        };
+        serviceOrchestrator.MappingsChanged += (_, _) =>
+            HubContext.Clients.All.SendAsync("ReceivedMappingUpdate");
+        
         var mappings = await Repository.GetMappingsAsync(serviceId);
 
         var maps = SetMapsOrdered(mappings, sortOrder).ToList();

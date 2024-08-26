@@ -41,6 +41,9 @@
     <Content Include="..\README.md">
       <Link>README.md</Link>
     </Content>
+    <Content Update="wwwroot\js\signalr.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
