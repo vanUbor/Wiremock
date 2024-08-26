@@ -19,6 +19,7 @@ exclude:
     paths:
       - WireMock\wwwroot
       - WireMock\wwwroot\lib
+  - name: Html.PathError
 include:
   - name: ConvertIfStatementToReturnStatement
   - name: ArrangeThisQualifier
