@@ -1,4 +1,4 @@
-name: SonarCloud on push
+name: SonarCloud on PR
 
 on:
   pull_request:
