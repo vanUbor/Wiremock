@@ -238,7 +238,7 @@ public class ServerOrchestratorTest
         var orchestrator = new ServiceOrchestrator(serviceList, repo);
         var mappingsChangedRaised = false;
         
-        orchestrator.MappingsChanged += (sender, args) =>
+        orchestrator.MappingsChanged += (_, _) =>
         {
             mappingsChangedRaised = true;
         };
@@ -259,6 +259,5 @@ public class ServerOrchestratorTest
         public void RaiseMappingRemoved()
             => OnMappingRemoved(null, new ChangedMappingsEventArgs(
                 new List<MappingModel>()){ServiceId = 42});
-        
     }
 }
