@@ -9,7 +9,9 @@ In its current state it is super limited in its functionality but will grow cont
 
 # How to use
 
-coming soon
+Just start the application and browse to the start page (by default http://localhost:5000).
+On the start page you can see a list of services. Each service can mock the api calls to a configured web api endpoint.
+![startPageScreen.png](.assets/startPageScreen.png)
 
 # Build
 
