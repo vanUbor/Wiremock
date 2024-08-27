@@ -10,6 +10,7 @@ In its current state it is super limited in its functionality but will grow cont
 # How to use
 
 ## Start
+
 Just start the application and browse to the start page (by default http://localhost:5000).
 On the start page you can see a list of services. Each service can mock the api calls to a configured web api endpoint.
 ![startPageScreen.png](.assets/startPageScreen.png)
@@ -27,6 +28,7 @@ you can:
 A docker image is planned.
 
 ## Record and Mock
+
 Basically what WireMock does is providing a "man in the middle" for Web API calls, recording them.
 After it has recorded a call to an endpoint, it will not forward it again (on a second call), but answer "on its own".
 Those recordings are called mappings. You can see a list of all mappings via the mappings button on each service row.
@@ -38,17 +40,22 @@ There are basically two different ways to configure a service.
 
 ### Admin API
 
-As SSMWUI is basically just a super simple wrapper (providing a Web UI) around [WireMock.NET](https://github.com/WireMock-Net/WireMock.Net), 
+As SSWMUI is basically just a super simple wrapper (providing a Web UI) around [WireMock.NET](https://github.com/WireMock-Net/WireMock.Net), 
 you can just use the [Admin API](https://github.com/WireMock-Net/WireMock.Net/wiki/Admin-API-Reference) of WireMock.NET.
-(by default each service starts with the Admin API enabled - you can disable this)
+(by default each service starts with the Admin API enabled - you can disable it)
 
 ### Configuration Page
 
 Each service has a very limited configuration page, you can access via the "Settings" button on each service row.
-The settings should be self-explanatory, if not. Please see WireMock.NET, as the settings are just 1:1 to the original. 
+The settings should be self-explanatory, if not, please see WireMock.NET, as the settings are just 1:1 to the original. 
 
 ## Mappings
+
 ![startPageScreen.png](.assets/mappingsPageScreen.png)
+
+The Mapping page shows all active mappings on a service. You can configure the mappings via a json file in your browser.
+To see details on how mappings work, see the [WireMock.NET WIKI](https://github.com/WireMock-Net/WireMock.Net/wiki)
+
 # Code
 
 ## Build
