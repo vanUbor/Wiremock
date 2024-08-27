@@ -5,6 +5,7 @@ _SSWMUI_ (Super Simple WireMock User Interface) is an ASP.NET Razor Page
 making use of [WireMock.NET](https://github.com/WireMock-Net/WireMock.Net),
 providing the possibility to create, start,
 stop and configure web api proxy instances. You are able to edit and delete your mappings via s simple Webpage.
+SSMWUI stores everything in a local database, with that your services, settings and mappings persist. You can even exchange the database to cover different scenarios, if you like.
 In its current state it is super limited in its functionality but will grow continuously.
 
 # How to use
