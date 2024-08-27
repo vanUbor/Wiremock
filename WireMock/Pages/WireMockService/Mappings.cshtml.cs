@@ -17,6 +17,7 @@ public class Mappings(
     : PageModel
 {
     public int ServiceId { get; set; }
+    public string ServiceName { get; set; } = string.Empty;
     public string? GuidSort { get; set; }
     public string? TitleSort { get; set; }
     public string? DateSort { get; set; }
@@ -31,6 +32,7 @@ public class Mappings(
     public async Task<IActionResult> OnGet(int serviceId, string sortOrder, int? pageIndex)
     {
         ServiceId = serviceId;
+        ServiceName = (await Repository.GetModelAsync(serviceId)).Name;
         GuidSort = string.IsNullOrEmpty(sortOrder) ? "guid_desc" : "";
         TitleSort = sortOrder == "title" ? "title_desc" : "title";
         DateSort = sortOrder == "date" ? "date_desc" : "date";
