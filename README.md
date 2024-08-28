@@ -15,11 +15,13 @@ In its current state it is super limited in its functionality but will grow cont
 ### Get SSWMUI
 
 First you must download the [latest](https://github.com/vanUbor/Wiremock/releases/latest) release 
-directly form GitHub or download the image from the [Docker Hub](https://hub.docker.com/) (Docker image coming soon)
+directly form GitHub or download the image from the [Docker Hub](https://hub.docker.com/repository/docker/vanubor42/sswmui/general) 
+(`docker pull vanUbor42/sswmui:latest`)
 
 ### Run
 
-Just start the application (either your locally downloaded Wiremock.exe or run the docker image) 
+Just start the application, either your locally downloaded Wiremock.exe or run the docker image 
+`docker run --name mySSWMUI -e ASPNETCORE_HTTP_PORTS=5000 -p 5000:5000 -p 8081:8081 vanubor42/sswmui`
 and browse to the start page (by default <http://localhost:5000>).
 On the start page you can see a list of services. Each service can mock the api calls to a configured web api endpoint.
 ![startPageScreen.png](.assets/startPageScreen.png)
