@@ -4,7 +4,7 @@
 _SSWMUI_ (Super Simple WireMock User Interface) is an ASP.NET Razor Page
 making use of [WireMock.NET](https://github.com/WireMock-Net/WireMock.Net),
 providing the possibility to create, start,
-stop and configure web api proxy instances. You are able to edit and delete your mappings via s simple Webpage.
+stop and configure web api proxy instances. You can edit and delete your mappings via a simple Webpage.
 SSMWUI stores everything in a local database, with that your services, settings and mappings persist. You can even exchange the database to cover different scenarios, if you like.
 In its current state it is super limited in its functionality but will grow continuously.
 
@@ -12,11 +12,18 @@ In its current state it is super limited in its functionality but will grow cont
 
 ## Start
 
-Just start the application and browse to the start page (by default http://localhost:5000).
+### Get SSMUI
+First you must download the [latest](https://github.com/vanUbor/Wiremock/releases/latest) release 
+directly form GitHub or download the image from the [Dockerhu](https://hub.docker.com/) (Docker image coming soon)
+
+### Run
+
+Just start the application (either your locally downloaded Wiremock.exe or run the docker image) 
+and browse to the start page (by default <http://localhost:5000>).
 On the start page you can see a list of services. Each service can mock the api calls to a configured web api endpoint.
 ![startPageScreen.png](.assets/startPageScreen.png)
-Each row shows an service that is bound to a dedicated port. 
-Besides an unique id, a name and the status of the service (running / stopped),
+Each row shows a service that is bound to a dedicated port. 
+Besides a unique id, a name and the status of the service (running / stopped),
 you can:
 
 - start the service 
@@ -26,11 +33,9 @@ you can:
 - display the configuration of the service
 - see all mappings of the service (mappings are explained down below)
 
-A docker image is planned.
+### Record and Mock
 
-## Record and Mock
-
-Basically what WireMock does is providing a "man in the middle" for Web API calls, recording them.
+Basically, what WireMock does is providing a "man in the middle" for Web API calls, recording them.
 After it has recorded a call to an endpoint, it will not forward it again (on a second call), but answer "on its own".
 Those recordings are called mappings. You can see a list of all mappings via the mappings button on each service row.
 Now you can adjust the mappings to your needs and with that mock and external or your own Web API with ease.
