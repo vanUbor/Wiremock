@@ -16,7 +16,7 @@ In its current state it is super limited in its functionality but will grow cont
 
 First you must download the [latest](https://github.com/vanUbor/Wiremock/releases/latest) release 
 directly form GitHub or download the image from the [Docker Hub](https://hub.docker.com/repository/docker/vanubor42/sswmui/general) 
-(`docker pull vanUbor42/sswmui:latest`)
+(`docker pull vanubor42/sswmui:latest`)
 
 ### Run
 
