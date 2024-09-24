@@ -38,6 +38,9 @@
     <Content Include="..\.dockerignore">
       <Link>.dockerignore</Link>
     </Content>
+    <Content Include="..\Dockerfile">
+      <Link>Dockerfile</Link>
+    </Content>
     <Content Include="..\README.md">
       <Link>README.md</Link>
     </Content>
