@@ -1,18 +1,29 @@
-import MyButton from "./components/MyButton";
+import Matcher from "./components/Matcher";
+import generateRandomId from "./helper/generateRandomId"
 
-const handleClick = () => {
-    alert('Button clicked!');
-};
 
-const myButton = new MyButton({
-    label: 'Click Me',
-    onClick: handleClick,
-    variant: 'success'
-});
+function removeMatcher(id: string): void {
+    console.log(id);
+    const matcherTableElement = document.getElementById('matcherTableBody');
+    const matcherRow = document.getElementById(id);
+    if (matcherTableElement && matcherRow) {
+        matcherTableElement.removeChild(matcherRow);
+    }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
-    const app = document.getElementById('app');
-    if (app) {
-        app.appendChild(myButton.render());
+    const matcherTableElement = document.getElementById('matcherTableBody');
+    if (matcherTableElement) {
+        for (let i = 0; i < 10; i++) {
+            let id = generateRandomId(10);
+            let matcher = new Matcher({
+                id: id,
+                name: id,
+                pattern: '/',
+                ignoreCase: true,
+                onClick: removeMatcher,
+            });
+            matcherTableElement.appendChild(matcher.render());
+        }
     }
 });

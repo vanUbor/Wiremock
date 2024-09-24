@@ -7,7 +7,20 @@
     <link rel="stylesheet" href="/@modules/bootstrap/dist/css/bootstrap.min.css">
 </head>
 <body>
-<div id="app"></div>
+<div class="container">
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Pattern</th>
+            <th scope="col">IgnoreCase</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody id="matcherTableBody">
+        </tbody>
+    </table>
+</div>
 <script type="module" src="/src/main.ts"></script>
 </body>
 </html>
