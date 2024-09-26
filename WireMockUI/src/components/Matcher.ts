@@ -3,7 +3,6 @@ import generateRandomId from "../helper/generateRandomId"
 
 interface MatcherProps {
     id : string;
-    name: string;
     pattern: string;
     ignoreCase: boolean;
     onClick: (id : string) => void;
@@ -12,14 +11,12 @@ interface MatcherProps {
 class Matcher {
 
     private id: string;
-    private name: string;
     private pattern: string;
     private ignoreCase: boolean;
     private onRemoveClick: (id:string) => void;
 
     constructor(props: MatcherProps) {
         this.id = props.id;
-        this.name = props.name;
         this.pattern = props.pattern;
         this.ignoreCase = props.ignoreCase;
         this.onRemoveClick = props.onClick;
@@ -30,7 +27,7 @@ class Matcher {
         let row = document.createElement("tr");
         row.setAttribute("id", this.id);
 
-        row.appendChild(this.renderMatcherCell());
+        row.appendChild(this.renderNameCell());
         row.appendChild(this.renderPatternCell());
         row.appendChild(this.renderIgnoreCaseCell());
         row.appendChild(this.renderRemoveButton());
@@ -38,21 +35,45 @@ class Matcher {
         return row;
     }
 
-    private renderMatcherCell(): HTMLElement {
-        let id = generateRandomId(10);
+    private renderNameCell(): HTMLElement {
         let matcherColumn = document.createElement("td");
 
-        let matcherLabel = document.createElement("label");
-        matcherLabel.setAttribute("for", id);
+        let dropdownDiv = document.createElement("div");
+        dropdownDiv.classList.add("dropdown");
 
-        let matcherInput = document.createElement("input");
-        matcherInput.setAttribute("id", id);
-        matcherInput.setAttribute("placeholder", "Name");
-        matcherInput.value = this.name;
+        let button = document.createElement("button");
+        button.classList.add("btn");
+        button.classList.add("btn-secondary");
+        button.classList.add("dropdown-toggle");
+        button.type = "button";
+        button.setAttribute("data-bs-toggle", "dropdown");
+        button.setAttribute("aria-expanded", "false");
+        button.innerText = "WildCardMatcher"
 
-        matcherColumn.appendChild(matcherLabel);
-        matcherColumn.appendChild(matcherInput);
+        let list = document.createElement("ul");
+        list.classList.add("dropdown-menu");
+        let wildCardListItem = document.createElement("li");
+        let wildcardMatcherLink = document.createElement("a");
+        wildcardMatcherLink.classList.add("dropdown-item");
+        wildcardMatcherLink.href ="#"
+        wildcardMatcherLink.innerText = "WildCardMatcher"
+        wildCardListItem.appendChild(wildcardMatcherLink);
 
+        let regExListItem = document.createElement("li");
+        let regExLink = document.createElement("a");
+        regExLink.classList.add("dropdown-item");
+        regExLink.href ="#"
+        regExLink.innerText = "RegExMatcher"
+        regExListItem.appendChild(regExLink);
+
+        list.appendChild(wildCardListItem);
+        list.appendChild(regExListItem);
+
+        dropdownDiv.appendChild(list);
+        dropdownDiv.appendChild(button);
+        dropdownDiv.appendChild(list);
+
+        matcherColumn.appendChild(dropdownDiv);
         return matcherColumn;
     }
 
