@@ -46,7 +46,7 @@
                     <button class="btn btn-primary me-2"
                             data-bs-toggle="collapse"
                             data-bs-target="#details-@map.Guid">
-                        Details and Edit
+                        Show Json
                     </button>
                     <form method="post" asp-page-handler="ResetMapping" onsubmit="grayOut(event)">
                         <input type="hidden" asp-for="@Request.Query["serviceId"]" name="serviceId"/>
