@@ -7,6 +7,41 @@
 </head>
 <body>
 <div class="container">
+    <div class="border border-3 border-light-subtle">
+        <div>
+            <h2>Request</h2>
+        </div>
+        <div class="row justify-content-center mb-3">
+            <h3>Method</h3>
+            <div class="col-auto">
+                <input type="checkbox" class="btn-check" id="btncheckget" autocomplete="off">
+                <label class="btn btn-outline-primary" for="btncheckget">GET</label>
+            </div>
+
+            <div class="col-auto">
+                <input type="checkbox" class="btn-check" id="btncheckpost" autocomplete="off">
+                <label class="btn btn-outline-primary" for="btncheckpost">POST</label>
+            </div>
+
+            <div class="col-auto">
+                <input type="checkbox" class="btn-check" id="btncheckput" autocomplete="off">
+                <label class="btn btn-outline-primary" for="btncheckput">PUT</label>
+            </div>
+
+            <div class="col-auto">
+                <input type="checkbox" class="btn-check" id="btncheckpatch" autocomplete="off">
+                <label class="btn btn-outline-primary" for="btncheckpatch">PATCH</label>
+            </div>
+
+            <div class="col-auto">
+                <input type="checkbox" class="btn-check" id="btncheckdelete" autocomplete="off">
+                <label class="btn btn-outline-primary" for="btncheckdelete">DELETE</label>
+            </div>
+        </div>
+    </div>
+    <div>
+        <h3>Header</h3>
+    </div>
     <div id="app"></div>
 </div>
 <script type="module" src="/src/main.ts"></script>

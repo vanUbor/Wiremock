@@ -24,3 +24,4 @@ p.then((result) => {
     let o : any = JSON.parse((result))
     console.log(o);
 });
+

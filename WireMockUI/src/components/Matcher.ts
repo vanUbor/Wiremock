@@ -1,14 +1,14 @@
 ﻿import "bootstrap/dist/css/bootstrap.min.css";
 import generateRandomId from "../helper/generateRandomId"
 
-interface MatcherProps {
+export interface MatcherProps {
     id : string;
     pattern: string;
     ignoreCase: boolean;
     onClick: (id : string) => void;
 }
 
-class Matcher {
+export default class Matcher {
 
     private id: string;
     private pattern: string;
@@ -132,5 +132,3 @@ class Matcher {
         return buttonCell;
     }
 }
-
-export default Matcher;
