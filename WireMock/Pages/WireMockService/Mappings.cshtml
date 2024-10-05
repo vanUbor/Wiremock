@@ -6,8 +6,8 @@
     ViewData["Title"] = "Mappings";
 }
 <div class="d-flex align-items-baseline">
-    <h2>Mappings</h2> 
-    &nbsp; of Service 
+    <h2>Mappings</h2>
+    &nbsp; of Service
     &nbsp;"@Model.ServiceName"
     &nbsp; (@Model.ServiceId)
 </div>
@@ -46,7 +46,7 @@
                     <button class="btn btn-primary me-2"
                             data-bs-toggle="collapse"
                             data-bs-target="#details-@map.Guid">
-                        Show Json
+                        Show Details
                     </button>
                     <form method="post" asp-page-handler="ResetMapping" onsubmit="grayOut(event)">
                         <input type="hidden" asp-for="@Request.Query["serviceId"]" name="serviceId"/>
@@ -58,9 +58,10 @@
         </tr>
         <tr id="details-@map.Guid" class="collapse">
             <td colspan="4">
+                <div class="scripTest" rawData="@map.Raw"></div>
                 <form id="UpdateMappingForm" method="post" asp-page-handler="SaveAndUpdate">
                     <div class="form-floating">
-                        <textarea id="rawMap" asp-for="@map.Raw" class="form-control" style="height: 300px; white-space: pre-line" name="raw"></textarea>
+                        <textarea id="rawMap-@map.Guid" asp-for="@map.Raw" class="form-control" style="height: 300px; white-space: pre-line" name="raw"></textarea>
                     </div>
                     <p>
                     <div class="d-flex flex-row-reverse">
@@ -117,7 +118,7 @@
         </a>
     </div>
 </div>
-
+<script type="module" src="../js/MatcherShell.js"></script>
 <script>
     function isValidJson(json) {
         try {
@@ -129,7 +130,7 @@
     }
     $(document).ready(function(){
         $( "#UpdateMappingForm" ).submit(function( event ) {
-            let jsonInput = $("#rawMap").val();
+            let jsonInput = $("[id*=rawMap]").val();
             let isValid = isValidJson(jsonInput);
             if (!isValid[0]) {
                 event.preventDefault();
@@ -142,7 +143,6 @@
         $('#errorModal').modal('show');
     }
 </script>
-
 
 
 <script>

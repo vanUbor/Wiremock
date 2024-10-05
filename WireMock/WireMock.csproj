@@ -54,5 +54,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
+  
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="npm run build-ts" />
+  </Target>
 </Project>

@@ -1,21 +1,24 @@
-﻿import "bootstrap/dist/css/bootstrap.min.css";
-import generateRandomId from "../helper/generateRandomId"
+﻿import generateRandomId from "./helper/generateRandomId.js"
+
 
 export interface MatcherProps {
-    id : string;
+    mappingGuid: string;
+    id: string;
     pattern: string;
     ignoreCase: boolean;
-    onClick: (id : string) => void;
+    onClick: (id: string) => void;
 }
 
 export default class Matcher {
 
+    private mappingGuid: string;
     private id: string;
     private pattern: string;
     private ignoreCase: boolean;
-    private onRemoveClick: (id:string) => void;
+    private onRemoveClick: (id: string) => void;
 
     constructor(props: MatcherProps) {
+        this.mappingGuid = props.mappingGuid;
         this.id = props.id;
         this.pattern = props.pattern;
         this.ignoreCase = props.ignoreCase;
@@ -55,14 +58,14 @@ export default class Matcher {
         let wildCardListItem = document.createElement("li");
         let wildcardMatcherLink = document.createElement("a");
         wildcardMatcherLink.classList.add("dropdown-item");
-        wildcardMatcherLink.href ="#"
+        wildcardMatcherLink.href = "#"
         wildcardMatcherLink.innerText = "WildCardMatcher"
         wildCardListItem.appendChild(wildcardMatcherLink);
 
         let regExListItem = document.createElement("li");
         let regExLink = document.createElement("a");
         regExLink.classList.add("dropdown-item");
-        regExLink.href ="#"
+        regExLink.href = "#"
         regExLink.innerText = "RegExMatcher"
         regExListItem.appendChild(regExLink);
 
@@ -88,6 +91,15 @@ export default class Matcher {
         patternInput.setAttribute("id", id);
         patternInput.setAttribute("placeholder", "Pattern");
         patternInput.value = this.pattern;
+        patternInput.addEventListener("input", () => {
+            let rawMap = document.getElementById("rawMap-" + this.mappingGuid);
+            if (rawMap?.textContent) {
+                let rawMapContent = JSON.parse(rawMap.textContent);
+                rawMapContent.Request.Headers[0].Matchers[0].Pattern = patternInput.value;
+                rawMap.textContent = JSON.stringify(rawMapContent, null, 1);
+            } else {
+            }
+        });
 
         patternCell.appendChild(patternLabel);
         patternCell.appendChild(patternInput);

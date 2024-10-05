@@ -1,4 +1,4 @@
-﻿import Matcher, {MatcherProps} from "../components/Matcher";
+﻿import Matcher, {MatcherProps} from "../Matcher";
 
 function toMatchers(matcherProps: MatcherProps[]): Matcher[] {
 

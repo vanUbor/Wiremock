@@ -1,12 +1,58 @@
-﻿import Matcher from "./Matcher.ts";
+﻿import Matcher from "./Matcher.js";
+import {Section} from "./Section.js";
 
+document.addEventListener('DOMContentLoaded', function () {
+    const items = document.querySelectorAll('.scripTest');
+    items.forEach(item => {
+        let data = item.getAttribute("rawData");
+        let rawMap = JSON.parse(data!);
+        
+        createSection(item, "Headers");
+        createHeaders(item, rawMap);
+        createSection(item, "RAW");
+    });
+});
 
-class MatcherShell {
+function createSection(item: Element, name : string) : void {
+    let mockShells : MatcherShell[] = [];
+    let section = new Section(name, mockShells);
+    let headerDiv = section.render();
+    item.appendChild(headerDiv);
+}
+function createHeaders(item: Element, rawMap : any) : void {
+    let headers = rawMap.Request.Headers;
+    headers.forEach((header: { Name: any; IgnoreCase: any; Matchers: any; }) => {
+        let name = header.Name;
+        let ignoreCase = header.IgnoreCase;
+        let rawMatchers = header.Matchers;
+
+        let matchers: Matcher[] = [];
+        rawMatchers.forEach((rawMatcher: { Guid: any; Id: any; Pattern: any; IgnoreCase: any; }) => {
+            let matcher : Matcher = new Matcher({
+                mappingGuid: rawMap.Guid,
+                id: rawMatcher.Id,
+                pattern: rawMatcher.Pattern,
+                ignoreCase: rawMatcher.IgnoreCase,
+                onClick: (id: string) => {
+                }
+            });
+            matchers.push(matcher);
+        });
+        let matcherShell: MatcherShell = new MatcherShell(name, ignoreCase, matchers);
+        item.appendChild(matcherShell.render())
+    });
+}
+
+export default class MatcherShell {
 
     private Matchers: Matcher[];
+    private name: string;
+    private ignoreCase: boolean = false;
 
-    constructor(matcher: Matcher[]) {
+    constructor(name: string, ignoreCase: boolean, matcher: Matcher[]) {
         this.Matchers = matcher;
+        this.name = name;
+        this.ignoreCase = ignoreCase;
     }
 
     render(): HTMLElement {
@@ -46,6 +92,7 @@ class MatcherShell {
         let headerNameInput = document.createElement("input");
         headerNameInput.id = "Name";
         headerNameInput.type = "text";
+        headerNameInput.value = this.name;
         headerNameDiv.appendChild(headerNameInput);
 
 
@@ -60,6 +107,7 @@ class MatcherShell {
         headerInput.setAttribute("type", "checkbox");
         headerInput.setAttribute("role", "switch");
         headerInput.setAttribute("id", "flexSwitchCheckDefault")
+        headerInput.checked = this.ignoreCase;
         headerInputDiv.appendChild(headerInput);
 
         // Ignore Case Label
@@ -114,7 +162,7 @@ class MatcherShell {
         return table;
     }
 
-    private renderMatcherTableBody() : HTMLElement {
+    private renderMatcherTableBody(): HTMLElement {
         let body = document.createElement("tbody");
         this.Matchers.forEach((m) => {
             body.appendChild(m.render());
@@ -122,7 +170,7 @@ class MatcherShell {
         return body;
     }
 
-    private renderMatcherButtons() : HTMLElement {
+    private renderMatcherButtons(): HTMLElement {
         let div = document.createElement("div");
         div.classList.add("d-flex");
         div.classList.add("justify-content-end");
@@ -146,5 +194,3 @@ class MatcherShell {
         return div;
     }
 }
-
-export default MatcherShell;
