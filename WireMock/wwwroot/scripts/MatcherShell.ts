@@ -21,10 +21,10 @@ function createSection(item: Element, name : string) : void {
 }
 function createHeaders(item: Element, rawMap : any) : void {
     let headers = rawMap.Request.Headers;
-    headers.forEach((header: { Name: any; IgnoreCase: any; Matchers: any; }) => {
-        let name = header.Name;
-        let ignoreCase = header.IgnoreCase;
-        let rawMatchers = header.Matchers;
+    for (let headerIndex = 0; headerIndex  < headers.length; headerIndex++) {
+        let name = headers[headerIndex].Name;
+        let ignoreCase = headers[headerIndex].IgnoreCase;
+        let rawMatchers = headers[headerIndex].Matchers;
 
         let matchers: Matcher[] = [];
         rawMatchers.forEach((rawMatcher: { Guid: any; Id: any; Pattern: any; IgnoreCase: any; }) => {
@@ -39,8 +39,9 @@ function createHeaders(item: Element, rawMap : any) : void {
             matchers.push(matcher);
         });
         let matcherShell: MatcherShell = new MatcherShell(name, ignoreCase, matchers);
-        item.appendChild(matcherShell.render())
-    });
+        console.log("render headerIndex: " + headerIndex);
+        item.appendChild(matcherShell.render(headerIndex))
+    }
 }
 
 export default class MatcherShell {
@@ -55,14 +56,14 @@ export default class MatcherShell {
         this.ignoreCase = ignoreCase;
     }
 
-    render(): HTMLElement {
+    render(headerIndex : number): HTMLElement {
         let borderDiv = document.createElement("div");
         borderDiv.classList.add("border");
         borderDiv.classList.add("border-3");
         borderDiv.classList.add("border-light-subtle");
 
         let header = this.renderMatcherHeader();
-        let matcherTable = this.renderMatcherTable();
+        let matcherTable = this.renderMatcherTable(headerIndex);
         let matcherButtons = this.renderMatcherButtons();
 
         borderDiv.appendChild(header);
@@ -124,7 +125,7 @@ export default class MatcherShell {
         return headerDiv;
     }
 
-    private renderMatcherTable(): HTMLElement {
+    private renderMatcherTable(headerIndex: number): HTMLElement {
         let table = document.createElement("table");
         table.classList.add("table");
         table.classList.add("table-bordered");
@@ -156,17 +157,18 @@ export default class MatcherShell {
         tableHead.appendChild(tableHeaderRow);
         table.appendChild(tableHead);
 
-        let tableBody = this.renderMatcherTableBody();
+        let tableBody = this.renderMatcherTableBody(headerIndex);
         table.appendChild(tableBody);
 
         return table;
     }
 
-    private renderMatcherTableBody(): HTMLElement {
+    private renderMatcherTableBody(headerIndex : number): HTMLElement {
         let body = document.createElement("tbody");
-        this.Matchers.forEach((m) => {
-            body.appendChild(m.render());
-        });
+        
+        for(let i = 0; i < this.Matchers.length; i++){
+            body.appendChild(this.Matchers[i].render(headerIndex, i));
+        }
         return body;
     }
 

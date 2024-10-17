@@ -26,12 +26,12 @@ export default class Matcher {
     };
 
 
-    render(): HTMLElement {
+    render(headerIndex: number, matcherIndex : number): HTMLElement {
         let row = document.createElement("tr");
         row.setAttribute("id", this.id);
 
         row.appendChild(this.renderNameCell());
-        row.appendChild(this.renderPatternCell());
+        row.appendChild(this.renderPatternCell(headerIndex, matcherIndex));
         row.appendChild(this.renderIgnoreCaseCell());
         row.appendChild(this.renderRemoveButton());
 
@@ -80,7 +80,7 @@ export default class Matcher {
         return matcherColumn;
     }
 
-    private renderPatternCell(): HTMLElement {
+    private renderPatternCell(headerIndex: number, matcherIndex : number): HTMLElement {
         let id = generateRandomId(10);
         let patternCell = document.createElement("td");
 
@@ -95,7 +95,8 @@ export default class Matcher {
             let rawMap = document.getElementById("rawMap-" + this.mappingGuid);
             if (rawMap?.textContent) {
                 let rawMapContent = JSON.parse(rawMap.textContent);
-                rawMapContent.Request.Headers[0].Matchers[0].Pattern = patternInput.value;
+                
+                rawMapContent.Request.Headers[headerIndex].Matchers[matcherIndex].Pattern = patternInput.value;
                 rawMap.textContent = JSON.stringify(rawMapContent, null, 1);
             } else {
             }
