@@ -24,21 +24,31 @@ export default class Matcher {
         this.ignoreCase = props.ignoreCase;
         this.onRemoveClick = props.onClick;
     };
+    
+    renderPathMatcher(matcherIndex : number) : HTMLElement {
+
+        let row = document.createElement("tr");
+        row.appendChild(this.renderMatcherName());
+        row.appendChild(this.renderPathPatternCell(matcherIndex))
+        row.appendChild(this.renderIgnoreCaseCell());
+        row.appendChild(this.renderRemoveButton());
+        return row;
+    }
 
 
-    render(headerIndex: number, matcherIndex : number): HTMLElement {
+    renderHeaderMatcher(headerIndex: number, matcherIndex : number): HTMLElement {
         let row = document.createElement("tr");
         row.setAttribute("id", this.id);
 
-        row.appendChild(this.renderNameCell());
-        row.appendChild(this.renderPatternCell(headerIndex, matcherIndex));
+        row.appendChild(this.renderMatcherName());
+        row.appendChild(this.renderHeaderPatternCell(headerIndex, matcherIndex));
         row.appendChild(this.renderIgnoreCaseCell());
         row.appendChild(this.renderRemoveButton());
 
         return row;
     }
 
-    private renderNameCell(): HTMLElement {
+    private renderMatcherName(): HTMLElement {
         let matcherColumn = document.createElement("td");
 
         let dropdownDiv = document.createElement("div");
@@ -80,7 +90,34 @@ export default class Matcher {
         return matcherColumn;
     }
 
-    private renderPatternCell(headerIndex: number, matcherIndex : number): HTMLElement {
+    private renderPathPatternCell(matcherIndex : number): HTMLElement {
+        let id = generateRandomId(10);
+        let patternCell = document.createElement("td");
+
+        let patternLabel = document.createElement("label");
+        patternLabel.setAttribute("for", id);
+
+        let patternInput = document.createElement("input");
+        patternInput.setAttribute("id", id);
+        patternInput.setAttribute("placeholder", "Pattern");
+        patternInput.value = this.pattern;
+        patternInput.addEventListener("input", () => {
+            let rawMap = document.getElementById("rawMap-" + this.mappingGuid);
+            if (rawMap?.textContent) {
+                let rawMapContent = JSON.parse(rawMap.textContent);
+
+                rawMapContent.Request.Path.Matchers[matcherIndex].Pattern = patternInput.value;
+                rawMap.textContent = JSON.stringify(rawMapContent, null, 1);
+            }
+        });
+
+        patternCell.appendChild(patternLabel);
+        patternCell.appendChild(patternInput);
+
+        return patternCell;
+    }
+    
+    private renderHeaderPatternCell(headerIndex: number, matcherIndex : number): HTMLElement {
         let id = generateRandomId(10);
         let patternCell = document.createElement("td");
 
