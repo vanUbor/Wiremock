@@ -58,7 +58,7 @@
         </tr>
         <tr id="details-@map.Guid" class="collapse">
             <td colspan="4">
-                <div class="scripTest" rawData="@map.Raw"></div>
+                <div class="mappingSection" rawData="@map.Raw"></div>
                 <form id="UpdateMappingForm" method="post" asp-page-handler="SaveAndUpdate">
                     <div class="form-floating">
                         <textarea id="rawMap-@map.Guid" asp-for="@map.Raw" class="form-control" style="height: 300px; white-space: pre-line" name="raw"></textarea>

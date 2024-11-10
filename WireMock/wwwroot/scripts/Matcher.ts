@@ -98,7 +98,6 @@ export default class Matcher {
                 
                 rawMapContent.Request.Headers[headerIndex].Matchers[matcherIndex].Pattern = patternInput.value;
                 rawMap.textContent = JSON.stringify(rawMapContent, null, 1);
-            } else {
             }
         });
 
