@@ -9,7 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{CBB5
 		.github\workflows\Build.yml = .github\workflows\Build.yml
 		.github\workflows\GitGuardian.yml = .github\workflows\GitGuardian.yml
 		.github\workflows\Codecov.yml = .github\workflows\Codecov.yml
-		.github\workflows\qodana.yml = .github\workflows\qodana.yml
 		.github\workflows\SonarCloud_PR.yml = .github\workflows\SonarCloud_PR.yml
 		.github\workflows\SonarCloud_push.yml = .github\workflows\SonarCloud_push.yml
 	EndProjectSection
@@ -18,7 +17,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "configs", "configs", "{A8C5
 	ProjectSection(SolutionItems) = preProject
 		.coderabbit.yaml = .coderabbit.yaml
 		codecov.yml = codecov.yml
-		qodana.yaml = qodana.yaml
 	EndProjectSection
 EndProject
 Global
