@@ -145,7 +145,7 @@ export default class MatcherShell {
         return body;
     }
     
-    private renderPathMatcherTableBody(): HTMLElement {
+    renderPathMatcherTableBody(): HTMLElement {
         let body = document.createElement("tbody");
         for (let i = 0; i < this.Matchers.length; i++) {
             body.appendChild(this.Matchers[i].renderPathMatcher(i));
@@ -154,7 +154,7 @@ export default class MatcherShell {
     }
 
     // Creates the delete button at the end of every matcher row
-    private renderMatcherButtons(): HTMLElement {
+    renderMatcherButtons(): HTMLElement {
         let div = document.createElement("div");
         div.classList.add("d-flex");
         div.classList.add("justify-content-end");

@@ -86,6 +86,8 @@ function createPaths(item: Element, rawMap: any): void {
     let headerDiv = createSection(item, "Paths");
     boarder.appendChild(headerDiv);
     boarder.appendChild(pathTable);
+    let matcherButtons = matcherShell.renderMatcherButtons();
+    boarder.appendChild(matcherButtons);
     item.appendChild(boarder);
 }
 
