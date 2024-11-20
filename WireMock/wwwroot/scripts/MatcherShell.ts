@@ -164,7 +164,7 @@ export default class MatcherShell {
         removeButton.classList.add("btn-danger");
         removeButton.classList.add("me-2");
         removeButton.classList.add("mb-2");
-        removeButton.innerHTML = "Remove All";
+        removeButton.innerHTML = "Remove Element";
         div.appendChild(removeButton);
 
         let addButton = document.createElement("button");

@@ -2,24 +2,24 @@
 
 
 export interface MatcherProps {
-    mappingGuid: string;
-    id: string;
+    MappingGuid: string;
+    Id: string;
     pattern: string;
     ignoreCase: boolean;
-    onClick: (id: string) => void;
+    onClick: (id: string, mappingGuid: string) => void;
 }
 
 export default class Matcher {
 
-    private mappingGuid: string;
-    private id: string;
+    public MappingGuid: string;
+    public Id: string;
     private pattern: string;
     private ignoreCase: boolean;
-    private onRemoveClick: (id: string) => void;
+    private onRemoveClick: (id: string, matchingGuid: string) => void;
 
     constructor(props: MatcherProps) {
-        this.mappingGuid = props.mappingGuid;
-        this.id = props.id;
+        this.MappingGuid = props.MappingGuid;
+        this.Id = props.Id;
         this.pattern = props.pattern;
         this.ignoreCase = props.ignoreCase;
         this.onRemoveClick = props.onClick;
@@ -28,6 +28,7 @@ export default class Matcher {
     renderPathMatcher(matcherIndex : number) : HTMLElement {
 
         let row = document.createElement("tr");
+        row.setAttribute("id", "matcher-" + this.Id);
         row.appendChild(this.renderMatcherName());
         row.appendChild(this.renderPathPatternCell(matcherIndex))
         row.appendChild(this.renderIgnoreCaseCell());
@@ -38,7 +39,7 @@ export default class Matcher {
 
     renderHeaderMatcher(headerIndex: number, matcherIndex : number): HTMLElement {
         let row = document.createElement("tr");
-        row.setAttribute("id", this.id);
+        row.setAttribute("id", "matcher-" + this.Id);
 
         row.appendChild(this.renderMatcherName());
         row.appendChild(this.renderHeaderPatternCell(headerIndex, matcherIndex));
@@ -102,7 +103,7 @@ export default class Matcher {
         patternInput.setAttribute("placeholder", "Pattern");
         patternInput.value = this.pattern;
         patternInput.addEventListener("input", () => {
-            let rawMap = document.getElementById("rawMap-" + this.mappingGuid);
+            let rawMap = document.getElementById("rawMap-" + this.MappingGuid);
             if (rawMap?.textContent) {
                 let rawMapContent = JSON.parse(rawMap.textContent);
 
@@ -129,7 +130,7 @@ export default class Matcher {
         patternInput.setAttribute("placeholder", "Pattern");
         patternInput.value = this.pattern;
         patternInput.addEventListener("input", () => {
-            let rawMap = document.getElementById("rawMap-" + this.mappingGuid);
+            let rawMap = document.getElementById("rawMap-" + this.MappingGuid);
             if (rawMap?.textContent) {
                 let rawMapContent = JSON.parse(rawMap.textContent);
                 
@@ -176,7 +177,7 @@ export default class Matcher {
         button.innerHTML = "X";
         button.classList.add("btn");
         button.classList.add("btn-danger");
-        button.addEventListener("click", () => this.onRemoveClick(this.id));
+        button.addEventListener("click", () => this.onRemoveClick(this.Id, this.MappingGuid));
         buttonCell.appendChild(button);
         return buttonCell;
     }

@@ -1,6 +1,7 @@
 ﻿import {Section} from "./Section.js";
 import Matcher from "./Matcher.js";
 import MatcherShell from "./MatcherShell.js";
+import generateRandomId from "./helper/generateRandomId.js";
 
 document.addEventListener('DOMContentLoaded', function () {
     const items = document.querySelectorAll('.mappingSection');
@@ -10,10 +11,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         createMethods(item, rawMap);
         item.appendChild(document.createElement("br"));
-        
+
         createPaths(item, rawMap);
         item.appendChild(document.createElement("br"));
-      
+
         createHeaders(item, rawMap);
         item.appendChild(document.createElement("br"));
 
@@ -25,35 +26,6 @@ function createSection(item: Element, name: string): HTMLElement {
     let mockShells: MatcherShell[] = [];
     let section = new Section(name, mockShells);
     return section.render();
-}
-
-function createPaths(item: Element, rawMap: any): void {
-    let headerDiv = createSection(item, "Paths");
-
-    let pathMatchers = rawMap.Request.Path.Matchers;
-    let matchers: Matcher[] = [];
-    pathMatchers.forEach((rawMatcher: { Guid: any; Id: any; Pattern: any; IgnoreCase: any; }) => {
-        let matcher: Matcher = new Matcher({
-            mappingGuid: rawMap.Guid,
-            id: rawMatcher.Id,
-            pattern: rawMatcher.Pattern,
-            ignoreCase: rawMatcher.IgnoreCase,
-            onClick: (id: string) => {
-            }
-        });
-        matchers.push(matcher);
-    });
-
-    let matcherShell = new MatcherShell("Path", false, matchers);
-    let paths = matcherShell.renderPaths();
-
-    let boarder = document.createElement("div");
-    boarder.classList.add("border");
-    boarder.classList.add("border-3");
-    boarder.classList.add("border-light-subtle");
-    boarder.appendChild(headerDiv);
-    boarder.appendChild(paths);
-    item.appendChild(boarder);
 }
 
 function updateMethodsInRaw(event: Event, methods: any) {
@@ -75,6 +47,46 @@ function updateMethodsInRaw(event: Event, methods: any) {
         rawMapContent.Request.Methods = methods;
         rawMap.textContent = JSON.stringify(rawMapContent, null, 1);
     }
+}
+
+function createPaths(item: Element, rawMap: any): void {
+
+    let pathMatchers = rawMap.Request.Path.Matchers;
+    let matchers: Matcher[] = [];
+    pathMatchers.forEach((rawMatcher: { Guid: any; Id: any; Pattern: any; IgnoreCase: any; }) => {
+        let id = generateRandomId(10);
+        let matcher: Matcher = new Matcher({
+            MappingGuid: rawMap.Guid,
+            Id: id,
+            pattern: rawMatcher.Pattern,
+            ignoreCase: rawMatcher.IgnoreCase,
+            // removes the matcher from the raw mapping json
+            onClick: (id: string, mappingGuid: string) => {
+                let rawMap = document.getElementById("rawMap-" + mappingGuid);
+                if (rawMap?.textContent) {
+                    let rawMapContent = JSON.parse(rawMap.textContent);
+                    rawMapContent.Request.Path.Matchers =
+                        rawMapContent.Request.Path.Matchers.filter((m: { Guid: any; Pattern: any; IgnoreCase: any; }) =>
+                            m.Pattern != rawMatcher.Pattern);
+                    rawMap.textContent = JSON.stringify(rawMapContent, null, 1);
+                }
+                document.getElementById("matcher-" + id)?.remove();
+            }
+        });
+        matchers.push(matcher);
+    });
+
+    let matcherShell = new MatcherShell("", false, matchers);
+    let pathTable = matcherShell.renderPaths();
+
+    let boarder = document.createElement("div");
+    boarder.classList.add("border");
+    boarder.classList.add("border-3");
+    boarder.classList.add("border-light-subtle");
+    let headerDiv = createSection(item, "Paths");
+    boarder.appendChild(headerDiv);
+    boarder.appendChild(pathTable);
+    item.appendChild(boarder);
 }
 
 function createMethods(item: Element, rawMap: any): void {
@@ -219,16 +231,30 @@ function createHeaders(item: Element, rawMap: any): void {
     for (let headerIndex = 0; headerIndex < headers.length; headerIndex++) {
         let name = headers[headerIndex].Name;
         let ignoreCase = headers[headerIndex].IgnoreCase;
-        let rawMatchers = headers[headerIndex].Matchers;
+        let headerMatchers = headers[headerIndex].Matchers;
 
         let matchers: Matcher[] = [];
-        rawMatchers.forEach((rawMatcher: { Guid: any; Id: any; Pattern: any; IgnoreCase: any; }) => {
+        headerMatchers.forEach((rawMatcher: { Guid: any; Id: any; Pattern: any; IgnoreCase: any; }) => {
+            let id = generateRandomId(10);
             let matcher: Matcher = new Matcher({
-                mappingGuid: rawMap.Guid,
-                id: rawMatcher.Id,
+                MappingGuid: rawMap.Guid,
+                Id: id,
                 pattern: rawMatcher.Pattern,
                 ignoreCase: rawMatcher.IgnoreCase,
-                onClick: (id: string) => {
+                onClick: (id: string, mappingGuid: string) => {
+                    let rawMap = document.getElementById("rawMap-" + mappingGuid);
+                    if (rawMap?.textContent) {
+                        let rawMapContent = JSON.parse(rawMap.textContent);
+                        rawMapContent.Request.Headers[headerIndex].Matchers =
+                            rawMapContent.Request.Headers[headerIndex].Matchers.filter((m: {
+                                Guid: any;
+                                Pattern: any;
+                                IgnoreCase: any;
+                            }) =>
+                                m.Pattern != rawMatcher.Pattern);
+                        rawMap.textContent = JSON.stringify(rawMapContent, null, 1);
+                    }
+                    document.getElementById("matcher-" + id)?.remove();
                 }
             });
             matchers.push(matcher);
