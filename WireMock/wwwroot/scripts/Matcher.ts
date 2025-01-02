@@ -31,19 +31,31 @@ export default class Matcher {
         row.setAttribute("id", "matcher-" + this.Id);
         row.appendChild(this.renderMatcherName());
         row.appendChild(this.renderPathPatternCell(matcherIndex))
-        row.appendChild(this.renderIgnoreCaseCell());
+        
+        let rawMap = document.getElementById("rawMap-" + this.MappingGuid);
+        if (rawMap?.textContent) {
+            row.appendChild(this.renderPathIgnoreCaseCell(matcherIndex));
+            
+        }
+            
         row.appendChild(this.renderRemoveButton());
         return row;
     }
 
 
     renderHeaderMatcher(headerIndex: number, matcherIndex : number): HTMLElement {
+
+        
         let row = document.createElement("tr");
         row.setAttribute("id", "matcher-" + this.Id);
-
         row.appendChild(this.renderMatcherName());
         row.appendChild(this.renderHeaderPatternCell(headerIndex, matcherIndex));
-        row.appendChild(this.renderIgnoreCaseCell());
+
+        let rawMap = document.getElementById("rawMap-" + this.MappingGuid);
+        if (rawMap?.textContent) {
+            row.appendChild(this.renderHeaderIgnoreCaseCell(headerIndex, matcherIndex));
+        }
+
         row.appendChild(this.renderRemoveButton());
 
         return row;
@@ -145,7 +157,7 @@ export default class Matcher {
         return patternCell;
     }
 
-    private renderIgnoreCaseCell(): HTMLElement {
+    private renderPathIgnoreCaseCell(matcherIndex : number): HTMLElement {
         let id = generateRandomId(10);
 
         let ignoreCaseCell = document.createElement("td");
@@ -159,6 +171,48 @@ export default class Matcher {
         checkInput.setAttribute("role", "switch");
         checkInput.setAttribute("id", id);
         checkInput.checked = this.ignoreCase;
+        checkInput.addEventListener("change", () => {
+            let rawMap = document.getElementById("rawMap-" + this.MappingGuid);
+            if (rawMap?.textContent) {
+                let rawMapContent = JSON.parse(rawMap.textContent);
+                rawMapContent.Request.Path.Matchers[matcherIndex].IgnoreCase = checkInput.checked;
+                rawMap.textContent = JSON.stringify(rawMapContent, null, 1);
+            }
+        });
+
+        let checkLabel = document.createElement("label");
+        checkLabel.classList.add("form-check-label");
+        checkLabel.setAttribute("for", id);
+        checkLabel.innerText = "Ignore Case"
+
+        checkDiv.appendChild(checkInput)
+        checkDiv.appendChild(checkLabel);
+        ignoreCaseCell.appendChild(checkDiv);
+        return ignoreCaseCell;
+    }
+
+    private renderHeaderIgnoreCaseCell(headerIndex: number, matcherIndex : number): HTMLElement {
+        let id = generateRandomId(10);
+
+        let ignoreCaseCell = document.createElement("td");
+        let checkDiv = document.createElement("div");
+        checkDiv.classList.add("form-check");
+        checkDiv.classList.add("form-switch");
+
+        let checkInput = document.createElement("input");
+        checkInput.classList.add("form-check-input");
+        checkInput.setAttribute("type", "checkbox");
+        checkInput.setAttribute("role", "switch");
+        checkInput.setAttribute("id", id);
+        checkInput.checked = this.ignoreCase;
+        checkInput.addEventListener("change", () => {
+            let rawMap = document.getElementById("rawMap-" + this.MappingGuid);
+            if (rawMap?.textContent) {
+                let rawMapContent = JSON.parse(rawMap.textContent);
+                rawMapContent.Request.Headers[headerIndex].Matchers[matcherIndex].IgnoreCase = checkInput.checked;
+                rawMap.textContent = JSON.stringify(rawMapContent, null, 1);
+            }
+        });
 
         let checkLabel = document.createElement("label");
         checkLabel.classList.add("form-check-label");

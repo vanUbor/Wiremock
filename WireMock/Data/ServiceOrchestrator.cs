@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 using NuGet.Packaging;
 using NuGet.Protocol;
