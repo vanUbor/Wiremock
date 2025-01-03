@@ -15,13 +15,15 @@ export default class MatcherShell {
         this.ignoreCase = ignoreCase;
     }
 
-    renderHeaders(headerIndex: number, onNameChanged: (newName : string) => void) : HTMLElement {
+    renderHeaders(headerIndex: number, 
+                  onNameChanged: (newName : string) => void,
+                  onIgnoreCaseChange: (ignoreCoase : boolean) => void) : HTMLElement {
         let borderDiv = document.createElement("div");
         borderDiv.classList.add("border");
         borderDiv.classList.add("border-3");
         borderDiv.classList.add("border-light-subtle");
 
-        let header = this.renderMatcherHeader(onNameChanged);
+        let header = this.renderMatcherHeader(onNameChanged, onIgnoreCaseChange);
         let matcherTable = this.renderMatcherTable();
         let tableBody = this.renderHeaderMatcherTableBody(headerIndex);
         matcherTable.appendChild(tableBody);
@@ -41,7 +43,9 @@ export default class MatcherShell {
         return table;
     }
 
-    private renderMatcherHeader(onNameChanged: (newName : string) => void): HTMLElement {
+    private renderMatcherHeader(
+        onNameChanged: (newName : string) => void,
+        onIgnoreCaseChange: (ignoreCase : boolean) => void): HTMLElement {
         let headerDiv = document.createElement("div");
         headerDiv.classList.add("d-flex");
         headerDiv.classList.add("justify-content-around");
@@ -81,7 +85,7 @@ export default class MatcherShell {
         headerInput.setAttribute("id", "flexSwitchCheckDefault")
         headerInput.checked = this.ignoreCase;
         headerInput.onchange = () => {
-            alert("GOT YOU also");
+            onIgnoreCaseChange(headerInput.checked);
         }
         headerInputDiv.appendChild(headerInput);
 
