@@ -263,7 +263,14 @@ function createHeaders(item: Element, rawMap: any): void {
         });
         let matcherShell: MatcherShell = new MatcherShell(name, ignoreCase, matchers);
 
-        boarder.appendChild(matcherShell.renderHeaders(headerIndex));
+        boarder.appendChild(matcherShell.renderHeaders(headerIndex, (newName) => {
+            let rm = document.getElementById("rawMap-" + rawMap.Guid);
+            if (rm?.textContent) {
+                let rawMapContent = JSON.parse(rm.textContent);
+                rawMapContent.Request.Headers[headerIndex].Name = newName;
+                rm.textContent = JSON.stringify(rawMapContent, null, 1);
+            }
+        }));
     }
     item.appendChild(boarder);
 }

@@ -15,13 +15,13 @@ export default class MatcherShell {
         this.ignoreCase = ignoreCase;
     }
 
-    renderHeaders(headerIndex: number): HTMLElement {
+    renderHeaders(headerIndex: number, onNameChanged: (newName : string) => void) : HTMLElement {
         let borderDiv = document.createElement("div");
         borderDiv.classList.add("border");
         borderDiv.classList.add("border-3");
         borderDiv.classList.add("border-light-subtle");
 
-        let header = this.renderMatcherHeader();
+        let header = this.renderMatcherHeader(onNameChanged);
         let matcherTable = this.renderMatcherTable();
         let tableBody = this.renderHeaderMatcherTableBody(headerIndex);
         matcherTable.appendChild(tableBody);
@@ -41,7 +41,7 @@ export default class MatcherShell {
         return table;
     }
 
-    private renderMatcherHeader(): HTMLElement {
+    private renderMatcherHeader(onNameChanged: (newName : string) => void): HTMLElement {
         let headerDiv = document.createElement("div");
         headerDiv.classList.add("d-flex");
         headerDiv.classList.add("justify-content-around");
@@ -62,6 +62,9 @@ export default class MatcherShell {
         headerNameInput.id = "Name";
         headerNameInput.type = "text";
         headerNameInput.value = this.name;
+        headerNameInput.oninput = () => {
+            onNameChanged(headerNameInput.value);
+        };
         headerNameDiv.appendChild(headerNameInput);
 
 
@@ -77,6 +80,9 @@ export default class MatcherShell {
         headerInput.setAttribute("role", "switch");
         headerInput.setAttribute("id", "flexSwitchCheckDefault")
         headerInput.checked = this.ignoreCase;
+        headerInput.onchange = () => {
+            alert("GOT YOU also");
+        }
         headerInputDiv.appendChild(headerInput);
 
         // Ignore Case Label
