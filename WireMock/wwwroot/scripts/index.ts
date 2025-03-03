@@ -8,13 +8,13 @@ document.addEventListener('DOMContentLoaded', function () {
     items.forEach(item => {
         let data = item.getAttribute("rawData");
         let rawMap = JSON.parse(data!);
-
-        createMethods(item, rawMap);
-        item.appendChild(document.createElement("br"));
-
+        
         createPaths(item, rawMap);
         item.appendChild(document.createElement("br"));
 
+        createMethods(item, rawMap);
+        item.appendChild(document.createElement("br"));
+        
         createHeaders(item, rawMap);
         item.appendChild(document.createElement("br"));
 
