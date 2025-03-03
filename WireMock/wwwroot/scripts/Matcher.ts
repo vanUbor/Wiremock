@@ -104,7 +104,7 @@ export default class Matcher {
     }
 
     private renderPathPatternCell(matcherIndex : number): HTMLElement {
-        let id = generateRandomId(10);
+        let id = "pattern-" + generateRandomId(10);
         let patternCell = document.createElement("td");
 
         let patternLabel = document.createElement("label");
@@ -131,7 +131,7 @@ export default class Matcher {
     }
     
     private renderHeaderPatternCell(headerIndex: number, matcherIndex : number): HTMLElement {
-        let id = generateRandomId(10);
+        let id = "pattern-" + generateRandomId(10);
         let patternCell = document.createElement("td");
 
         let patternLabel = document.createElement("label");

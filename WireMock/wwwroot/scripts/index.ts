@@ -65,10 +65,21 @@ function createPaths(item: Element, rawMap: any): void {
                 let rawMap = document.getElementById("rawMap-" + mappingGuid);
                 if (rawMap?.textContent) {
                     let rawMapContent = JSON.parse(rawMap.textContent);
-                    rawMapContent.Request.Path.Matchers =
-                        rawMapContent.Request.Path.Matchers.filter((m: { Guid: any; Pattern: any; IgnoreCase: any; }) =>
-                            m.Pattern != rawMatcher.Pattern);
-                    rawMap.textContent = JSON.stringify(rawMapContent, null, 1);
+
+                    // Aktuelles Pattern aus der UI abrufen
+                    const matcherRow = document.querySelector(`#matcher-${id}`);
+                    const inputElement = matcherRow?.querySelector(`input[id^="pattern-"]`);
+                    const currentPattern = inputElement ? (inputElement as HTMLInputElement).value : null;
+
+                    if (currentPattern) {
+                        rawMapContent.Request.Path.Matchers =
+                            rawMapContent.Request.Path.Matchers.filter((m: { 
+                                Guid: any; 
+                                Pattern: any; 
+                                IgnoreCase: any; }) => m.Pattern !== currentPattern);
+                        
+                        rawMap.textContent = JSON.stringify(rawMapContent, null, 1);
+                    }
                 }
                 document.getElementById("matcher-" + id)?.remove();
             }
@@ -247,13 +258,19 @@ function createHeaders(item: Element, rawMap: any): void {
                     let rawMap = document.getElementById("rawMap-" + mappingGuid);
                     if (rawMap?.textContent) {
                         let rawMapContent = JSON.parse(rawMap.textContent);
+
+                        const matcherRow = document.querySelector(`#matcher-${id}`);
+                        const inputElement = matcherRow?.querySelector(`input[id^="pattern-"]`);
+                        const currentPattern = inputElement ? (inputElement as HTMLInputElement).value : null;
+                        
+                        if (currentPattern)
                         rawMapContent.Request.Headers[headerIndex].Matchers =
                             rawMapContent.Request.Headers[headerIndex].Matchers.filter((m: {
                                 Guid: any;
                                 Pattern: any;
                                 IgnoreCase: any;
-                            }) =>
-                                m.Pattern != rawMatcher.Pattern);
+                            }) => m.Pattern != currentPattern);
+                        
                         rawMap.textContent = JSON.stringify(rawMapContent, null, 1);
                     }
                     document.getElementById("matcher-" + id)?.remove();
