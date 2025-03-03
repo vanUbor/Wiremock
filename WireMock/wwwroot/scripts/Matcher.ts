@@ -24,6 +24,39 @@ export default class Matcher {
         this.ignoreCase = props.ignoreCase;
         this.onRemoveClick = props.onClick;
     };
+
+    static createMatcher(rawMap: any, rawMatcher: { Id: any; Pattern: any; IgnoreCase: any }) {
+        return new Matcher({
+            MappingGuid: rawMap.Guid,
+            pattern: rawMatcher.Pattern,
+            ignoreCase: rawMatcher.IgnoreCase,
+            Id: generateRandomId(10),
+            // removes the matcher from the raw mapping json
+            onClick: (id: string, mappingGuid: string) => {
+                let rawMap = document.getElementById("rawMap-" + mappingGuid);
+                if (rawMap?.textContent) {
+                    let rawMapContent = JSON.parse(rawMap.textContent);
+
+                    // Aktuelles Pattern aus der UI abrufen
+                    const matcherRow = document.querySelector(`#matcher-${id}`);
+                    const inputElement = matcherRow?.querySelector(`input[id^="pattern-"]`);
+                    const currentPattern = inputElement ? (inputElement as HTMLInputElement).value : null;
+
+                    if (currentPattern) {
+                        rawMapContent.Request.Path.Matchers =
+                            rawMapContent.Request.Path.Matchers.filter((m: {
+                                Guid: any;
+                                Pattern: any;
+                                IgnoreCase: any;
+                            }) => m.Pattern !== currentPattern);
+
+                        rawMap.textContent = JSON.stringify(rawMapContent, null, 1);
+                    }
+                }
+                document.getElementById("matcher-" + id)?.remove();
+            }
+        });
+    }
     
     renderPathMatcher(matcherIndex : number) : HTMLElement {
 
@@ -32,11 +65,11 @@ export default class Matcher {
         row.appendChild(this.renderMatcherName());
         row.appendChild(this.renderPathPatternCell(matcherIndex))
         
-        let rawMap = document.getElementById("rawMap-" + this.MappingGuid);
-        if (rawMap?.textContent) {
+        // let rawMap = document.getElementById("rawMap-" + this.MappingGuid);
+        // if (rawMap?.textContent) {
             row.appendChild(this.renderPathIgnoreCaseCell(matcherIndex));
             
-        }
+        // }
             
         row.appendChild(this.renderRemoveButton());
         return row;

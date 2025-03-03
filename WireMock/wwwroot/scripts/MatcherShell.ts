@@ -1,23 +1,31 @@
 ﻿import Matcher from "./Matcher.js";
-import {Section} from "./Section.js";
-
+import generateRandomId from "./helper/generateRandomId.js";
 
 
 export default class MatcherShell {
 
     private Matchers: Matcher[];
-    private name: string;
-    private ignoreCase: boolean = false;
+    private readonly name: string;
+    private readonly ignoreCase: boolean = false;
+    private readonly mappingGuid : string;
 
-    constructor(name: string, ignoreCase: boolean, matcher: Matcher[]) {
+    constructor(mappingGuid :string, name: string, ignoreCase: boolean, matcher: Matcher[]) {
         this.Matchers = matcher;
         this.name = name;
         this.ignoreCase = ignoreCase;
+        this.mappingGuid = mappingGuid;
     }
 
-    renderHeaders(headerIndex: number, 
-                  onNameChanged: (newName : string) => void,
-                  onIgnoreCaseChange: (ignoreCoase : boolean) => void) : HTMLElement {
+    renderPaths(): HTMLTableElement {
+        let table = this.renderMatcherTable();
+        let body = this.renderPathMatcherTableBody()
+        table.appendChild(body);
+        return table;
+    }
+    
+    renderHeaders(headerIndex: number,
+                  onNameChanged: (newName: string) => void,
+                  onIgnoreCaseChange: (ignoreCase: boolean) => void): HTMLElement {
         let borderDiv = document.createElement("div");
         borderDiv.classList.add("border");
         borderDiv.classList.add("border-3");
@@ -27,7 +35,7 @@ export default class MatcherShell {
         let matcherTable = this.renderMatcherTable();
         let tableBody = this.renderHeaderMatcherTableBody(headerIndex);
         matcherTable.appendChild(tableBody);
-        let matcherButtons = this.renderMatcherButtons();
+        let matcherButtons = this.renderMatcherButtons(tableBody);
 
         borderDiv.appendChild(header);
         borderDiv.appendChild(matcherTable);
@@ -35,17 +43,11 @@ export default class MatcherShell {
 
         return borderDiv;
     }
-    
-    renderPaths() : HTMLElement{
-        let table = this.renderMatcherTable();
-        let body = this.renderPathMatcherTableBody()
-        table.appendChild(body);
-        return table;
-    }
+
 
     private renderMatcherHeader(
-        onNameChanged: (newName : string) => void,
-        onIgnoreCaseChange: (ignoreCase : boolean) => void): HTMLElement {
+        onNameChanged: (newName: string) => void,
+        onIgnoreCaseChange: (ignoreCase: boolean) => void): HTMLElement {
         let headerDiv = document.createElement("div");
         headerDiv.classList.add("d-flex");
         headerDiv.classList.add("justify-content-around");
@@ -103,9 +105,8 @@ export default class MatcherShell {
         return headerDiv;
     }
 
-   
-    
-    private renderMatcherTable(): HTMLElement {
+
+    private renderMatcherTable(): HTMLTableElement {
         let table = document.createElement("table");
         table.classList.add("table");
         table.classList.add("table-bordered");
@@ -145,8 +146,8 @@ export default class MatcherShell {
 
         return tableHead;
     }
-    
-    private renderHeaderMatcherTableBody(headerIndex: number): HTMLElement {
+
+    private renderHeaderMatcherTableBody(headerIndex: number): HTMLTableSectionElement {
         let body = document.createElement("tbody");
 
         for (let i = 0; i < this.Matchers.length; i++) {
@@ -154,37 +155,42 @@ export default class MatcherShell {
         }
         return body;
     }
-    
-    renderPathMatcherTableBody(): HTMLElement {
+
+    renderPathMatcherTableBody(): HTMLTableSectionElement {
         let body = document.createElement("tbody");
         for (let i = 0; i < this.Matchers.length; i++) {
             body.appendChild(this.Matchers[i].renderPathMatcher(i));
         }
         return body;
     }
+    
+    addPathMatcher(body: HTMLTableSectionElement, matcher: Matcher): void {
+        this.Matchers.push(matcher);
+        body.appendChild(matcher.renderPathMatcher(this.Matchers.length));
+    }
 
     // Creates the delete button at the end of every matcher row
-    renderMatcherButtons(): HTMLElement {
+    renderMatcherButtons(tbody: HTMLTableSectionElement): HTMLElement {
         let div = document.createElement("div");
         div.classList.add("d-flex");
         div.classList.add("justify-content-end");
+        this.renderAddMatcherButton(div, tbody);
+        return div;
+    }
 
-        let removeButton = document.createElement("button");
-        removeButton.classList.add("btn");
-        removeButton.classList.add("btn-danger");
-        removeButton.classList.add("me-2");
-        removeButton.classList.add("mb-2");
-        removeButton.innerHTML = "Remove Element";
-        div.appendChild(removeButton);
-
+    renderAddMatcherButton(div: HTMLDivElement, tbody: HTMLTableSectionElement) {
         let addButton = document.createElement("button");
         addButton.classList.add("btn");
         addButton.classList.add("btn-success");
         addButton.classList.add("me-2");
         addButton.classList.add("mb-2");
         addButton.innerHTML = "Add Matcher";
+        addButton.addEventListener("click", () => {
+           let matcher = Matcher.createMatcher(this.mappingGuid, 
+               { Id: generateRandomId(10), Pattern: "", IgnoreCase: false});
+           this.addPathMatcher(tbody, matcher);
+        })
+        tbody.appendChild(addButton);
         div.appendChild(addButton);
-
-        return div;
     }
 }
